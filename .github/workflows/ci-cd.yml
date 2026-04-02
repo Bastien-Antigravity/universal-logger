@@ -1,0 +1,52 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout Sibling Dependencies
+      - name: Checkout Distributed-Config
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/distributed-config
+          path: distributed-config
+
+      - name: Checkout Flexible-Logger
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/flexible-logger
+          path: flexible-logger
+
+      # 2. Checkout Current Project
+      - name: Checkout Distconf-Flexlog
+        uses: actions/checkout@v4
+        with:
+          path: distconf-flexlog
+
+      # 3. Setup Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache-dependency-path: distconf-flexlog/go.sum
+
+      # 4. Run Tests
+      # We move into the distconf-flexlog directory but the 'replace' 
+      # directives ../distributed-config and ../flexible-logger 
+      # will resolve correctly because they are siblings in the runner workspace.
+      - name: Run Facade Integration Tests
+        working-directory: distconf-flexlog
+        run: |
+          go mod tidy
+          go test -v ./src/facade/...
+
+      - name: Verify Examples Compilation
+        working-directory: distconf-flexlog
+        run: |
+          go build ./cmd/examples/main.go
