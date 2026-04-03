@@ -1,12 +1,12 @@
 # Testing Documentation: Distconf-Flexlog Facade
 
-This document describes the testing strategy and procedures for the `distconf-flexlog` orchestrator.
+This document describes the testing strategy and procedures for the `universal-logger` orchestrator.
 
 ## Testing Philosophy
 
 Since the underlying libraries (`distributed-config` and `flexible-logger`) are already extensively unit-tested for their internal logic, the facade tests focus exclusively on **Orchestration** and **Synergy**.
 
-Our goal is to verify that the two systems are correctly "bridged"—meaning parameters are mapped accurately and the subsystems are initialized in the correct order.
+Our goal is to verify that the two systems are correctly "bindingd"—meaning parameters are mapped accurately and the subsystems are initialized in the correct order.
 
 ## Test Layers
 
@@ -15,7 +15,7 @@ The project uses a two-layer testing approach:
 ### 1. Integration & Orchestration (`src/facade/facade_test.go`)
 These automated tests verify the internal state of the facade after initialization.
 -   **Orchestration Logic**: Ensures that both the Config and Logger subsystems are non-nil and functional.
-*   **Bridge Verification**: Confirms that discovery data (e.g., LogServer IP/Port) from the config is correctly passed to the logger profile.
+*   **Binding Verification**: Confirms that discovery data (e.g., LogServer IP/Port) from the config is correctly passed to the logger profile.
 -   **Parameter Mapping**: Verifies that `MFacadeParams` fields like `LogLevel` are successfully converted and applied to the engine.
 -   **Profile Synergy**: Tests the initialization of key profiles (`devel`, `minimal`) to ensure they play well with the `standalone` config.
 

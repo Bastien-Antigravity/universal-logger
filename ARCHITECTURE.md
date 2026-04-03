@@ -1,6 +1,6 @@
 # Architecture: Distconf-Flexlog Facade
 
-This document describes the architectural design of the `distconf-flexlog` orchestrator, which provides a unified interface for configuration and logging.
+This document describes the architectural design of the `universal-logger` orchestrator, which provides a unified interface for configuration and logging.
 
 ## Architectural Philosophy
 
@@ -45,7 +45,7 @@ The codebase is organized into four distinct layers to ensure maximum decoupling
 
 ## System Alignment & Integration
 
-The facade performs several "bridge" operations to ensure the two libraries work together seamlessly:
+The facade performs several "binding" operations to ensure the two libraries work together seamlessly:
 
 ### 1. Capability Mapping
 `flexible-logger` requires network addresses for its remote sinks. The facade automatically extracts these from the `distributed-config` capabilities:

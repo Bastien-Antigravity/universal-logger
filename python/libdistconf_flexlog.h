@@ -101,6 +101,8 @@ extern GoUintptr NewFacade(char* configProfile, char* appName, char* loggerProfi
 extern void FreeFacade(GoUintptr handle);
 extern void LogWithMetadataC(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
 extern void RegisterUpdateCallback(GoUintptr handle, config_update_cb cb);
+extern void SetLevelC(GoUintptr handle, GoInt level);
+extern char* GetConfigValueC(GoUintptr handle, char* section, char* key);
 
 #ifdef __cplusplus
 }

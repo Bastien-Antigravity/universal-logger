@@ -29,13 +29,28 @@ lib.LogWithMetadataC.argtypes = [
 CALLBACK_TYPE = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 lib.RegisterUpdateCallback.argtypes = [ctypes.c_void_p, CALLBACK_TYPE]
 
+lib.SetLevelC.argtypes = [ctypes.c_void_p, ctypes.c_int]
+
+lib.GetConfigValueC.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+lib.GetConfigValueC.restype = ctypes.c_char_p
+
 class LogLevel:
     NOTSET = 0
-    DEBUG = 10
-    INFO = 20
-    WARNING = 30
-    ERROR = 40
-    CRITICAL = 50
+    DEBUG = 1
+    STREAM = 2
+    INFO = 3
+    LOGON = 4
+    LOGOUT = 5
+    TRADE = 6
+    SCHEDULE = 7
+    REPORT = 8
+    WARNING = 9
+    ERROR = 10
+    CRITICAL = 11
+
+    @classmethod
+    def from_str(cls, s):
+        return getattr(cls, s.upper(), cls.INFO)
 
 class DistconfFlexlogFacade:
     def __init__(self, config_profile="standalone", app_name="python-app", 
@@ -55,6 +70,19 @@ class DistconfFlexlogFacade:
 
     def __del__(self):
         self.close()
+
+    def set_level(self, level):
+        """Sets the log level. level can be a string name or a LogLevel constant."""
+        if isinstance(level, str):
+            level = LogLevel.from_str(level)
+        lib.SetLevelC(self._handle, level)
+
+    def get(self, section, key, default=None):
+        """Gets a configuration value for a section and key."""
+        res = lib.GetConfigValueC(self._handle, section.encode(), key.encode())
+        if res is None:
+            return default
+        return res.decode()
 
     def _log(self, level, msg):
         # Capture stack info

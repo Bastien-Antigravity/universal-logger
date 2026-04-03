@@ -1,4 +1,4 @@
-module github.com/Bastien-Antigravity/distconf-flexlog
+module github.com/Bastien-Antigravity/universal-logger
 
 go 1.25.4
 

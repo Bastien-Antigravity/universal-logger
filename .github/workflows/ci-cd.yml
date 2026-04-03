@@ -27,26 +27,26 @@ jobs:
       - name: Checkout Distconf-Flexlog
         uses: actions/checkout@v4
         with:
-          path: distconf-flexlog
+          path: universal-logger
 
       # 3. Setup Go
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.25'
-          cache-dependency-path: distconf-flexlog/go.sum
+          cache-dependency-path: universal-logger/go.sum
 
       # 4. Run Tests
-      # We move into the distconf-flexlog directory but the 'replace' 
+      # We move into the universal-logger directory but the 'replace' 
       # directives ../distributed-config and ../flexible-logger 
       # will resolve correctly because they are siblings in the runner workspace.
       - name: Run Facade Integration Tests
-        working-directory: distconf-flexlog
+        working-directory: universal-logger
         run: |
           go mod tidy
           go test -v ./src/facade/...
 
       - name: Verify Examples Compilation
-        working-directory: distconf-flexlog
+        working-directory: universal-logger
         run: |
           go build ./cmd/examples/main.go

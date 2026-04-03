@@ -1,7 +1,6 @@
 import os
 import subprocess
 import platform
-import shutil
 from setuptools import setup, Command
 from setuptools.command.build_py import build_py
 
@@ -44,7 +43,7 @@ class CustomBuildPy(build_py):
         super().run()
 
 setup(
-    name="distconf-flexlog",
+    name="universal-logger",
     version="1.0.0",
     packages=["distconf_flexlog"],
     package_dir={"": "python"},

@@ -1,5 +1,5 @@
 import time
-from facade import DistconfFlexlogFacade, LogLevel
+from facade import DistconfFlexlogFacade
 
 def main():
     print("Initializing Distconf-Flexlog Facade from Python...")
