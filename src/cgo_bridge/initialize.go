@@ -17,8 +17,10 @@ import (
 
 // FacadeSession holds the state for a single library instantiation.
 type FacadeSession struct {
-	Config *config.DistConfig
-	Logger *logger.UniLog
+	Config   *config.DistConfig
+	Logger   *logger.UniLog
+	VbaHwnd  uintptr // Windows HWND for Message Pump (VBA only)
+	VbaMsgId uint32  // Windows Message ID (VBA only)
 }
 
 var (

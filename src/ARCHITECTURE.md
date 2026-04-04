@@ -44,6 +44,24 @@ sequenceDiagram
     Bridge-->>Client: Return (Async execution continues in Go)
 ```
 
+### 2. The CGO Bridge (`src/cgo_bridge/`)
+The Bridge serves as the "Universal Translator":
+- **FFI Stability**: Exposes a stable C ABI (Application Binary Interface).
+- **Thread-Safe Unified Dispatcher**: Uses a "Platform-Aware" dispatcher (`dispatchConfigurationUpdate`) to route updates to either standard C-callbacks (Python/Rust/CPP) or the Windows Message Pump (VBA).
+- **Callback Dispatching**: Handles the transition from Go goroutines to language-specific threads (e.g., acquiring the Python GIL) or posting asynchronous Windows messages.
+- **String/Memory Safety**: Manages memory allocation/deallocation across the boundary (using `C.CString` and `C.free`).
+
+## Data Flow: Configuration Updates
+
+1. **Go Core**: Detects a remote configuration change.
+2. **CGO Bridge**: Serializes the update to JSON and invokes the Unified Dispatcher.
+3. **Unified Dispatcher**: 
+   - **For Python/Rust/CPP**: Triggers the C function pointer registered by the client.
+   - **For VBA**: Calls `PostMessageA` to the registered `HWND`.
+4. **Client Reception**:
+   - **Python**: Receives the callback in a background thread, pushes to an `asyncio.Queue`.
+   - **VBA**: Receives the Windows message on the main thread and triggers `UniLog_WindowProc`.
+
 ## Data Translation and Memory Safety
 
 Go and C have different memory models. The bridge ensures safe translation:

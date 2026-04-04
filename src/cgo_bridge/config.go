@@ -5,19 +5,11 @@ package main
 
 // Define the callback type for C
 typedef void (*config_update_cb)(const char* json_data);
-
-// C helper to call the callback
-static void call_config_update_cb(config_update_cb cb, const char* json_data) {
-    if (cb) {
-        cb(json_data);
-    }
-}
 */
 import "C"
 
 import (
 	"encoding/json"
-	"unsafe"
 )
 
 // -------------------------------------------------------------------------
@@ -70,14 +62,12 @@ func UniLog_OnMemConfUpdate(handle uintptr, cb C.config_update_cb) {
 		if err != nil {
 			return
 		}
-		cStr := C.CString(string(jsonData))
 
 		// Run callback in a goroutine to avoid deadlocks with the Python GIL
 		go func() {
-			println("!!! Go: Calling Python callback...")
-			defer C.free(unsafe.Pointer(cStr))
-			C.call_config_update_cb(cb, cStr)
-			println("!!! Go: Callback returned.")
+			// Delegate all dispatching (FFI + VBA) to the unified dispatcher
+			// This ensures config.go stays clean and unaware of VBA internals.
+			dispatchConfigurationUpdate(handle, cb, string(jsonData))
 		}()
 	})
 }

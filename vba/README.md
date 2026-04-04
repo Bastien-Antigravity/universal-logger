@@ -17,18 +17,35 @@ A simple, direct way to integrate high-performance logging and distributed confi
 
 ## 📖 Quick Start
 
+### Basic Logging
 ```vba
 Sub DemoLogging()
     ' Initialize (defaults to standalone config)
     If UniLog_Initialize("standalone", "excel-app") Then
-        
-        ' Log messages
         UniLog_Info "Application has started."
-        UniLog_Debug "Testing the VBA bridge..."
-        
-        ' Cleanup (Important for releasing memory)
         UniLog_Close
     End If
+End Sub
+```
+
+### Asynchronous Config Updates (NEW)
+To receive real-time configuration updates without crashing Excel, you must start the **Config Watcher**:
+
+```vba
+Sub StartMyTool()
+    If UniLog_Initialize("production", "my-tool") Then
+        ' 1. Start the hidden message pump
+        StartConfigWatcher GetUniLogHandle()
+        
+        ' 2. Updates will now appear in the VBA Immediate Window (Ctrl+G)
+        '    or can be handled in UniLog_WindowProc inside the .bas module.
+    End If
+End Sub
+
+Sub StopMyTool()
+    ' 3. Always stop the watcher before closing!
+    StopConfigWatcher
+    UniLog_Close
 End Sub
 ```
 

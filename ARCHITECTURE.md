@@ -52,15 +52,18 @@ Each language library matches the native idioms of its environment:
 - **Python**: Uses `asyncio.Queue` and background threads to provide a non-blocking experience.
 - **Rust**: Provides `Send`/`Sync` wrappers and safe pointer management.
 - **C++**: Follows RAII (Resource Acquisition Is Initialization) for automatic handle cleanup.
-- **VBA**: Implements a Windows Message Pump to bridge multi-threaded Go callbacks into single-threaded Excel/Access environments.
+- **VBA**: Implements a **Windows Message-Based Proxy** to bridge multi-threaded Go callbacks into single-threaded Excel/Access environments via a hidden `HWND_MESSAGE` window.
 
 ## Data Flow: Configuration Updates
 
 1. **Go Core**: Detects a remote configuration change.
-2. **CGO Bridge**: Serializes the update to JSON.
-3. **FFI Boundary**: Triggers the C function pointer registered by the client.
-4. **Python Facade**: (Example) Receives the callback in a background thread, pushes to an `asyncio.Queue`.
-5. **Application**: Receives the update via `async for update in logger.on_config_update()`.
+2. **CGO Bridge**: Serializes the update to JSON and invokes the Unified Dispatcher.
+3. **Unified Dispatcher**:
+   - **For Python/Rust/CPP**: Triggers the C function pointer registered by the client.
+   - **For VBA**: Uses `PostMessageA` to the registered `HWND`.
+4. **Client Reception**:
+   - **Python**: (Example) Receives the callback in a background thread, pushes to an `asyncio.Queue`.
+   - **VBA**: Receives the Windows message on the main thread and triggers `UniLog_WindowProc`.
 
 ## Safety and Concurrency
 

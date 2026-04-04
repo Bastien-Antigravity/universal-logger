@@ -6,18 +6,18 @@ This document explains the planned architectural design for the VBA facade of th
 
 VBA (Visual Basic for Applications) is fundamentally single-threaded and runs within the main UI thread of the host application (Excel, Access, etc.). This presents a challenge for receiving asynchronous configuration updates from the multi-threaded Go core.
 
-## Planned Solution: Windows Message Pump
+## Core Implementation: Windows Message-Based Proxy
 
 To safely bridge Go-side background callbacks into the single-threaded VBA context, we utilize a **Windows Message-Based Proxy**.
 
 ### 1. Hidden Proxy Window
-The Go-shared library will create a hidden window (`HWND`) on the main thread when initialized via VBA.
+When `StartConfigWatcher` is called in VBA, it creates a hidden window (`HWND`) using `HWND_MESSAGE`. This window is invisible and has no graphical presence.
 
 ### 2. Message Dispatching
 When a configuration update occurs:
-1.  **Go Thread**: The Go background goroutine triggers a internal C-callback.
-2.  **CGO Bridge**: Instead of calling VBA directly (which would crash), it uses `PostMessage(hwnd, WM_USER + X, ...)` to send a message to the hidden window.
-3.  **VBA Context**: The hidden window's subclassed procedure receives the message on the **Main UI Thread** and safely executes the VBA callback.
+1.  **Go Thread**: The Go background goroutine triggers the `dispatchConfigurationUpdate` handler.
+2.  **CGO Bridge**: It uses `PostMessageA(hwnd, WM_USER_101, 0, (LPARAM)json_data)` to send a message to the hidden window.
+3.  **VBA Context**: The hidden window's subclassed procedure (`UniLog_WindowProc`) receives the message on the **Main UI Thread** and safely processes the update.
 
 ```mermaid
 sequenceDiagram
