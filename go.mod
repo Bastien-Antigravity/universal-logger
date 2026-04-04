@@ -1,13 +1,11 @@
-module github.com/Bastien-Antigravity/universal-logger
+module universal-logger
 
 go 1.25.4
-
-replace github.com/Bastien-Antigravity/distributed-config => ../distributed-config
 
 replace github.com/Bastien-Antigravity/flexible-logger => ../flexible-logger
 
 require (
-	github.com/Bastien-Antigravity/distributed-config v1.4.1-0.20260403071547-1ff15390340f
+	github.com/Bastien-Antigravity/distributed-config v1.4.1-0.20260403170406-daab1400a5ea
 	github.com/Bastien-Antigravity/flexible-logger v0.0.0-00010101000000-000000000000
 )
 

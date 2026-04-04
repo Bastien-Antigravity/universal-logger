@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+	"universal-logger/src/bootstrap"
+	"universal-logger/src/utils"
 )
+
+// -------------------------------------------------------------------------
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run cmd/examples/main.go [scenario]")
+		fmt.Println("Usage: go run cmd/universal-logger/main.go [scenario]")
 		fmt.Println("Scenarios:")
 		fmt.Println("  1: Local Development (standalone + devel)")
 		fmt.Println("  2: Production Standard (production + standard)")
@@ -21,7 +24,12 @@ func main() {
 	}
 
 	scenario := os.Args[1]
-	var name, configProfile, loggerProfile, logLevel string
+	var (
+		name          string
+		configProfile string
+		loggerProfile string
+		logLevel      = utils.LevelInfo
+	)
 
 	switch scenario {
 	case "1":
@@ -30,7 +38,7 @@ func main() {
 		name = "dev-service"
 		configProfile = "standalone"
 		loggerProfile = "devel"
-		logLevel = "debug"
+		logLevel = utils.LevelDebug
 
 	case "2":
 		// SCENARIO 2: PRODUCTION STANDARD
@@ -38,7 +46,7 @@ func main() {
 		name = "prod-api"
 		configProfile = "production"
 		loggerProfile = "standard"
-		logLevel = "info"
+		logLevel = utils.LevelInfo
 
 	case "3":
 		// SCENARIO 3: HIGH THROUGHPUT
@@ -46,7 +54,7 @@ func main() {
 		name = "high-load-worker"
 		configProfile = "production"
 		loggerProfile = "high_perf"
-		logLevel = "warning"
+		logLevel = utils.LevelWarning
 
 	case "4":
 		// SCENARIO 4: TESTING
@@ -54,7 +62,7 @@ func main() {
 		name = "test-suite"
 		configProfile = "test"
 		loggerProfile = "minimal"
-		logLevel = "error"
+		logLevel = utils.LevelError
 
 	case "5":
 		// SCENARIO 5: MONITORING & ALERTING
@@ -62,7 +70,7 @@ func main() {
 		name = "monitor-svc"
 		configProfile = "preprod"
 		loggerProfile = "notif_logger"
-		logLevel = "info"
+		logLevel = utils.LevelInfo
 
 	case "6":
 		// SCENARIO 6: LOCK-FREE PERFORMANCE
@@ -70,21 +78,46 @@ func main() {
 		name = "latency-critical-app"
 		configProfile = "production"
 		loggerProfile = "no_lock"
-		logLevel = "info"
+		logLevel = utils.LevelInfo
 
 	default:
 		fmt.Printf("Unknown scenario: %s\n", scenario)
 		return
 	}
 
+	// -------------------------------------------------------------------------
 	// EXECUTION
-	distConfig, logSvc := bootstrap.Init_UniLogger(name, configProfile, loggerProfile, logLevel)
-	defer logSvc.Close()
 
-	logSvc.Info("Facade initialized for scenario %s", scenario)
-	logSvc.Warning("This is a warning log from %s", name)
+	distConfig, uniLog := bootstrap.Init(name, configProfile, loggerProfile, logLevel)
+
+	uniLog.Info("Facade initialized for scenario %s", scenario)
+	uniLog.Warning("This is a warning log from %s", name)
+
+	// -------------------------------------------------------------------------
+	// DEMONSTRATION: Dynamic Configuration and Callbacks
+
+	// 1. Register a callback for configuration updates
+	distConfig.OnConfigUpdate(func(update map[string]map[string]string) {
+		fmt.Println(">>> [Event] Configuration update received via callback!")
+	})
+
+	// 2. Manually change the log level
+	fmt.Println(">>> [Demo] Switching log level to DEBUG manually")
+	uniLog.SetLevel(utils.LevelDebug)
+	uniLog.Debug("This debug message is now visible after SetLevel()")
+
+	// 3. Update a configuration value dynamically (e.g., simulated remote update)
+	fmt.Println(">>> [Demo] Updating memory configuration dynamically")
+	distConfig.SetConfig("system", "status", "maintenance")
+
+	// 4. Verify value retrieval
+	status := distConfig.GetConfig("system", "status")
+	fmt.Printf(">>> [Verify] Current system status: %s\n", status)
+
+	// -------------------------------------------------------------------------
 
 	fmt.Printf("Config Object initialized: %v\n", distConfig.Common.Name)
 
-	logSvc.Info("Walkthrough complete.")
+	uniLog.Info("Walkthrough complete.")
+
 }

@@ -3,6 +3,7 @@ package utils
 import logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 
 // -------------------------------------------------------------------------
+
 // Log level constants mirrored from flexible-logger for easy access.
 const (
 	LevelNotSet   = logger_models.LevelNotSet
@@ -20,6 +21,7 @@ const (
 )
 
 // -------------------------------------------------------------------------
+
 // GetLogLevel converts string to logger_models.Level.
 func GetLogLevel(LogLevel string) logger_models.Level {
 	return logger_models.ParseLevel(LogLevel)

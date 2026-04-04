@@ -1,0 +1,14 @@
+# Dockerfile for Go CGO Cross-Compilation (Linux & Windows)
+FROM golang:1.22-bookworm
+
+# 1. Install cross-compilation toolchains
+RUN apt-get update && apt-get install -y \
+    gcc-x86-64-linux-gnu \
+    libc6-dev-amd64-cross \
+    gcc-mingw-w64-x86-64 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# The entrypoint will handle the specific build command
+ENTRYPOINT ["/bin/bash", "-c"]

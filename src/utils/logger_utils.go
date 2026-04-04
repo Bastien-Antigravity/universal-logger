@@ -10,6 +10,7 @@ import (
 )
 
 // -------------------------------------------------------------------------
+
 // LogWithMetadata allows manual injection of stack metadata.
 // It tries to access the underlying LogEngine sink for high-performance writing.
 func LogWithMetadata(logger interfaces.Logger, level logger_models.Level, msg, file, line, function, module string) {
@@ -45,13 +46,17 @@ func LogWithMetadata(logger interfaces.Logger, level logger_models.Level, msg, f
 }
 
 // -------------------------------------------------------------------------
+
 // Log logs a message at a specific level using the provided logger.
 func Log(logger interfaces.Logger, level logger_models.Level, format string, args ...any) {
 	logger.Log(level, format, args...)
 }
 
+
 // -------------------------------------------------------------------------
+
 // GetUnderlyingLogger is a helper to access the raw interface (maintained for compatibility/utility).
 func GetUnderlyingLogger(logger interfaces.Logger) interfaces.Logger {
 	return logger
 }
+

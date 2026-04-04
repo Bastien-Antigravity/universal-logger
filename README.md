@@ -30,8 +30,8 @@ Initialize the entire system with a single call using the `factory`:
 
 ```go
 import (
-    "github.com/Bastien-Antigravity/universal-logger/src/factory"
-    "github.com/Bastien-Antigravity/universal-logger/src/models"
+    "universal-logger/src/factory"
+    "universal-logger/src/models"
 )
 
 func main() {

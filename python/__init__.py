@@ -1,3 +1,7 @@
-from .facade import DistconfFlexlogFacade, LogLevel
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-__all__ = ["DistconfFlexlogFacade", "LogLevel"]
+from .unilog import UniLog
+from .models import LogLevel
+
+__all__ = ['UniLog', 'LogLevel']

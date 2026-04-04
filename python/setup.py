@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import os
 import subprocess
 import platform
@@ -12,47 +15,56 @@ class BuildGoLib(Command):
     def finalize_options(self): pass
 
     def run(self):
-        # 1. Resolve library name based on platform
+        # 1. Determine platform extension
         ext = ".so"
         if platform.system() == "Darwin":
             ext = ".dylib"
         elif platform.system() == "Windows":
             ext = ".dll"
 
-        target_lib = os.path.join("python", f"libdistconf_flexlog{ext}")
+        target_lib = os.path.join("python", f"libunilog{ext}")
+        source_lib = os.path.join("libunilog", f"libunilog{ext}")
         
-        # 2. Run go build
-        print(f"Building Go shared library: {target_lib}")
+        # 2. Check if library exists in libunilog/ and copy it to python/ if needed
+        if os.path.exists(source_lib):
+            print(f">>> Copying {source_lib} to {target_lib} for packaging...")
+
+            import shutil
+            shutil.copy2(source_lib, target_lib)
+            return
+
+        # 3. Fallback to local Go build if missing
+        print(f">>> Missing {source_lib}. Attempting local Go build...")
         cmd = [
             "go", "build", 
             "-buildmode=c-shared",
             "-o", target_lib,
-            "src/facade/facade.go",
-            "src/facade/c_api.go"
+            "./src/cgo_bridge/initialize.go",
+            "./src/cgo_bridge/config.go",
+            "./src/cgo_bridge/logger.go"
         ]
+
         
         try:
+            # Run from the project root
             subprocess.check_call(cmd, env=os.environ, cwd="..")
         except subprocess.CalledProcessError as e:
             print(f"Failed to build Go library: {e}")
             raise
 
-class CustomBuildPy(build_py):
-    def run(self):
-        self.run_command("build_go")
-        super().run()
-
 setup(
-    name="universal-logger",
+    name="unilog",
     version="1.0.0",
-    packages=["distconf_flexlog"],
+    py_modules=["unilog"],
     package_dir={"": "python"},
-    package_data={"distconf_flexlog": ["*.so", "*.dylib", "*.dll"]},
+    package_data={"": ["*.so", "*.dylib", "*.dll", "*.h"]},
     cmdclass={
         "build_go": BuildGoLib,
         "build_py": CustomBuildPy,
     },
     install_requires=[],
     author="Bastien-Antigravity",
-    description="Python facade for Distributed Config and Flexible Logger",
+    description="Python facade for Universal Logger (Go) - Multi-platform CGO",
 )
+
+
