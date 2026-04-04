@@ -50,7 +50,10 @@ python: core
 	@# Ensure Python can find the library
 	export DYLD_LIBRARY_PATH=$(LIB_DIR):$$DYLD_LIBRARY_PATH && \
 	export LD_LIBRARY_PATH=$(LIB_DIR):$$LD_LIBRARY_PATH && \
-	python3 python/test_unilog.py
+	export PYTHONPATH=$(PWD)/python:$$PYTHONPATH && \
+	python3 python/test_unilog.py && \
+	python3 python/test_unified_callback.py && \
+	python3 python/test_async_logging.py
 
 clean:
 	@echo ">>> Cleaning all build artifacts..."

@@ -56,11 +56,13 @@ func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
 
 //export UniLog_OnMemConfUpdate
 func UniLog_OnMemConfUpdate(handle uintptr, cb C.config_update_cb) {
+	println("!!! Go: UniLog_OnMemConfUpdate called for handle:", handle)
 	facadeMu.Lock()
 	session, ok := facadeStore[handle]
 	facadeMu.Unlock()
-
-	if !ok || session.Config == nil {
+	
+	if !ok {
+		println("!!! Go: Handle NOT FOUND in facadeStore:", handle)
 		return
 	}
 	session.Config.OnMemConfUpdate(func(update map[string]map[string]string) {
@@ -72,8 +74,10 @@ func UniLog_OnMemConfUpdate(handle uintptr, cb C.config_update_cb) {
 
 		// Run callback in a goroutine to avoid deadlocks with the Python GIL
 		go func() {
+			println("!!! Go: Calling Python callback...")
 			defer C.free(unsafe.Pointer(cStr))
 			C.call_config_update_cb(cb, cStr)
+			println("!!! Go: Callback returned.")
 		}()
 	})
 }

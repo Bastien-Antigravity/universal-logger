@@ -1,8 +1,21 @@
-import asyncio
-import unittest
-from unilog import UniLog, LogLevel
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-class TestUnifiedCallback(unittest.TestCase):
+from asyncio import run as asyncioRun, create_task as asyncioCreateTask, sleep as asyncioSleep, wait_for as asyncioWaitFor
+from unittest import main as unitMain, TestCase as unitTestCase
+
+from unilog import UniLog
+
+
+##########################################################################
+# Unified Callback verification (Sync & Async)
+
+class TestUnifiedCallback(unitTestCase):
+
+    ##########################################################################
+    # Synchronous Callback Tests
+
+    # Verify that traditional sync callbacks triggered from Go reach Python
     def test_sync_callback(self):
         print("\n>>> Testing Synchronous Callback...")
         updates = []
@@ -17,12 +30,17 @@ class TestUnifiedCallback(unittest.TestCase):
             logger.set_config("test", "key", "value1")
             
             # Give a small amount of time for the background Go thread to call back
-            import time
-            time.sleep(0.2)
+            from time import sleep as timeSleep
+            timeSleep(0.2)
             
         self.assertGreater(len(updates), 0)
         self.assertEqual(updates[-1]["test"]["key"], "value1")
 
+
+    ##########################################################################
+    # Asynchronous Iterator Tests
+
+    # Verify that the async iterator correctly marshals data using call_soon_threadsafe
     def test_async_iterator(self):
         print("\n>>> Testing Async Iterator...")
         
@@ -41,20 +59,25 @@ class TestUnifiedCallback(unittest.TestCase):
                         if len(received) >= 1:
                             break
                 
-                t = asyncio.create_task(listen_task())
+                t = asyncioCreateTask(listen_task())
                 
                 # Trigger update
-                await asyncio.sleep(0.1)
+                await asyncioSleep(0.1)
                 logger.set_config("async_test", "status", "active")
                 
                 # Wait for listener to finish
-                await asyncio.wait_for(t, timeout=2.0)
+                await asyncioWaitFor(t, timeout=2.0)
                 
                 self.assertEqual(len(received), 1)
                 self.assertEqual(received[0]["async_test"]["status"], "active")
 
-        asyncio.run(run_test())
+        asyncioRun(run_test())
 
+
+    ##########################################################################
+    # Dual Mode Interaction Tests
+
+    # Verify that both sync and async systems can coexist on the same logger session
     def test_dual_mode(self):
         print("\n>>> Testing Dual Mode (Sync + Async simultaneously)...")
         
@@ -75,21 +98,25 @@ class TestUnifiedCallback(unittest.TestCase):
                         if len(received) >= 1:
                             break
                 
-                t = asyncio.create_task(listen_task())
+                t = asyncioCreateTask(listen_task())
                 
                 # Trigger update
-                await asyncio.sleep(0.1)
+                await asyncioSleep(0.1)
                 logger.set_config("dual", "mode", "enabled")
                 
-                await asyncio.wait_for(t, timeout=2.0)
+                await asyncioWaitFor(t, timeout=2.0)
                 
                 # Wait a bit for sync (though it should be immediate)
-                await asyncio.sleep(0.1)
+                await asyncioSleep(0.1)
                 
                 self.assertEqual(len(received), 1)
-                self.assertEqual(len(sync_received), 1)
+                self.assertEqual(sync_received[-1]["dual"]["mode"], "enabled")
 
-        asyncio.run(run_test())
+        asyncioRun(run_test())
+
+
+##########################################################################
+# Entry point
 
 if __name__ == "__main__":
-    unittest.main()
+    unitMain()

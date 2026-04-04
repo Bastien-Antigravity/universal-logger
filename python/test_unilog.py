@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import unittest
+from unittest import main as unitMain, TestCase as unitTestCase
 from unilog import UniLog, LogLevel
 
-class TestUnilog(unittest.TestCase):
+
+##########################################################################
+# Logger basic verification
+
+class TestUnilog(unitTestCase):
+    
+    ##########################################################################
+    # Basic logging tests
+    
+    # Verify that primary logging methods work without crashing using devel profile
     def test_basic_logging(self):
         # We use 'standalone' and 'devel' for testing as they don't require external servers
         with UniLog(config_profile="standalone", app_name="test-basic", logger_profile="devel", log_level="debug") as logger:
@@ -16,7 +25,7 @@ class TestUnilog(unittest.TestCase):
             # Test configuration getting (standalone has some defaults)
             val = logger.get_config("logger", "level", "not_found")
             print(f"Logged level from config: {val}")
-            
+
     # def test_config_updates(self):
     #     # This test is more complex due to the Go-Python callback deadlock potential
     #     # with the Python GIL and synchronous CGO calls.
@@ -35,6 +44,9 @@ class TestUnilog(unittest.TestCase):
             logger.set_level(LogLevel.DEBUG)
             logger.debug("This should be visible after set_level")
 
-if __name__ == "__main__":
-    unittest.main()
 
+##########################################################################
+# Entry point
+
+if __name__ == "__main__":
+    unitMain()

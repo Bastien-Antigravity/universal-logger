@@ -1,79 +1,70 @@
-# Distconf-Flexlog Facade
+# Universal Logger
 
-A unified high-performance facade that orchestrates [Distributed-Config](https://github.com/Bastien-Antigravity/distributed-config) and [Flexible-Logger](https://github.com/Bastien-Antigravity/flexible-logger).
+A unified, high-performance, cross-platform logging and configuration facade. Universal Logger provides a single, consistent API across multiple languages (Go, Python, Rust, C++, VBA) by orchestrating [Distributed-Config](https://github.com/Bastien-Antigravity/distributed-config) and [Flexible-Logger](https://github.com/Bastien-Antigravity/flexible-logger) via a high-performance CGO bridge.
 
 ## 🏗️ Architecture
 
-Following the **SystemFacade** pattern, this library decouples application logic from the underlying configuration and logging drivers.
+Universal Logger acts as a "Universal Adapter," allowing various languages to leverage a shared Go-based core for configuration management and high-throughput logging.
 
-```text
-       +---------------------------------------+
-       |           Application Logic           |
-       +---------------------------------------+
-                     |
-                     v
-       +---------------------------------------+
-       |        DistconfFlexlogFacade          |
-       |     (src/facade/facade.go)            |
-       +---------------------------------------+
-          /                         \
-         v                           v
-+-------------------+       +-------------------+
-| Distributed Config|       |  Flexible Logger  |
-| (Sync/Async REST) |       | (Binary/Capnp/UDP)|
-+-------------------+       +-------------------+
+```mermaid
+flowchart TD
+    subgraph Client_Layers [Client Facades]
+        Py[Python] 
+        Rs[Rust]
+        Cpp[C++]
+        VBA[VBA]
+        Go[Go Native]
+    end
+
+    subgraph Bridge_Layer [CGO Bridge]
+        CGO[Shared Library .so/.dylib]
+    end
+
+    subgraph Core_Layer [Go Core]
+        Facade[Universal Facade]
+    end
+
+    subgraph Components [Underlying Systems]
+        Config[Distributed Config]
+        Logger[Flexible Logger]
+    end
+
+    Client_Layers --> Bridge_Layer
+    Bridge_Layer --> Core_Layer
+    Core_Layer --> Components
 ```
 
-## 🚀 Quick Start
+## 🚀 Key Features
 
-Initialize the entire system with a single call using the `factory`:
+- **Multi-Language Support**: Identical API signatures for Go, Python, Rust, C++, and VBA.
+- **Asynchronous Logging**: Non-blocking log dispatching across all supported languages.
+- **Dynamic Configuration**: Real-time configuration updates with language-native callback support (e.g., `async for` in Python).
+- **High Performance**: Leverages Go's concurrency model and low-latency CGO FFI.
+- **Lifecycle Management**: Robust resource handling with context managers and automatic cleanup.
 
-```go
-import (
-    "universal-logger/src/factory"
-    "universal-logger/src/models"
-)
+## 📊 Operational Profiles
 
-func main() {
-    params := models.MFacadeParams{
-        ConfigProfile: "standalone",
-        AppName:       "my-service",
-        LoggerProfile: "devel",
-        LogLevel:      "debug",
-    }
+The logger supports various synergistic profiles out of the box:
 
-    facade := factory.NewFacade(params)
-    defer facade.Close()
-
-    facade.Info("System is online!")
-}
-```
-
-## 📊 Operational Scenarios
-
-| Scenario | Config Profile | Logger Profile | Primary Use Case |
+| Profile | Config | Logger | Primary Use Case |
 | :--- | :--- | :--- | :--- |
-| **1: Local Dev** | `standalone` | `devel` | Standard local development with text logs. |
-| **2: Production** | `production` | `standard` | Full remote config + Multi-sink (Network/File) logging. |
-| **3: High Load** | `production` | `high_perf` | Optimized for high-throughput async network logging. |
-| **4: Testing** | `test` | `minimal` | Lightweight setup for CI/CD and automated tests. |
-| **5: Monitor** | `preprod` | `notif_logger` | Notifications focus with remote config monitoring. |
-| **6: Critical** | `production` | `no_lock` | Ultra-low latency using lock-free atomic logging. |
+| **Local Dev** | `standalone` | `devel` | Rapid local iteration with text logs. |
+| **Production** | `production` | `standard` | Full remote orchestration and multi-sink logging. |
+| **High Load** | `production` | `high_perf` | Low-latency async network logging (UDP/Capnp). |
+| **Testing** | `test` | `minimal` | Optimized for CI/CD environments. |
+| **Monitor** | `preprod` | `notif_logger` | Notification-focused with remote monitoring. |
 
-## 🛠️ Configuration Parameters
+## 🛠️ Project Structure
 
-Initialize using the `MFacadeParams` struct:
+- `src/`: Go core and CGO bridge implementation.
+- `python/`: Python facade with `asyncio` support.
+- `rust/`: Rust safety wrappers and Cargo integration.
+- `cpp/`: C++ header-only like facade.
+- `vba/`: Excel/Access integration via Windows Message Pump.
+- `libunilog/`: Compiled shared libraries and C headers.
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `ConfigProfile` | `string` | `production`, `preprod`, `test`, `standalone` |
-| `AppName` | `string` | Application identifier (used for both systems) |
-| `LoggerProfile` | `string` | `standard`, `devel`, `high_perf`, `minimal`, `notif_logger`, `no_lock` |
-| `LogLevel` | `string` | `debug`, `info`, `warning`, `error`, `critical` |
-| `PublicIP` | `string` | Optional: used for remote identification (defaults to 127.0.0.1) |
+## 📜 Maintenance
 
-## 🛠️ Internal Maintenance
-
-This facade includes alignment fixes for:
-*   **Field Mapping**: Links `distributed-config`'s `LogServer`/`NotifServer` capabilities to `flexible-logger`'s engine requirements.
-*   **Dynamic Leveling**: Implements `SetLevel` on the core `LogEngine` to allow post-initialization level updates.
+This project centralizes operational alignment:
+- **Field Mapping**: Automatically links `Distributed-Config` capabilities to `Flexible-Logger` requirements.
+- **Unified Leveling**: Standardizes log level parsing and dynamic updates across all FFI boundaries.

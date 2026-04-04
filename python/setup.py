@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import subprocess
-import platform
-from setuptools import setup, Command
-from setuptools.command.build_py import build_py
+from os import path as osPath, environ as osEnviron
+from subprocess import check_call as subprocessCheckCall, CalledProcessError as subprocessCalledProcessError
+from platform import system as platformSystem
+from shutil import copy2 as shutilCopy2
+from setuptools import setup as setuptoolsSetup, Command as setuptoolsCommand
 
-class BuildGoLib(Command):
+
+##########################################################################
+# Custom Build Commands
+
+class BuildGoLib(setuptoolsCommand):
+    """
+    Compile the Go shared library for the current platform.
+    Used during installation or source distribution builds.
+    """
     description = "Compile the Go shared library"
     user_options = []
 
@@ -17,20 +25,18 @@ class BuildGoLib(Command):
     def run(self):
         # 1. Determine platform extension
         ext = ".so"
-        if platform.system() == "Darwin":
+        if platformSystem() == "Darwin":
             ext = ".dylib"
-        elif platform.system() == "Windows":
+        elif platformSystem() == "Windows":
             ext = ".dll"
 
-        target_lib = os.path.join("python", f"libunilog{ext}")
-        source_lib = os.path.join("libunilog", f"libunilog{ext}")
+        target_lib = osPath.join("python", f"libunilog{ext}")
+        source_lib = osPath.join("libunilog", f"libunilog{ext}")
         
         # 2. Check if library exists in libunilog/ and copy it to python/ if needed
-        if os.path.exists(source_lib):
+        if osPath.exists(source_lib):
             print(f">>> Copying {source_lib} to {target_lib} for packaging...")
-
-            import shutil
-            shutil.copy2(source_lib, target_lib)
+            shutilCopy2(source_lib, target_lib)
             return
 
         # 3. Fallback to local Go build if missing
@@ -44,27 +50,28 @@ class BuildGoLib(Command):
             "./src/cgo_bridge/logger.go"
         ]
 
-        
         try:
-            # Run from the project root
-            subprocess.check_call(cmd, env=os.environ, cwd="..")
-        except subprocess.CalledProcessError as e:
+            # Run from the project root (.. relative to python dir)
+            subprocessCheckCall(cmd, env=osEnviron, cwd="..")
+        except subprocessCalledProcessError as e:
             print(f"Failed to build Go library: {e}")
             raise
 
-setup(
+
+##########################################################################
+# Package configuration
+
+setuptoolsSetup(
     name="unilog",
     version="1.0.0",
-    py_modules=["unilog"],
+    packages=["unilog"],
     package_dir={"": "python"},
-    package_data={"": ["*.so", "*.dylib", "*.dll", "*.h"]},
+    package_data={"unilog": ["*.so", "*.dylib", "*.dll", "*.h"]},
+    # Custom build commands including the Go bridge compilation
     cmdclass={
         "build_go": BuildGoLib,
-        "build_py": CustomBuildPy,
     },
     install_requires=[],
     author="Bastien-Antigravity",
     description="Python facade for Universal Logger (Go) - Multi-platform CGO",
 )
-
-

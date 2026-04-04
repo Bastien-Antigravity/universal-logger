@@ -1,63 +1,75 @@
-# Testing Documentation: Distconf-Flexlog Facade
+# Testing: Universal Logger
 
-This document describes the testing strategy and procedures for the `universal-logger` orchestrator.
+This document provides a high-level overview of the testing strategy for the `universal-logger` project. Since this is a multi-language project, the test suite is divided by platform, with a focus on verifying the CGO bridge integrity.
 
 ## Testing Philosophy
 
-Since the underlying libraries (`distributed-config` and `flexible-logger`) are already extensively unit-tested for their internal logic, the facade tests focus exclusively on **Orchestration** and **Synergy**.
+Our testing strategy follows the **Contract-First** approach:
+1. **Core Logic**: The Go core (`src/`) is tested for orchestration and synergy.
+2. **Bridge Integrity**: The CGO bridge is verified by ensuring that handles and callbacks are correctly passed across the FFI boundary.
+3. **Facade Idioms**: Each language facade (Python, Rust, C++) is tested to ensure it behaves like a native library while correctly interacting with the shared core.
 
-Our goal is to verify that the two systems are correctly "bindingd"—meaning parameters are mapped accurately and the subsystems are initialized in the correct order.
+## Running Tests by Platform
 
-## Test Layers
-
-The project uses a two-layer testing approach:
-
-### 1. Integration & Orchestration (`src/facade/facade_test.go`)
-These automated tests verify the internal state of the facade after initialization.
--   **Orchestration Logic**: Ensures that both the Config and Logger subsystems are non-nil and functional.
-*   **Binding Verification**: Confirms that discovery data (e.g., LogServer IP/Port) from the config is correctly passed to the logger profile.
--   **Parameter Mapping**: Verifies that `MFacadeParams` fields like `LogLevel` are successfully converted and applied to the engine.
--   **Profile Synergy**: Tests the initialization of key profiles (`devel`, `minimal`) to ensure they play well with the `standalone` config.
-
-### 2. Scenario Verification (`cmd/examples/main.go`)
-A comprehensive suite of 6 "real-world" scenarios used to verify the facade's behavior in different environments (Production, Development, Testing, Monitoring).
-
-## Running Tests
-
-### Automated Integration Tests
-To run the orchestration suite, use the standard Go toolchain:
+### 1. Unified Makefile (Convenience)
+The root `Makefile` provides a quick way to run all primary tests:
 
 ```bash
-go test -v ./src/facade/...
+# Run Go core tests
+make core_tests
+
+# Run Python-specific tests
+make python
+
+# Build and run C++ tests
+make cpp
+
+# Build and run Rust tests
+make rust
 ```
 
-### Manual Scenario Testing
-To verify an exhaustive list of operational modes, run the example suite:
-
+### 2. Go Core (`src/`)
+Automated tests verify the internal state of the facade and the capability mapping between subsystems.
 ```bash
-# Example: Run the 'Local Development' scenario
-go run cmd/examples/main.go 1
-
-# Example: Run the 'Automated Testing' scenario
-go run cmd/examples/main.go 4
+go test -v ./src/...
 ```
 
-## Operational Scenarios Table
+### 3. Python (`python/`)
+Verifies asynchronous logging, thread-safe configuration updates, and the `async for` listener.
+```bash
+export PYTHONPATH=$(PWD)/python
+python3 python/test_unilog.py
+python3 python/test_unified_callback.py
+python3 python/test_async_logging.py
+```
 
-We verify the following synergistic combinations in every release:
+### 4. Rust (`rust/`)
+Verifies the safe pointers and memory management.
+```bash
+cd rust && cargo test
+```
 
-| Scenario | Config Profile | Logger Profile | Primary Purpose |
-| :--- | :--- | :--- | :--- |
-| **1: Local Dev** | `standalone` | `devel` | Rapid local iteration. |
-| **2: Production** | `production` | `standard` | Full remote orchestration. |
-| **3: High Load** | `production` | `high_perf` | Low-latency async logging. |
-| **4: Testing** | `test` | `minimal` | CI/CD optimized. |
-| **5: Monitor** | `preprod` | `notif_logger` | Alert-first monitoring. |
-| **6: Critical** | `production` | `no_lock` | Mutex-free execution. |
+### 5. C++ (`cpp/`)
+Verifies the C++ RAII wrapper and basic logging functionality.
+```bash
+make -C cpp
+./cpp/unilog_cpp
+```
 
-## Writing New Tests
+## Cross-Platform Verification Matrix
 
-When adding new integration points (e.g., a new profile or a new parameter mapping):
-1.  **Use `standalone` or `test` profiles**: Avoid using `production` in automated tests to prevent mandatory network hangs or config server requirements.
-2.  **Verify State**: Check that the resulting `IFacade` object has its underlying subsystems cross-linked (e.g., `facade.Config` matches the config passed to the logger).
-3.  **Don't Re-test Logic**: If a bug is found in how a log message is written to a file, the fix and the test belong in `flexible-logger`, not here.
+Every release is verified against the following matrix:
+
+| Platform | Feature | Test Target |
+| :--- | :--- | :--- |
+| **Go** | Orchestration | `src/facade/facade_test.go` |
+| **Python** | Async I/O | `python/test_async_logging.py` |
+| **Python** | Callbacks | `python/test_unified_callback.py` |
+| **Rust** | Memory Safety | `rust/src/lib.rs` (Doc tests) |
+| **C++** | Thread Safety | `cpp/main.cpp` |
+| **VBA** | Message Pump | Manual (Excel Mock) |
+
+## Infrastructure Requirements
+
+- **Local Development**: Use the `standalone` profile to run tests without requiring a remote `distributed-config` server.
+- **Environment Variables**: Ensure `DYLD_LIBRARY_PATH` (macOS) or `LD_LIBRARY_PATH` (Linux) points to the `libunilog/` directory during execution.

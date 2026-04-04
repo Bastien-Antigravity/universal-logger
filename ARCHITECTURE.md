@@ -1,64 +1,69 @@
-# Architecture: Distconf-Flexlog Facade
+# Architecture: Universal Logger
 
-This document describes the architectural design of the `universal-logger` orchestrator, which provides a unified interface for configuration and logging.
+This document describes the architectural design of the `universal-logger` project, which provides a unified, cross-platform interface for configuration and logging via a shared Go-based core.
 
 ## Architectural Philosophy
 
-The project adheres to the **Clean Architecture** and **Facade Pattern** principles. It serves as a glue layer that aligns two independent libraries into a single, cohesive developer experience.
-
-### 1. The SystemFacade Pattern
-The core component is the `DistconfFlexlogFacade`. It is the **only** component that coordinates between `distributed-config` and `flexible-logger`. 
+The project adheres to a **Layered Facade** pattern. At its heart is a Go-native implementation that orchestrates `distributed-config` and `flexible-logger`. This core is exposed to other languages via a high-performance CGO bridge.
 
 ```mermaid
 flowchart TD
-    %% Styles
-    classDef facade fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1;
-    classDef model fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,color:#4a148c;
-    classDef lib fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20;
-
-    App[Application] -->|"NewFacade(MFacadeParams)"| Factory(Factory):::facade
-    Factory -->|"Instantiate"| Facade(DistconfFlexlogFacade):::facade
-    
-    subgraph Layers [Internal Layers]
-        Facade -.->|"Implements"| IFacade[IFacade Interface]:::facade
-        Facade -.->|"Uses"| MParams[MFacadeParams Model]:::model
+    subgraph Language_Facades [Language Specific Facades]
+        Py[Python asyncio]
+        Rs[Rust Type-Safe]
+        Cpp[C++ Header-Only]
+        VBA[VBA Message Pump]
     end
 
-    subgraph Subsystems [Wrapped Subsystems]
-        Facade -->|"Orchestrates"| DistConfig[Distributed Config]:::lib
-        Facade -->|"Orchestrates"| FlexLogger[Flexible Logger]:::lib
+    subgraph Bridge_Layer [CGO Bridge / FFI]
+        SharedLib[Universal Shared Library .so/.dylib]
+        HandleMap[Handle Memory Store]
     end
+
+    subgraph Go_Core [Core Orchestrator]
+        Bootstrap[Bootstrap Logic]
+        DistConfig[Distributed Config]
+        FlexLogger[Flexible Logger]
+    end
+
+    Language_Facades --> SharedLib
+    SharedLib --> HandleMap
+    HandleMap --> Go_Core
+    Go_Core --> DistConfig
+    Go_Core --> FlexLogger
 ```
 
-## Layered Structure (src/)
+## Key Architectural Components
 
-The codebase is organized into four distinct layers to ensure maximum decoupling and testability:
+### 1. The Go Core (`src/`)
+The Go core is responsible for the actual "heavy lifting":
+- **Bootstrap**: Aligns the configuration secrets and discovery data with the logging engine's requirements.
+- **Session Management**: Tracks multiple logger instances using a thread-safe `uintptr -> Session` map.
+- **Dynamic Leveling**: Synchronizes log level changes across all active sinks.
 
--   **`src/models/`**: Contains pure data structures.
-    -   `MFacadeParams`: The single configuration object used to bootstrap both systems.
--   **`src/interfaces/`**: Defines the decoupling boundaries.
-    -   `IFacade`: An interface that embeds `interfaces.Logger` and provides access to the shared `Config`.
--   **`src/facade/`**: The implementation of the orchestrator.
-    -   `DistconfFlexlogFacade`: Manages the lifecycle of both configuration and logging instances.
--   **`src/factory/`**: The dependency injection layer.
-    -   `facade_factory.go`: Provides the `NewFacade` function, hiding the complexity of sub-system alignment.
+### 2. The CGO Bridge (`src/cgo_bridge/`)
+The Bridge serves as the "Universal Translator":
+- **FFI Stability**: Exposes a stable C ABI (Application Binary Interface).
+- **Callback Dispatching**: Handles the transition from Go goroutines to language-specific threads (e.g., acquiring the Python GIL).
+- **String/Memory Safety**: Manages memory allocation/deallocation across the boundary (using `C.CString` and `C.free`).
 
-## System Alignment & Integration
+### 3. Language Facades
+Each language library matches the native idioms of its environment:
+- **Python**: Uses `asyncio.Queue` and background threads to provide a non-blocking experience.
+- **Rust**: Provides `Send`/`Sync` wrappers and safe pointer management.
+- **C++**: Follows RAII (Resource Acquisition Is Initialization) for automatic handle cleanup.
+- **VBA**: Implements a Windows Message Pump to bridge multi-threaded Go callbacks into single-threaded Excel/Access environments.
 
-The facade performs several "binding" operations to ensure the two libraries work together seamlessly:
+## Data Flow: Configuration Updates
 
-### 1. Capability Mapping
-`flexible-logger` requires network addresses for its remote sinks. The facade automatically extracts these from the `distributed-config` capabilities:
--   `config.Capabilities.LogServer` ➔ Maps to Logger Network Sink.
-*   `config.Capabilities.NotifServer` ➔ Maps to Logger Notifier.
+1. **Go Core**: Detects a remote configuration change.
+2. **CGO Bridge**: Serializes the update to JSON.
+3. **FFI Boundary**: Triggers the C function pointer registered by the client.
+4. **Python Facade**: (Example) Receives the callback in a background thread, pushes to an `asyncio.Queue`.
+5. **Application**: Receives the update via `async for update in logger.on_config_update()`.
 
-### 2. Dynamic Initialization
-The facade handles the "chicken-and-egg" problem:
-1.  It initializes **Distributed Config** first to obtain current environment settings.
-2.  It then uses those settings to initialize the **Flexible Logger** profiles (Standard, HighPerf, etc.).
-3.  Finally, it applies the user-requested `LogLevel` via the `SetLevel` interface method.
+## Safety and Concurrency
 
-## Safety & Performance
-
--   **Error Handling**: The facade ensures that configuration load failures are logged via the logger's fallback mechanisms before the main engine is online.
--   **Concurrency**: Access to the underlying `Config` is thread-safe as per the `distributed-config` implementation, and the `LogEngine` maintains its lock-free or mutex profiles as requested by the user.
+- **Thread Safety**: The Go core uses `sync.Mutex` to protect the facade store. Each logging operation is non-blocking (async) at the core level.
+- **Resource Lifecycle**: Every language implementation is required to call `close()` or implement a finalizer (`__del__`, `Drop`, destructor) to ensure Go-side memory is cleaned up.
+- **FFI Overhead**: Minimized by passing handles (integers) instead of complex objects across the boundary.
