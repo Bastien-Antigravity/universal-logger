@@ -44,9 +44,9 @@ jobs:
         working-directory: universal-logger
         run: |
           go mod tidy
-          go test -v ./src/facade/...
+          go test -v ./src/...
 
-      - name: Verify Examples Compilation
+      - name: Verify CLI Compilation
         working-directory: universal-logger
         run: |
-          go build ./cmd/examples/main.go
+          go build ./cmd/universal-logger/main.go
