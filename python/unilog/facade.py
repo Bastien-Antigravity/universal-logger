@@ -19,7 +19,7 @@ class UniLog:
     """
 
     def __init__(self, config_profile="standalone", app_name="python-app", 
-                 logger_profile="standard", log_level="info"):
+                 logger_profile="standard", log_level="info", use_local_notifier=False):
         if not lib:
             raise RuntimeError("libunilog shared library not found. Please ensure it is built.")
         
@@ -30,7 +30,8 @@ class UniLog:
             config_profile.encode('utf-8'), 
             app_name.encode('utf-8'), 
             logger_profile.encode('utf-8'), 
-            ctypeC_int(level_val)
+            ctypeC_int(level_val),
+            ctypeC_int(1 if use_local_notifier else 0)
         )
         self._callback_ref = None # Keep reference to avoid GC
         self._sync_subscribers = []
@@ -129,6 +130,26 @@ class UniLog:
             return None
         
         return ConfigUpdateListener(self)
+
+
+    ##########################################################################
+    # Local Notifier Methods
+
+    def on_notification(self, callback):
+        """
+        Registers a callback for local notifications.
+        The callback will receive a dictionary parsed from the notification JSON.
+        """
+        def _bridge_cb(json_data):
+            try:
+                data = jsonLoads(json_data.decode('utf-8'))
+                callback(data)
+            except Exception as e:
+                print(f"!!! on_notification EXCEPTION: {e}")
+
+        # Keep a reference to the bridge callback to avoid GC
+        self._notif_callback_ref = CALLBACK_TYPE(_bridge_cb)
+        lib.UniLog_RegisterNotifCallback(self._handle, self._notif_callback_ref)
 
 
     ##########################################################################

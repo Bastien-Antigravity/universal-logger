@@ -4,6 +4,12 @@ import logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 
 // -------------------------------------------------------------------------
 
+// Level mirrors the flexible-logger Level using a type alias.
+// This allowing consumers to use the Level type without direct dependency on flexible-logger.
+type Level = logger_models.Level
+
+// -------------------------------------------------------------------------
+
 // Log level constants mirrored from flexible-logger for easy access.
 const (
 	LevelNotSet   = logger_models.LevelNotSet
@@ -22,7 +28,7 @@ const (
 
 // -------------------------------------------------------------------------
 
-// GetLogLevel converts string to logger_models.Level.
-func GetLogLevel(LogLevel string) logger_models.Level {
+// GetLogLevel converts string to Level.
+func GetLogLevel(LogLevel string) Level {
 	return logger_models.ParseLevel(LogLevel)
 }

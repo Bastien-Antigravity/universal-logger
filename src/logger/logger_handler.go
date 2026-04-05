@@ -3,19 +3,22 @@ package logger
 import (
 	"runtime"
 
+	"universal-logger/src/utils"
+
 	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
-	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
 
 // UniLog wraps the flexible-logger library.
 type UniLog struct {
-	Logger interfaces.Logger
+	Logger     interfaces.Logger
+	NotifQueue <-chan *utils.NotifMessage
 }
 
 // -------------------------------------------------------------------------
 
 // NewUniLog initializes a new logger service from an existing logger instance.
-// Note: This implementation uses a runtime finalizer to automatically call Close() 
+// Note: This implementation uses a runtime finalizer to automatically call Close()
 // when the logger instance is about to be garbage collected.
 func NewUniLog(logger interfaces.Logger) *UniLog {
 	res := &UniLog{
@@ -29,7 +32,6 @@ func NewUniLog(logger interfaces.Logger) *UniLog {
 
 	return res
 }
-
 
 // -------------------------------------------------------------------------
 
@@ -70,50 +72,68 @@ func (s *UniLog) Critical(format string, args ...any) {
 
 // Stream logs a message at Stream level.
 func (s *UniLog) Stream(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelStream, format, args...)
+	s.Logger.Log(utils.LevelStream, format, args...)
 }
 
 // -------------------------------------------------------------------------
 
 // Logon logs a message at Logon level.
 func (s *UniLog) Logon(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelLogon, format, args...)
+	s.Logger.Log(utils.LevelLogon, format, args...)
 }
 
 // -------------------------------------------------------------------------
 
 // Logout logs a message at Logout level.
 func (s *UniLog) Logout(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelLogout, format, args...)
+	s.Logger.Log(utils.LevelLogout, format, args...)
 }
 
 // -------------------------------------------------------------------------
 
 // Trade logs a message at Trade level.
 func (s *UniLog) Trade(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelTrade, format, args...)
+	s.Logger.Log(utils.LevelTrade, format, args...)
 }
 
 // -------------------------------------------------------------------------
 
 // Schedule logs a message at Schedule level.
 func (s *UniLog) Schedule(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelSchedule, format, args...)
+	s.Logger.Log(utils.LevelSchedule, format, args...)
 }
 
 // -------------------------------------------------------------------------
 
 // Report logs a message at Report level.
 func (s *UniLog) Report(format string, args ...any) {
-	s.Logger.Log(logger_models.LevelReport, format, args...)
+	s.Logger.Log(utils.LevelReport, format, args...)
 }
 
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 
 // SetLevel sets the current log level.
-func (s *UniLog) SetLevel(level logger_models.Level) {
+func (s *UniLog) SetLevel(level utils.Level) {
 	s.Logger.SetLevel(level)
+}
+
+// -------------------------------------------------------------------------
+
+// SetLocalNotifQueue sets the notification channel for the local notifier.
+// It performs a type assertion to find the appropriate wrapper that supports this.
+func (s *UniLog) SetLocalNotifQueue(notifChan chan *utils.NotifMessage) {
+	if wrapper, ok := s.Logger.(*profiles.NotifLoggerWrapper); ok {
+		wrapper.SetLocalNotifQueue(notifChan)
+	}
+}
+
+// -------------------------------------------------------------------------
+
+// GetNotifQueue returns the internal notification queue for this logger.
+// If the notifier was not enabled during Init, this will return nil.
+func (s *UniLog) GetNotifQueue() <-chan *utils.NotifMessage {
+	return s.NotifQueue
 }
 
 // -------------------------------------------------------------------------

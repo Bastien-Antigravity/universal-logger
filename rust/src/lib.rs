@@ -10,11 +10,12 @@ use std::sync::Mutex;
 
 #[link(name = "unilog")]
 extern "C" {
-    fn UniLog_Init(config_profile: *const c_char, app_name: *const c_char, logger_profile: *const c_char, log_level: c_int) -> uintptr_t;
+    fn UniLog_Init(config_profile: *const c_char, app_name: *const c_char, logger_profile: *const c_char, log_level: c_int, use_local_notifier: c_int) -> uintptr_t;
     fn UniLog_Close(handle: uintptr_t);
     fn UniLog_Config_Get(handle: uintptr_t, section: *const c_char, key: *const c_char) -> *mut c_char;
     fn UniLog_Config_Set(handle: uintptr_t, section: *const c_char, key: *const c_char, value: *const c_char);
     fn UniLog_OnMemConfUpdate(handle: uintptr_t, cb: extern "C" fn(*const c_char));
+    fn UniLog_RegisterNotifCallback(handle: uintptr_t, cb: extern "C" fn(*const c_char));
     fn UniLog_LogWithMetadata(handle: uintptr_t, level: i64, msg: *const c_char, file: *const c_char, line: *const c_char, function: *const c_char, module: *const c_char);
     fn UniLog_SetLevel(handle: uintptr_t, level: i64);
 }
@@ -26,9 +27,19 @@ extern "C" {
 /// Global callback storage for C -> Rust bridge.
 /// Currently supports one global callback due to C function pointer limitations.
 static GLOBAL_CONFIG_CB: Lazy<Mutex<Option<Box<dyn Fn(String) + Send + 'static>>>> = Lazy::new(|| Mutex::new(None));
+static GLOBAL_NOTIF_CB: Lazy<Mutex<Option<Box<dyn Fn(String) + Send + 'static>>>> = Lazy::new(|| Mutex::new(None));
 
 extern "C" fn c_callback_bridge(json_data: *const c_char) {
     if let Ok(guard) = GLOBAL_CONFIG_CB.lock() {
+        if let Some(ref cb) = *guard {
+            let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
+            cb(s);
+        }
+    }
+}
+
+extern "C" fn c_notif_callback_bridge(json_data: *const c_char) {
+    if let Ok(guard) = GLOBAL_NOTIF_CB.lock() {
         if let Some(ref cb) = *guard {
             let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
             cb(s);
@@ -51,13 +62,13 @@ pub struct UniLog {
 
 impl UniLog {
     /// Initializes a new logger session via the Go shared library.
-    pub fn new(config_profile: &str, app_name: &str, logger_profile: &str, log_level: LogLevel) -> Result<Self, String> {
+    pub fn new(config_profile: &str, app_name: &str, logger_profile: &str, log_level: LogLevel, use_local_notifier: bool) -> Result<Self, String> {
         let c_config = CString::new(config_profile).map_err(|e| e.to_string())?;
         let c_app = CString::new(app_name).map_err(|e| e.to_string())?;
         let c_logger = CString::new(logger_profile).map_err(|e| e.to_string())?;
         
         let handle = unsafe {
-            UniLog_Init(c_config.as_ptr(), c_app.as_ptr(), c_logger.as_ptr(), log_level as c_int)
+            UniLog_Init(c_config.as_ptr(), c_app.as_ptr(), c_logger.as_ptr(), log_level as c_int, if use_local_notifier { 1 } else { 0 })
         };
         
         if handle == 0 {
@@ -114,7 +125,6 @@ impl UniLog {
         }
     }
 
-    /// Registers a callback to be executed when the configuration is updated in memory.
     pub fn on_config_update<F>(&self, cb: F) 
     where F: Fn(String) + Send + 'static 
     {
@@ -123,6 +133,18 @@ impl UniLog {
         }
         unsafe {
             UniLog_OnMemConfUpdate(self.handle, c_callback_bridge);
+        }
+    }
+
+    /// Registers a callback to be executed when a local notification is received.
+    pub fn on_notification<F>(&self, cb: F)
+    where F: Fn(String) + Send + 'static
+    {
+        if let Ok(mut guard) = GLOBAL_NOTIF_CB.lock() {
+            *guard = Some(Box::new(cb));
+        }
+        unsafe {
+            UniLog_RegisterNotifCallback(self.handle, c_notif_callback_bridge);
         }
     }
 

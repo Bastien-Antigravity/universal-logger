@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
-#include "libunilog.h"
+#include "../libunilog/libunilog.h"
 
 /**
  * @class UniLog
@@ -29,13 +29,15 @@ public:
     UniLog(const std::string& config_profile = "standalone", 
                     const std::string& app_name = "cpp-app", 
                     const std::string& logger_profile = "standard", 
-                    int log_level = INFO) {
+                    int log_level = INFO,
+                    bool use_local_notifier = false) {
         
         handle_ = UniLog_Init(
             const_cast<char*>(config_profile.c_str()),
             const_cast<char*>(app_name.c_str()),
             const_cast<char*>(logger_profile.c_str()),
-            log_level
+            log_level,
+            use_local_notifier ? 1 : 0
         );
 
         if (handle_ == 0) {
@@ -113,6 +115,13 @@ public:
      */
     void set_level(int level) {
         UniLog_SetLevel(handle_, level);
+    }
+
+    /**
+     * @brief Set a callback for notifications.
+     */
+    void set_notification_callback(void (*cb)(const char*)) {
+        UniLog_RegisterNotifCallback(handle_, cb);
     }
 
 private:

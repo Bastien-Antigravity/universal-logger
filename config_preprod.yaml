@@ -1,0 +1,6 @@
+logger:
+  level: "info"
+  strategy: "async"
+capabilities:
+  notif_server: "http://localhost:8080"
+  log_server: "http://localhost:8081"

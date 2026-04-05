@@ -34,11 +34,11 @@ func main() {}
 // -------------------------------------------------------------------------
 
 //export UniLog_Init
-func UniLog_Init(configProfile, appName, loggerProfile *C.char, logLevel C.int) uintptr {
+func UniLog_Init(configProfile, appName, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int) uintptr {
 	name := C.GoString(appName)
 	cfgProf := C.GoString(configProfile)
 	logProf := C.GoString(loggerProfile)
-	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel))
+	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel), useLocalNotifier != 0)
 
 	facadeMu.Lock()
 	defer facadeMu.Unlock()

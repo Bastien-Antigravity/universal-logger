@@ -10,7 +10,7 @@ Attribute VB_Name = "UniLog"
 Option Explicit
 
     ' 64-bit Excel
-    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long) As LongPtr
+    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As LongPtr
     Private Declare PtrSafe Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
     Private Declare PtrSafe Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
     Private Declare PtrSafe Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
@@ -19,6 +19,7 @@ Option Explicit
     
     ' --- VBA CALLBACK BRIDGE (NEW) ---
     Private Declare PtrSafe Sub UniLog_RegisterVBAWindow Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal hwnd As LongPtr, ByVal msgId As Long)
+    Private Declare PtrSafe Sub UniLog_RegisterNotifCallback Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal callback As LongPtr)
 
     ' Windows API for Message Pump
     Private Declare PtrSafe Function CreateWindowExA Lib "user32" (ByVal dwExStyle As Long, ByVal lpClassName As String, ByVal lpWindowName As String, ByVal dwStyle As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As LongPtr, ByVal hMenu As LongPtr, ByVal hInstance As LongPtr, lpParam As Any) As LongPtr
@@ -45,7 +46,7 @@ Option Explicit
     Private Declare PtrSafe Sub lstrcpyA Lib "kernel32" (ByVal lpString1 As String, ByVal lpString2 As LongPtr)
 #Else
     ' 32-bit Excel (Note: libunilog.dll must also be 32-bit)
-    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long) As Long
+    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As Long
     Private Declare Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As Long)
     Private Declare Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
     Private Declare Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
@@ -234,7 +235,7 @@ Public Sub TestUniversalLogger()
     Dim dbIp As String
     
     ' 1. Initialize the logger
-    handle = UniLog_Init("standalone", "Excel-Tool", "standard", Level_INFO)
+    handle = UniLog_Init("standalone", "Excel-Tool", "standard", Level_INFO, 0)
     
     If handle = 0 Then
         MsgBox "Failed to initialize Universal Logger!", vbCritical

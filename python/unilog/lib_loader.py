@@ -66,7 +66,7 @@ except Exception:
 
 if lib:
     # Initialization & Lifecycle
-    lib.UniLog_Init.argtypes = [ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_int]
+    lib.UniLog_Init.argtypes = [ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_int, ctypeC_int]
     lib.UniLog_Init.restype = ctypeC_size_t
     
     lib.UniLog_Close.argtypes = [ctypeC_size_t]
@@ -87,3 +87,5 @@ if lib:
     # Shared Bridge Callbacks
     CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
     lib.UniLog_OnMemConfUpdate.argtypes = [ctypeC_size_t, CALLBACK_TYPE]
+    
+    lib.UniLog_RegisterNotifCallback.argtypes = [ctypeC_size_t, CALLBACK_TYPE]

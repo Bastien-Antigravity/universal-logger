@@ -11,9 +11,15 @@ import (
 
 // -------------------------------------------------------------------------
 
+// Logger mirrors the flexible-logger main interface using a type alias.
+// This allowing consumers to use the Logger interface without direct dependency on flexible-logger.
+type Logger = interfaces.Logger
+
+// -------------------------------------------------------------------------
+
 // LogWithMetadata allows manual injection of stack metadata.
 // It tries to access the underlying LogEngine sink for high-performance writing.
-func LogWithMetadata(logger interfaces.Logger, level logger_models.Level, msg, file, line, function, module string) {
+func LogWithMetadata(logger Logger, level Level, msg, file, line, function, module string) {
 	// 1. Try to access the underlying LogEngine to get the Sink
 	if logEngine, ok := logger.(*engine.LogEngine); ok {
 		// 2. Get an entry from the pool
@@ -48,7 +54,7 @@ func LogWithMetadata(logger interfaces.Logger, level logger_models.Level, msg, f
 // -------------------------------------------------------------------------
 
 // Log logs a message at a specific level using the provided logger.
-func Log(logger interfaces.Logger, level logger_models.Level, format string, args ...any) {
+func Log(logger Logger, level Level, format string, args ...any) {
 	logger.Log(level, format, args...)
 }
 
@@ -56,7 +62,7 @@ func Log(logger interfaces.Logger, level logger_models.Level, format string, arg
 // -------------------------------------------------------------------------
 
 // GetUnderlyingLogger is a helper to access the raw interface (maintained for compatibility/utility).
-func GetUnderlyingLogger(logger interfaces.Logger) interfaces.Logger {
+func GetUnderlyingLogger(logger Logger) Logger {
 	return logger
 }
 
