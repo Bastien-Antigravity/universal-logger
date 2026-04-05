@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"universal-logger/src/bootstrap"
-	"universal-logger/src/utils"
+	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
 // -------------------------------------------------------------------------

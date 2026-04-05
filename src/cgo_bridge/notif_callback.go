@@ -17,7 +17,7 @@ import "C"
 import (
 	"encoding/json"
 	"unsafe"
-	"universal-logger/src/utils"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
 // -------------------------------------------------------------------------

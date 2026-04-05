@@ -8,9 +8,9 @@ import "C"
 import (
 	"sync"
 
-	"universal-logger/src/bootstrap"
-	"universal-logger/src/config"
-	"universal-logger/src/logger"
+	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+	"github.com/Bastien-Antigravity/universal-logger/src/config"
+	"github.com/Bastien-Antigravity/universal-logger/src/logger"
 
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 )

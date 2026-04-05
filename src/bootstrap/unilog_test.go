@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"testing"
-	"universal-logger/src/utils"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
 func TestInitWithLocalNotifier(t *testing.T) {

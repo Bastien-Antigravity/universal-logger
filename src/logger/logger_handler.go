@@ -3,7 +3,7 @@ package logger
 import (
 	"runtime"
 
-	"universal-logger/src/utils"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
 	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"

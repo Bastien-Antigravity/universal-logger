@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"universal-logger/src/config"
-	"universal-logger/src/logger"
-	"universal-logger/src/utils"
+	"github.com/Bastien-Antigravity/universal-logger/src/config"
+	"github.com/Bastien-Antigravity/universal-logger/src/logger"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
 	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"

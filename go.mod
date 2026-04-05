@@ -1,4 +1,4 @@
-module universal-logger
+module github.com/Bastien-Antigravity/universal-logger
 
 go 1.25.4
 
