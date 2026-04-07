@@ -111,6 +111,13 @@ func (s *UniLog) Report(format string, args ...any) {
 }
 
 // -------------------------------------------------------------------------
+
+// Log logs a message at a specific level using the provided level constant.
+func (s *UniLog) Log(level utils.Level, format string, args ...any) {
+	s.Logger.Log(level, format, args...)
+}
+
+// -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 
 // SetLevel sets the current log level.
