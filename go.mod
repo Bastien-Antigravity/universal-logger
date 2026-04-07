@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/Bastien-Antigravity/distributed-config v1.0.1
-	github.com/Bastien-Antigravity/flexible-logger v1.0.1
+	github.com/Bastien-Antigravity/flexible-logger v1.0.2
 )
 
 require (
