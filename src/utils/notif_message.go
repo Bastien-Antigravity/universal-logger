@@ -1,11 +1,10 @@
 package utils
 
 import (
-	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )
 
 // -----------------------------------------------------------------------------
 
-// NotifMessage mirrors the flexible-logger NotifMessage using a type alias.
-// This allows notif-server to use the model without direct dependency on flexible-logger.
-type NotifMessage = logger_models.NotifMessage
+// NotifMessage mirrors the universal-logger NotifMessage using a type alias.
+type NotifMessage = interfaces.NotifMessage

@@ -1,9 +1,5 @@
 package interfaces
 
-import (
-	"github.com/Bastien-Antigravity/flexible-logger/src/models"
-)
-
 // Logger is the main interface for logging across the Bastien-Antigravity ecosystem.
 // It is a facade that ensures microservices remain decoupled from the underlying logging engine.
 type Logger interface {
@@ -52,11 +48,15 @@ type Logger interface {
 	// Generic and Control Methods
 	// -------------------------------------------------------------------------
 
+	// GetNotifQueue returns the internal notification queue for this logger.
+	// If the notifier was not enabled during Init, this will return nil.
+	GetNotifQueue() <-chan *NotifMessage
+
 	// Log logs a message at a specific level.
-	Log(level models.Level, format string, args ...any)
+	Log(level Level, format string, args ...any)
 
 	// SetLevel sets the current log level.
-	SetLevel(level models.Level)
+	SetLevel(level Level)
 
 	// Close flushes any buffered logs and closes the handler.
 	Close()

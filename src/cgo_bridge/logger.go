@@ -23,7 +23,7 @@ func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function
 	}
 
 	utils.LogWithMetadata(
-		session.Logger.Logger,
+		session.Logger,
 		logger_models.Level(level),
 		C.GoString(msg),
 		C.GoString(file),

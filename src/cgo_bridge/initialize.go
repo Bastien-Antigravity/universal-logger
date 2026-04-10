@@ -10,7 +10,7 @@ import (
 
 	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 	"github.com/Bastien-Antigravity/universal-logger/src/config"
-	"github.com/Bastien-Antigravity/universal-logger/src/logger"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 )
@@ -18,7 +18,7 @@ import (
 // FacadeSession holds the state for a single library instantiation.
 type FacadeSession struct {
 	Config   *config.DistConfig
-	Logger   *logger.UniLog
+	Logger   interfaces.Logger
 	VbaHwnd  uintptr // Windows HWND for Message Pump (VBA only)
 	VbaMsgId uint32  // Windows Message ID (VBA only)
 }

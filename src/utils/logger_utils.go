@@ -20,8 +20,15 @@ type Logger = interfaces.Logger
 // LogWithMetadata allows manual injection of stack metadata.
 // It tries to access the underlying LogEngine sink for high-performance writing.
 func LogWithMetadata(logger Logger, level Level, msg, file, line, function, module string) {
-	// 1. Try to access the underlying LogEngine to get the Sink
-	if logEngine, ok := logger.(*engine.LogEngine); ok {
+	var target any = logger
+
+	// 1. If it's unwrappable (like UniLog), get the inner logger
+	if unwrappable, ok := logger.(interface{ Unwrap() any }); ok {
+		target = unwrappable.Unwrap()
+	}
+
+	// 2. Try to access the underlying LogEngine to get the Sink from the target
+	if logEngine, ok := target.(*engine.LogEngine); ok {
 		// 2. Get an entry from the pool
 		e := logger_models.EntryPool.Get().(*logger_models.LogEntry)
 		e.Reset()

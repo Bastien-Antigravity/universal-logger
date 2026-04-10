@@ -1,10 +1,12 @@
 package bootstrap
 
 import (
+	"github.com/Bastien-Antigravity/universal-logger/src/config"
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	"github.com/Bastien-Antigravity/universal-logger/src/logger"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
+	flex_interfaces "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
@@ -19,7 +21,7 @@ func Init(Name, ConfigProfile, LoggerProfile string, LogLevel logger_models.Leve
 	distConfig := config.NewDistributedConfig(ConfigProfile)
 
 	// 2. Initialize Logger using the selected profile
-	var flexLogger interfaces.Logger
+	var flexLogger flex_interfaces.Logger
 	switch LoggerProfile {
 	case "standard":
 		flexLogger = profiles.NewStandardLogger(Name, distConfig.Config)

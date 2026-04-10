@@ -6,14 +6,16 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
-	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
+	flex_interfaces "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
 
+var _ interfaces.Logger = (*UniLog)(nil)
+
 // UniLog wraps the flexible-logger library.
 type UniLog struct {
-	Logger     interfaces.Logger
+	Logger     flex_interfaces.Logger
 	NotifQueue <-chan *utils.NotifMessage
 }
 
@@ -22,7 +24,7 @@ type UniLog struct {
 // NewUniLog initializes a new logger service from an existing logger instance.
 // Note: This implementation uses a runtime finalizer to automatically call Close()
 // when the logger instance is about to be garbage collected.
-func NewUniLog(logger interfaces.Logger) *UniLog {
+func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 	res := &UniLog{
 		Logger: logger,
 	}
@@ -145,6 +147,14 @@ func (s *UniLog) GetNotifQueue() <-chan *utils.NotifMessage {
 }
 
 // -------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------
+
+// Unwrap returns the underlying flexible-logger instance.
+// This is used by internal utilities for high-performance sink access.
+func (s *UniLog) Unwrap() any {
+	return s.Logger
+}
 
 // Close closes the underlying logger.
 func (s *UniLog) Close() {
