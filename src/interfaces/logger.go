@@ -52,6 +52,10 @@ type Logger interface {
 	// If the notifier was not enabled during Init, this will return nil.
 	GetNotifQueue() <-chan *NotifMessage
 
+	// SetLocalNotifQueue allows manual binding of a notification channel.
+	// This is useful for services like notif-server that manage their own channels.
+	SetLocalNotifQueue(notifChan chan *NotifMessage)
+
 	// Log logs a message at a specific level.
 	Log(level Level, format string, args ...any)
 

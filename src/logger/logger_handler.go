@@ -132,7 +132,7 @@ func (s *UniLog) Log(level utils.Level, format string, args ...any) {
 
 // SetLocalNotifQueue sets the notification channel for the local notifier.
 // It performs a type assertion to find the appropriate wrapper that supports this.
-func (s *UniLog) SetLocalNotifQueue(notifChan chan *utils.NotifMessage) {
+func (s *UniLog) SetLocalNotifQueue(notifChan chan *interfaces.NotifMessage) {
 	if wrapper, ok := s.Logger.(*profiles.NotifLoggerWrapper); ok {
 		wrapper.SetLocalNotifQueue(notifChan)
 	}
