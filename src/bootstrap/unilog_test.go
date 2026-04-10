@@ -10,7 +10,7 @@ func TestInitWithLocalNotifier(t *testing.T) {
 	_, uniLog := Init("test-app", "standalone", "devel", utils.LevelInfo, true)
 	defer uniLog.Close()
 
-	if uniLog.NotifQueue == nil {
+	if uniLog.GetNotifQueue() == nil {
 		t.Fatal("Expected NotifQueue to be initialized when useLocalNotifier is true")
 	}
 
@@ -30,7 +30,7 @@ func TestInitWithoutLocalNotifier(t *testing.T) {
 	_, uniLog := Init("test-app", "standalone", "devel", utils.LevelInfo, false)
 	defer uniLog.Close()
 
-	if uniLog.NotifQueue != nil {
+	if uniLog.GetNotifQueue() != nil {
 		t.Fatal("Expected NotifQueue to be nil when useLocalNotifier is false")
 	}
 
