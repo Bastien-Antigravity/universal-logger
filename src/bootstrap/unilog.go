@@ -1,11 +1,10 @@
 package bootstrap
 
 import (
-	"github.com/Bastien-Antigravity/universal-logger/src/config"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	"github.com/Bastien-Antigravity/universal-logger/src/logger"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
-	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
@@ -15,7 +14,7 @@ import (
 // Init initializes both subsystems and returns both directly.
 // It also sets up the automatic log-level synchronization.
 // useLocalNotifier: If true, enables an internal 1024-buffered notification queue.
-func Init(Name, ConfigProfile, LoggerProfile string, LogLevel logger_models.Level, useLocalNotifier bool) (*config.DistConfig, *logger.UniLog) {
+func Init(Name, ConfigProfile, LoggerProfile string, LogLevel logger_models.Level, useLocalNotifier bool) (*config.DistConfig, interfaces.Logger) {
 	// 1. Initialize Config Service
 	distConfig := config.NewDistributedConfig(ConfigProfile)
 

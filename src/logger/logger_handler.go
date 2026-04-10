@@ -5,7 +5,9 @@ import (
 
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
-	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
+
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
 
@@ -115,6 +117,13 @@ func (s *UniLog) Report(format string, args ...any) {
 // SetLevel sets the current log level.
 func (s *UniLog) SetLevel(level utils.Level) {
 	s.Logger.SetLevel(level)
+}
+
+// -------------------------------------------------------------------------
+
+// Log logs a message at a specific level.
+func (s *UniLog) Log(level utils.Level, format string, args ...any) {
+	s.Logger.Log(level, format, args...)
 }
 
 // -------------------------------------------------------------------------

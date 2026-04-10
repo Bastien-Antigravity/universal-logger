@@ -5,14 +5,14 @@ import (
 
 	"github.com/Bastien-Antigravity/flexible-logger/src/engine"
 	"github.com/Bastien-Antigravity/flexible-logger/src/error_handler"
-	"github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 )
 
 // -------------------------------------------------------------------------
 
-// Logger mirrors the flexible-logger main interface using a type alias.
-// This allowing consumers to use the Logger interface without direct dependency on flexible-logger.
+// Logger mirrors the universal-logger main interface using a type alias.
+// This allows consumers to use the Logger interface without direct dependency on flexible-logger.
 type Logger = interfaces.Logger
 
 // -------------------------------------------------------------------------
