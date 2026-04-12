@@ -16,7 +16,7 @@ import (
 // Init initializes both subsystems and returns both directly.
 // It also sets up the automatic log-level synchronization.
 // useLocalNotifier: If true, enables an internal 1024-buffered notification queue.
-func Init(Name, ConfigProfile, LoggerProfile string, LogLevel logger_models.Level, useLocalNotifier bool) (*config.DistConfig, interfaces.Logger) {
+func Init(Name, ConfigProfile, LoggerProfile string, LogLevel interfaces.Level, useLocalNotifier bool) (*config.DistConfig, interfaces.Logger) {
 	// 1. Initialize Config Service
 	distConfig := config.NewDistributedConfig(ConfigProfile)
 
