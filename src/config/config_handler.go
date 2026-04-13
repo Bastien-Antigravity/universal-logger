@@ -1,7 +1,7 @@
 package config
 
 import (
-	distributed_config "github.com/Bastien-Antigravity/distributed-config/src/facade"
+	distributed_config "github.com/Bastien-Antigravity/distributed-config"
 )
 
 // DistConfig wraps the distributed configuration library.
@@ -13,7 +13,7 @@ type DistConfig struct {
 
 // NewDistributedConfig initializes a new configuration service.
 func NewDistributedConfig(profile string) *DistConfig {
-	cfg := distributed_config.NewConfig(profile)
+	cfg := distributed_config.New(profile)
 	return &DistConfig{
 		Config: cfg,
 	}
