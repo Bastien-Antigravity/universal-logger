@@ -1,58 +1,66 @@
 # Universal Logger: C++ Library
 
-Universal Logger provides a modern C++ wrapper (`UniversalLogger.hpp`) around the Go-based shared library. It is designed to be lightweight, thread-safe, and easy to integrate into existing C++11 projects.
+Universal Logger provides a modern C++ RAII wrapper (`UniversalLogger.hpp`) around the Go-based shared library. It is designed to be lightweight, thread-safe, and easy to integrate into existing C++11 projects.
+
+## 🚀 Native Core (DLL)
+
+Since Modernization 2026, the C++ wrapper relies on the **compiled Go shared library** (`libunilog.dll` on Windows).
+
+**Requirement**: Ensure `libunilog.dll` is in your system `PATH` or the same directory as your application.
 
 ## 🚀 Features
 
-- **RAII Managed**: Automatic handle cleanup through the `UniversalLogger` class destructor.
+- **RAII Managed**: Automatic handle cleanup through the `UniLog` class destructor.
 - **Header-Only Wrapper**: No separate C++ library to build—just include the header and link the Go library.
-- **Cross-Platform**: Compatible with standard C++ compilers (g++, clang++, msvc).
+- **Telemetry Parity**: Shared library ensures your C++ logs match the format and performance of Go/Rust/Python services.
 
 ## 🔧 Installation and Linking
 
 ### 1. Build the Go Core
-```bash
-make core
-```
+See the root README for Docker-based build instructions to generate `libunilog.dll` and `libunilog.a`.
 
 ### 2. Include and Link
-The C++ library depends on the `libunilog` shared library and its generated C header.
-
 ```cpp
 #include "UniversalLogger.hpp"
 
 int main() {
-    UniversalLogger logger("standalone", "cpp-app");
-    logger.info("C++ is online!");
+    // Initialize (loads DLL automatically)
+    UniLog logger("standalone", "cpp-app");
+    logger.info("C++ is online and powered by Go!");
     return 0;
 }
 ```
 
 #### Compilation (Example with g++)
 ```bash
-g++ -std=c++11 main.cpp -o app -I./libunilog -L./libunilog -lunilog
+g++ -std=c++11 main.cpp -o app -I../libunilog -L../libunilog -lunilog
 ```
 
 ## 📖 Quick Start
 
+### Standard Logging
 ```cpp
 #include "UniversalLogger.hpp"
 
 int main() {
-    // Basic Initialization
-    UniversalLogger logger("standalone", "demo-app", "devel", LogLevel::INFO);
+    try {
+        UniLog logger("standalone", "demo-app", "standard", UniLog::INFO);
 
-    // Standard Logging
-    logger.info("Starting application...");
-    logger.debug("Debugging values...");
-    
-    // Dynamic Config Updates
-    logger.on_config_update([](const std::string& update) {
-        std::cout << "Config update received: " << update << std::endl;
-    });
-
+        logger.info("Starting application...");
+        logger.debug("Debugging values...");
+    } catch (const std::exception& e) {
+        std::cerr << "Initialization failed: " << e.what() << std::endl;
+    }
     return 0; // RAII cleans up the Go session
 }
+```
+
+### Automatic Metadata (Macros)
+```cpp
+#include "UniversalLogger.hpp"
+
+// Captures __FILE__, __LINE__, and __FUNCTION__ automatically
+UNILOG_INFO(logger, "Structured logging with full metadata!");
 ```
 
 ## 🧪 Testing

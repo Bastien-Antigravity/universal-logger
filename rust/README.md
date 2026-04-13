@@ -2,11 +2,17 @@
 
 Safe, high-performance, and type-safe Rust idiomatic facade for the Universal Logger. This crate provides a native Rust experience while leveraging a powerful Go-based core via CGO.
 
+## 🚀 Native Core (DLL)
+
+Since Modernization 2026, the Rust facade relies on the **compiled Go shared library** (`libunilog.dll` on Windows).
+
+**Requirement**: Ensure `libunilog.dll` is in your system `PATH` or the same directory as your application.
+
 ## 🚀 Features
 
-- **Safe Pointers**: Handle memory securely with Rust lifetimes and `Box`.
-- **Cargo Integration**: Full support for your Rust builds.
-- **Async Ready**: Seamless integration with `tokio` or other async runtimes.
+- **Safe Pointers**: Handle memory securely with Rust lifetimes and `Drop` trait for automated cleanup.
+- **Cargo Integration**: Full support for your Rust builds with automated linking via `build.rs`.
+- **Async Ready**: Seamless integration with `tokio` or other async runtimes via callbacks.
 - **Zero Overhead**: Minimal abstraction over the low-level FFI calls.
 
 ## 🔧 Installation
@@ -20,38 +26,40 @@ unilog-rs = { path = "../rust" }
 
 ## 📖 Quick Start
 
+### Basic Usage
 ```rust
 use unilog_rs::{UniLog, LogLevel};
 
 fn main() {
-    // Initialize the logger
-    let logger = UniLog::builder()
-        .config_profile("standalone")
-        .app_name("rust-demo")
-        .build()
-        .expect("Failed to initialize logger");
+    // 1. Initialize the logger session (loads libunilog.dll)
+    let logger = UniLog::new(
+        "standalone",   // config_profile
+        "rust-demo",     // app_name
+        "standard",     // logger_profile
+        LogLevel::Info, // log_level
+        false           // use_local_notifier
+    ).expect("Failed to initialize logger");
 
-    // Log messages
-    logger.info("Rust is online!");
+    // 2. Log messages
+    logger.info("Rust is online and powered by Go!");
     logger.debug("Debug message");
 }
 ```
 
+### Automatic Metadata (Macros)
+```rust
+use unilog_rs::{unilog_info, unilog_error};
+
+// Captures file!(), line!(), and module_path!() automatically
+unilog_info!(logger, "Structured logging with metadata!");
+```
+
 ## 🛠️ Linking Requirements
 
-Since this crate calls a Go-shared library, you must ensure the library is available at link time and runtime.
+The `unilog-rs` crate includes a `build.rs` that automatically searches for `libunilog.a` (import library) in the `../libunilog` directory.
 
-### 1. Build the Go Core
-```bash
-make core
-```
-
-### 2. Set Linker Flags
-When building your Rust app, tell `cargo` where to find the library:
-```bash
-export RUSTFLAGS="-L $(pwd)/libunilog"
-cargo build
-```
+1. **Build the Go Core**: See root README for Docker-based build instructions.
+2. **Environment**: On Windows, add the directory containing `libunilog.dll` to your `PATH`.
 
 ## 🧪 Testing
 

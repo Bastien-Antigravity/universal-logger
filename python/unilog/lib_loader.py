@@ -29,7 +29,10 @@ def _load_lib():
         
     # Resolve platform-specific extensions if the generic .so is not found
     if not found:
-        for ext in [".dylib", ".dll"]:
+        # Prioritize extension based on current platform
+        import sys
+        platforms = [".dll", ".dylib"] if sys.platform == "win32" else [".dylib", ".so"]
+        for ext in platforms:
             p = lib_path.with_suffix(ext)
             if p.exists():
                 lib_path = p

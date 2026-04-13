@@ -4,20 +4,20 @@ A unified, high-performance, cross-platform logging and configuration facade. Un
 
 ## 🏗️ Architecture
 
-Universal Logger acts as a "Universal Adapter," allowing various languages to leverage a shared Go-based core for configuration management and high-throughput logging.
+Universal Logger acts as a "Universal Adapter." Since modernization 2026, it centers on a **Compiled Go Core** distributed as a shared library (`.dll`, `.so`, `.dylib`), ensuring 100% telemetry parity across all technological stacks.
 
 ```mermaid
 flowchart TD
-    subgraph Client_Layers [Client Facades]
-        Py[Python] 
-        Rs[Rust]
-        Cpp[C++]
-        VBA[VBA]
+    subgraph Client_Layers [Native Facades]
+        Py[Python (ctypes)] 
+        Rs[Rust (FFI/unilog-rs)]
+        Cpp[C++ (RAII Wrapper)]
+        VBA[VBA (WinMessagePump)]
         Go[Go Native]
     end
 
-    subgraph Bridge_Layer [CGO Bridge]
-        CGO[Shared Library .so/.dylib]
+    subgraph Bridge_Layer [Shared Engine]
+        DLL[libunilog.dll/so]
     end
 
     subgraph Core_Layer [Go Core]
@@ -34,12 +34,19 @@ flowchart TD
     Core_Layer --> Components
 ```
 
+## 🚀 Modernization 2026 (Phase 1 & 2)
+
+The project has transitioned to a **Shared Library First** approach:
+- **Phase 1 (Successful)**: Modernized Python `microservice-toolbox` with a robust `UniLogger` wrapper.
+- **Phase 2 (Successful)**: Modernized Rust `microservice-toolbox` with the `unilog-rs` crate and automated DLL linking.
+- **Unified Telemetry**: ALL languages now share the same Go-based configuration loading, environment resolution, and asynchronous logging sinks.
+
 ## 🚀 Key Features
 
-- **Multi-Language Support**: Identical API signatures for Go, Python, Rust, C++, and VBA.
+- **Multi-Language Parity**: Identical behavior and structured log formats for Go, Python, Rust, C++, and VBA.
+- **DLL-Based Core**: One library to rule them all—fixes applied to the Go core benefit all languages instantly.
 - **Asynchronous Logging**: Non-blocking log dispatching across all supported languages.
-- **Dynamic Configuration**: Real-time configuration updates with language-native callback support (e.g., `async for` in Python).
-- **High Performance**: Leverages Go's concurrency model and low-latency CGO FFI.
+- **Dynamic Configuration**: Real-time configuration updates with language-native callback support.
 - **Lifecycle Management**: Robust resource handling with context managers and automatic cleanup.
 
 ## 📊 Operational Profiles
@@ -57,39 +64,26 @@ The logger supports various synergistic profiles out of the box:
 ## 🛠️ Project Structure
 
 - `src/`: Go core and CGO bridge implementation.
-- `python/`: Python facade with `asyncio` support.
-- `rust/`: Rust safety wrappers and Cargo integration.
-- `cpp/`: C++ header-only like facade.
+- `libunilog/`: Compiled shared libraries (`libunilog.dll`, `libunilog.a`) and C headers.
+- `python/`: Python facade with `UniLogger` wrapper.
+- `rust/`: Rust `unilog-rs` crate and FFI integration.
 - `vba/`: Excel/Access integration via Windows Message Pump.
-- `libunilog/`: Compiled shared libraries and C headers.
+- `cpp/`: C++ RAII wrapper header.
 
-## 🚀 Quick Start (Go)
+## 🚀 Quick Start (Shared Library)
 
-The simplest way to initialize the system is via the `bootstrap` package. 
+To use the logger in any language, ensure `libunilog.dll` is in your `PATH` or application directory.
 
 ```go
+// Go Native Bootstrap
 import "github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 
-// 1. Standard Initialization
-cfg, logger := bootstrap.Init("my-service", "production", "standard", utils.LevelInfo, false)
-
-// 2. Advanced Initialization (Dependency Injection & Metadata)
-cfg, logger := bootstrap.InitWithOptions(bootstrap.BootstrapOptions{
-    Name:          "my-service",
-    ExistingConfig: existingCfg, // Inject existing distributed-config instance
-    LoggerProfile:  "high_perf",
-    Metadata: map[string]string{
-        "version": "v2.0.0",
-        "env":     "prod",
-    },
-})
+cfg, logger := bootstrap.Init("my-service", "standalone", "standard", utils.LevelInfo, false)
 ```
 
 ## 📜 Maintenance
 
 This project centralizes operational alignment:
-- **Dependency Injection**: Supports sharing a single `Distributed-Config` instance between the toolbox and logger.
-- **Service Name Sync**: Automatically propagates the service name to the configuration core.
-- **Metadata Tagging**: Supports attaching global key-value pairs to every log line.
+- **One Engine**: All bug fixes in `Distributed-Config` or `Flexible-Logger` are encapsulated in the DLL.
+- **Standardized Leveling**: Log level parsing and dynamic updates are consistent across all FFI boundaries.
 - **Field Mapping**: Automatically links `Distributed-Config` capabilities to `Flexible-Logger` requirements.
-- **Unified Leveling**: Standardizes log level parsing and dynamic updates across all FFI boundaries.

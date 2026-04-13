@@ -6,6 +6,7 @@ package main
 import "C"
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
@@ -35,9 +36,9 @@ func main() {}
 
 //export UniLog_Init
 func UniLog_Init(configProfile, appName, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int) uintptr {
-	name := C.GoString(appName)
-	cfgProf := C.GoString(configProfile)
-	logProf := C.GoString(loggerProfile)
+	name := strings.TrimSpace(C.GoString(appName))
+	cfgProf := strings.TrimSpace(C.GoString(configProfile))
+	logProf := strings.TrimSpace(C.GoString(loggerProfile))
 	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel), useLocalNotifier != 0)
 
 	facadeMu.Lock()

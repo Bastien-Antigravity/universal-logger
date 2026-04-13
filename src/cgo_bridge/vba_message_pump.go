@@ -7,6 +7,9 @@ package main
 #include <windows.h>
 #include <stdlib.h>
 
+// Define the callback type for C
+typedef void (*config_update_cb)(const char* json_data);
+
 // Helper to call PostMessageA from CGO on Windows
 static void PostVbaMessage(HWND hwnd, UINT msg, const char* json_data) {
     if (hwnd) {
