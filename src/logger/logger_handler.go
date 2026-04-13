@@ -17,6 +17,7 @@ var _ interfaces.Logger = (*UniLog)(nil)
 type UniLog struct {
 	Logger     flex_interfaces.Logger
 	NotifQueue <-chan *utils.NotifMessage
+	Metadata   map[string]string
 }
 
 // -------------------------------------------------------------------------
@@ -26,7 +27,8 @@ type UniLog struct {
 // when the logger instance is about to be garbage collected.
 func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 	res := &UniLog{
-		Logger: logger,
+		Logger:   logger,
+		Metadata: make(map[string]string),
 	}
 
 	// Register finalizer for automatic cleanup
@@ -35,6 +37,21 @@ func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 	})
 
 	return res
+}
+
+// -------------------------------------------------------------------------
+
+// SetMetadata replaces all existing metadata with the provided map.
+func (s *UniLog) SetMetadata(metadata map[string]string) {
+	s.Metadata = metadata
+}
+
+// AddMetadata adds a single key-value pair to the logger's metadata.
+func (s *UniLog) AddMetadata(key, value string) {
+	if s.Metadata == nil {
+		s.Metadata = make(map[string]string)
+	}
+	s.Metadata[key] = value
 }
 
 // -------------------------------------------------------------------------

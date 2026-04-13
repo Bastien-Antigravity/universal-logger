@@ -13,48 +13,84 @@ import (
 
 // -------------------------------------------------------------------------
 
+// BootstrapOptions defines the configuration parameters for initializes the subsystems.
+type BootstrapOptions struct {
+	Name             string
+	ConfigProfile    string
+	LoggerProfile    string
+	InitialLogLevel  interfaces.Level
+	UseLocalNotifier bool
+	ExistingConfig   *config.DistConfig // OPTIONAL: Inject an existing configuration instance
+	Metadata         map[string]string   // OPTIONAL: Fields to be added to all logs
+}
+
 // Init initializes both subsystems and returns both directly.
 // It also sets up the automatic log-level synchronization.
 // useLocalNotifier: If true, enables an internal 1024-buffered notification queue.
 func Init(Name, ConfigProfile, LoggerProfile string, LogLevel interfaces.Level, useLocalNotifier bool) (*config.DistConfig, interfaces.Logger) {
-	// 1. Initialize Config Service
-	distConfig := config.NewDistributedConfig(ConfigProfile)
+	return InitWithOptions(BootstrapOptions{
+		Name:             Name,
+		ConfigProfile:    ConfigProfile,
+		LoggerProfile:    LoggerProfile,
+		InitialLogLevel:  LogLevel,
+		UseLocalNotifier: useLocalNotifier,
+	})
+}
 
-	// 2. Initialize Logger using the selected profile
-	var flexLogger flex_interfaces.Logger
-	switch LoggerProfile {
-	case "standard":
-		flexLogger = profiles.NewStandardLogger(Name, distConfig.Config)
-	case "devel":
-		flexLogger = profiles.NewDevelLogger(Name)
-	case "high_perf":
-		flexLogger = profiles.NewHighPerfLogger(Name, distConfig.Config)
-	case "minimal":
-		flexLogger = profiles.NewMinimalLogger(Name)
-	case "notif_logger":
-		flexLogger = profiles.NewNotifLogger(Name, distConfig.Config)
-	case "no_lock":
-		flexLogger = profiles.NewNoLockLogger(Name, distConfig.Config)
-	default:
-		flexLogger = profiles.NewStandardLogger(Name, distConfig.Config)
+// InitWithOptions initializes the subsystems using a sophisticated options structure.
+// It supports dependency injection (ExistingConfig) and specialized metadata.
+func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logger) {
+	// 1. Initialize or Inject Config Service
+	var distConfig *config.DistConfig
+	if opts.ExistingConfig != nil {
+		distConfig = opts.ExistingConfig
+	} else {
+		distConfig = config.NewDistributedConfig(opts.ConfigProfile)
 	}
 
-	// 3. Apply initial Log Level
-	flexLogger.SetLevel(LogLevel)
+	// 2. Synchronize Service Name
+	if opts.Name != "" && distConfig.Config != nil {
+		distConfig.Config.Common.Name = opts.Name
+	}
+
+	// 3. Initialize Logger using the selected profile
+	var flexLogger flex_interfaces.Logger
+	switch opts.LoggerProfile {
+	case "standard":
+		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
+	case "devel":
+		flexLogger = profiles.NewDevelLogger(opts.Name)
+	case "high_perf":
+		flexLogger = profiles.NewHighPerfLogger(opts.Name, distConfig.Config)
+	case "minimal":
+		flexLogger = profiles.NewMinimalLogger(opts.Name)
+	case "notif_logger":
+		flexLogger = profiles.NewNotifLogger(opts.Name, distConfig.Config)
+	case "no_lock":
+		flexLogger = profiles.NewNoLockLogger(opts.Name, distConfig.Config)
+	default:
+		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
+	}
+
+	// 4. Apply initial Log Level and Metadata
+	flexLogger.SetLevel(opts.InitialLogLevel)
 	unilog := logger.NewUniLog(flexLogger)
 
-	// 4. Initialize Local Notifier if requested
-	if useLocalNotifier {
+	if len(opts.Metadata) > 0 {
+		unilog.SetMetadata(opts.Metadata)
+	}
+
+	// 5. Initialize Local Notifier if requested
+	if opts.UseLocalNotifier {
 		// Create a channel with a buffer of 1024
 		notifQueue := make(chan *utils.NotifMessage, 1024)
 		unilog.NotifQueue = notifQueue
 
 		// Bind the channel only if the logger profile supports it
-		// (This calls the type-asserting helper in unilog)
 		unilog.SetLocalNotifQueue(notifQueue)
 	}
 
-	// 5. Register automatic LogLevel update from config
+	// 6. Register automatic LogLevel update from config
 	distConfig.OnConfigUpdate(func(update map[string]map[string]string) {
 		if section, ok := update["logger"]; ok {
 			if levelStr, ok := section["level"]; ok {

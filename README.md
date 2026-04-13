@@ -63,8 +63,33 @@ The logger supports various synergistic profiles out of the box:
 - `vba/`: Excel/Access integration via Windows Message Pump.
 - `libunilog/`: Compiled shared libraries and C headers.
 
+## 🚀 Quick Start (Go)
+
+The simplest way to initialize the system is via the `bootstrap` package. 
+
+```go
+import "github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+
+// 1. Standard Initialization
+cfg, logger := bootstrap.Init("my-service", "production", "standard", utils.LevelInfo, false)
+
+// 2. Advanced Initialization (Dependency Injection & Metadata)
+cfg, logger := bootstrap.InitWithOptions(bootstrap.BootstrapOptions{
+    Name:          "my-service",
+    ExistingConfig: existingCfg, // Inject existing distributed-config instance
+    LoggerProfile:  "high_perf",
+    Metadata: map[string]string{
+        "version": "v2.0.0",
+        "env":     "prod",
+    },
+})
+```
+
 ## 📜 Maintenance
 
 This project centralizes operational alignment:
+- **Dependency Injection**: Supports sharing a single `Distributed-Config` instance between the toolbox and logger.
+- **Service Name Sync**: Automatically propagates the service name to the configuration core.
+- **Metadata Tagging**: Supports attaching global key-value pairs to every log line.
 - **Field Mapping**: Automatically links `Distributed-Config` capabilities to `Flexible-Logger` requirements.
 - **Unified Leveling**: Standardizes log level parsing and dynamic updates across all FFI boundaries.

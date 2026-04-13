@@ -62,6 +62,16 @@ type Logger interface {
 	// SetLevel sets the current log level.
 	SetLevel(level Level)
 
+	// -------------------------------------------------------------------------
+	// Metadata and Tagging
+	// -------------------------------------------------------------------------
+
+	// SetMetadata replaces all existing metadata with the provided map.
+	SetMetadata(metadata map[string]string)
+
+	// AddMetadata adds a single key-value pair to the logger's metadata.
+	AddMetadata(key, value string)
+
 	// Close flushes any buffered logs and closes the handler.
 	Close()
 }

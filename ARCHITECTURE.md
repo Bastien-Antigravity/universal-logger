@@ -37,7 +37,7 @@ flowchart TD
 
 ### 1. The Go Core (`src/`)
 The Go core is responsible for the actual "heavy lifting":
-- **Bootstrap**: Aligns the configuration secrets and discovery data with the logging engine's requirements.
+- **Bootstrap**: Aligns the configuration secrets and discovery data with the logging engine's requirements. Supports **Dependency Injection** (injecting an existing `distributed-config.Config`) to avoid duplicate server connections.
 - **Session Management**: Tracks multiple logger instances using a thread-safe `uintptr -> Session` map.
 - **Dynamic Leveling**: Synchronizes log level changes across all active sinks.
 
