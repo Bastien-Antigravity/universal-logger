@@ -20,6 +20,9 @@ require (
 )
 
 replace github.com/Bastien-Antigravity/flexible-logger => ../flexible-logger
+
 replace github.com/Bastien-Antigravity/distributed-config => ../distributed-config
+
 replace github.com/Bastien-Antigravity/safe-socket => ../safe-socket
+
 replace github.com/Bastien-Antigravity/microservice-toolbox/go => ../microservice-toolbox/go
