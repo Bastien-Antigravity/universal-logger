@@ -1,17 +1,45 @@
 use std::env;
 use std::path::PathBuf;
+use std::process::Command;
 
 fn main() {
     let project_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-    let mut lib_dir = PathBuf::from(project_dir);
-    // Path to libunilog folder relative to universal-logger/rust/
-    lib_dir.pop(); 
-    lib_dir.push("libunilog");
+    let mut root_dir = PathBuf::from(project_dir);
+    root_dir.pop(); // Go to universal-logger root
+
+    let lib_dir = root_dir.join("libunilog");
+    
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap_or_default();
+    let is_windows = target_os == "windows" || (target_os.is_empty() && cfg!(windows));
+    let lib_ext = if is_windows { "dll" } else { "so" };
+    let lib_name = format!("libunilog.{}", lib_ext);
+    let lib_path = lib_dir.join(&lib_name);
+
+    // On Linux/CI, try to build the Go library if missing
+    let is_ci = env::var("GITHUB_ACTIONS").is_ok();
+    if !is_windows && (is_ci || !lib_path.exists()) {
+        println!("cargo:warning=Attempting to build Go shared library (cgo_bridge)...");
+        let go_src = root_dir.join("src").join("cgo_bridge");
+        
+        let status = Command::new("go")
+            .args(&[
+                "build",
+                "-buildmode=c-shared",
+                "-o",
+                lib_path.to_str().unwrap(),
+            ])
+            .arg(go_src)
+            .status();
+
+        if let Ok(s) = status {
+            if !s.success() {
+                println!("cargo:warning=Go build failed. Linker may fail.");
+            }
+        } else {
+            println!("cargo:warning=Go command not found. Linker may fail.");
+        }
+    }
 
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
-    
-    // We generated libunilog.a (MinGW style)
-    // On Windows with MSVC, we might need to rename it or use a .lib
-    // But let's try to link it as 'unilog'
     println!("cargo:rustc-link-lib=dylib=unilog");
 }
