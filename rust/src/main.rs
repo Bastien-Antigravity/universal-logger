@@ -4,7 +4,7 @@ fn main() {
     println!(">>> Initializing Universal Logger from Rust...");
 
     // 1. Initialize the logger safe wrapper
-    let logger = match UniLog::new("standalone", "rust-app-debug", "standard", LogLevel::Debug) {
+    let logger = match UniLog::new("standalone", "rust-app-debug", "standard", LogLevel::Debug, false) {
         Ok(l) => l,
         Err(e) => {
             eprintln!("Error initializing logger: {}", e);
