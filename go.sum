@@ -6,8 +6,8 @@ github.com/Bastien-Antigravity/flexible-logger v1.1.5 h1:K4tFtFJrEwr0iE+qY/n32Rq
 github.com/Bastien-Antigravity/flexible-logger v1.1.5/go.mod h1:ovaOC+4eb+5Hetu0KZNsa3f9O+UUOtTsP1jidvSgkdo=
 github.com/Bastien-Antigravity/microservice-toolbox/go v1.1.1 h1:NBExUS9JMjGYWRRPI30HdOJmQXQd1Ppv428VfXru6FM=
 github.com/Bastien-Antigravity/microservice-toolbox/go v1.1.1/go.mod h1:c8WuWF2mNDtBuvVIXB72zzsdAkBIv+2me6V7DhehgNg=
-github.com/Bastien-Antigravity/safe-socket v1.7.3 h1:SOXEru64YKRLbxwLEz/gQyWkxRtEi2plhHtQraYHbmY=
-github.com/Bastien-Antigravity/safe-socket v1.7.3/go.mod h1:ngCgFarvn3V+o248h48A5u+7Z4OSu2TgEMrWu3YQXe0=
+github.com/Bastien-Antigravity/safe-socket v1.7.4 h1:Vif1SvcZQpRWdrdurKYNHNlL1Ze55eYoczCIwUd2lgE=
+github.com/Bastien-Antigravity/safe-socket v1.7.4/go.mod h1:ngCgFarvn3V+o248h48A5u+7Z4OSu2TgEMrWu3YQXe0=
 github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381 h1:d5EKgQfRQvO97jnISfR89AiCCCJMwMFoSxUiU0OGCRU=
 github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381/go.mod h1:OU76gHeRo8xrzGJU3F3I1CqX1ekM8dfJw0+wPeMwnp0=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
