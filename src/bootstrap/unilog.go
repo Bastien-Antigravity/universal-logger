@@ -21,7 +21,7 @@ type BootstrapOptions struct {
 	InitialLogLevel  interfaces.Level
 	UseLocalNotifier bool
 	ExistingConfig   *config.DistConfig // OPTIONAL: Inject an existing configuration instance
-	Metadata         map[string]string   // OPTIONAL: Fields to be added to all logs
+	Metadata         map[string]string  // OPTIONAL: Fields to be added to all logs
 }
 
 // Init initializes both subsystems and returns both directly.
@@ -56,18 +56,22 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 	// 3. Initialize Logger using the selected profile
 	var flexLogger flex_interfaces.Logger
 	switch opts.LoggerProfile {
-	case "standard":
-		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
+	case "audit":
+		flexLogger = profiles.NewAuditLogger(opts.Name, distConfig.Config)
+	case "cloud":
+		flexLogger = profiles.NewCloudLogger(opts.Name, distConfig.Config)
 	case "devel":
 		flexLogger = profiles.NewDevelLogger(opts.Name)
 	case "high_perf":
 		flexLogger = profiles.NewHighPerfLogger(opts.Name, distConfig.Config)
 	case "minimal":
 		flexLogger = profiles.NewMinimalLogger(opts.Name)
-	case "notif_logger":
-		flexLogger = profiles.NewNotifLogger(opts.Name, distConfig.Config)
 	case "no_lock":
 		flexLogger = profiles.NewNoLockLogger(opts.Name, distConfig.Config)
+	case "notif_logger":
+		flexLogger = profiles.NewNotifLogger(opts.Name, distConfig.Config)
+	case "standard":
+		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
 	default:
 		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
 	}

@@ -1,3 +1,12 @@
+---
+microservice: universal-logger
+type: repository
+status: active
+language: polyglot
+tags:
+  - domain/observability
+---
+
 # Universal Logger
 
 A unified, high-performance, cross-platform logging and configuration facade. Universal Logger provides a single, consistent API across multiple languages (Go, Python, Rust, C++, VBA) by orchestrating [Distributed-Config](https://github.com/Bastien-Antigravity/distributed-config) and [Flexible-Logger](https://github.com/Bastien-Antigravity/flexible-logger) via a high-performance CGO bridge.
