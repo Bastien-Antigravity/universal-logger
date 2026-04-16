@@ -27,13 +27,15 @@ type BootstrapOptions struct {
 // Init initializes both subsystems and returns both directly.
 // It also sets up the automatic log-level synchronization.
 // useLocalNotifier: If true, enables an internal 1024-buffered notification queue.
-func Init(Name, ConfigProfile, LoggerProfile string, LogLevel interfaces.Level, useLocalNotifier bool) (*config.DistConfig, interfaces.Logger) {
+// existingConfig: OPTIONAL. If provided, the logger will use this configuration instance instead of creating a new one.
+func Init(Name, ConfigProfile, LoggerProfile, LogLevel string, useLocalNotifier bool, existingConfig *config.DistConfig) (*config.DistConfig, interfaces.Logger) {
 	return InitWithOptions(BootstrapOptions{
 		Name:             Name,
 		ConfigProfile:    ConfigProfile,
 		LoggerProfile:    LoggerProfile,
-		InitialLogLevel:  LogLevel,
+		InitialLogLevel:  utils.GetLogLevel(LogLevel),
 		UseLocalNotifier: useLocalNotifier,
+		ExistingConfig:   existingConfig,
 	})
 }
 
@@ -58,7 +60,7 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 	switch opts.LoggerProfile {
 	case "audit":
 		flexLogger = profiles.NewAuditLogger(opts.Name, distConfig.Config)
-	case "cloud":
+	case "cloud", "cloud_native":
 		flexLogger = profiles.NewCloudLogger(opts.Name, distConfig.Config)
 	case "devel":
 		flexLogger = profiles.NewDevelLogger(opts.Name)

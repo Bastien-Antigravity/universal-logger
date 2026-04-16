@@ -87,7 +87,7 @@ To use the logger in any language, ensure `libunilog.dll` is in your `PATH` or a
 // Go Native Bootstrap
 import "github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 
-cfg, logger := bootstrap.Init("my-service", "standalone", "standard", utils.LevelInfo, false)
+cfg, logger := bootstrap.Init("my-service", "standalone", "standard", "INFO", false, nil)
 ```
 
 ## 📜 Maintenance

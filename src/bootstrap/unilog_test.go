@@ -2,12 +2,11 @@ package bootstrap
 
 import (
 	"testing"
-	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
 func TestInitWithLocalNotifier(t *testing.T) {
 	// Initialize with useLocalNotifier = true
-	_, uniLog := Init("test-app", "standalone", "devel", utils.LevelInfo, true)
+	_, uniLog := Init("test-app", "standalone", "devel", "INFO", true, nil)
 	defer uniLog.Close()
 
 	if uniLog.GetNotifQueue() == nil {
@@ -27,7 +26,7 @@ func TestInitWithLocalNotifier(t *testing.T) {
 
 func TestInitWithoutLocalNotifier(t *testing.T) {
 	// Initialize with useLocalNotifier = false
-	_, uniLog := Init("test-app", "standalone", "devel", utils.LevelInfo, false)
+	_, uniLog := Init("test-app", "standalone", "devel", "INFO", false, nil)
 	defer uniLog.Close()
 
 	if uniLog.GetNotifQueue() != nil {

@@ -39,7 +39,7 @@ func UniLog_Init(configProfile, appName, loggerProfile *C.char, logLevel C.int, 
 	name := strings.TrimSpace(C.GoString(appName))
 	cfgProf := strings.TrimSpace(C.GoString(configProfile))
 	logProf := strings.TrimSpace(C.GoString(loggerProfile))
-	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel), useLocalNotifier != 0)
+	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel).String(), useLocalNotifier != 0, nil)
 
 	facadeMu.Lock()
 	defer facadeMu.Unlock()

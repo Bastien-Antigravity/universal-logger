@@ -29,7 +29,7 @@ func main() {
 		name          string
 		configProfile string
 		loggerProfile string
-		logLevel      = utils.LevelInfo
+		logLevel      = "INFO"
 		useLocalNotifier = false
 	)
 
@@ -40,7 +40,7 @@ func main() {
 		name = "dev-service"
 		configProfile = "standalone"
 		loggerProfile = "devel"
-		logLevel = utils.LevelDebug
+		logLevel = "DEBUG"
 
 	case "2":
 		// SCENARIO 2: PRODUCTION STANDARD
@@ -48,7 +48,7 @@ func main() {
 		name = "prod-api"
 		configProfile = "production"
 		loggerProfile = "standard"
-		logLevel = utils.LevelInfo
+		logLevel = "INFO"
 
 	case "3":
 		// SCENARIO 3: HIGH THROUGHPUT
@@ -56,7 +56,7 @@ func main() {
 		name = "high-load-worker"
 		configProfile = "production"
 		loggerProfile = "high_perf"
-		logLevel = utils.LevelWarning
+		logLevel = "WARNING"
 
 	case "4":
 		// SCENARIO 4: TESTING
@@ -64,7 +64,7 @@ func main() {
 		name = "test-suite"
 		configProfile = "test"
 		loggerProfile = "minimal"
-		logLevel = utils.LevelError
+		logLevel = "ERROR"
 
 	case "5":
 		// SCENARIO 5: MONITORING & ALERTING
@@ -72,7 +72,7 @@ func main() {
 		name = "monitor-svc"
 		configProfile = "preprod"
 		loggerProfile = "notif_logger"
-		logLevel = utils.LevelInfo
+		logLevel = "INFO"
 
 	case "6":
 		// SCENARIO 6: LOCK-FREE PERFORMANCE
@@ -80,7 +80,7 @@ func main() {
 		name = "latency-critical-app"
 		configProfile = "production"
 		loggerProfile = "no_lock"
-		logLevel = utils.LevelInfo
+		logLevel = "INFO"
 
 	default:
 		fmt.Printf("Unknown scenario: %s\n", scenario)
@@ -90,7 +90,7 @@ func main() {
 	// -------------------------------------------------------------------------
 	// EXECUTION
 
-	distConfig, uniLog := bootstrap.Init(name, configProfile, loggerProfile, logLevel, useLocalNotifier)
+	distConfig, uniLog := bootstrap.Init(name, configProfile, loggerProfile, logLevel, useLocalNotifier, nil)
 
 	uniLog.Info("Facade initialized for scenario %s", scenario)
 	uniLog.Warning("This is a warning log from %s", name)
@@ -105,7 +105,7 @@ func main() {
 
 	// 2. Manually change the log level
 	fmt.Println(">>> [Demo] Switching log level to DEBUG manually")
-	uniLog.SetLevel(utils.LevelDebug)
+	uniLog.SetLevel(utils.GetLogLevel("DEBUG"))
 	uniLog.Debug("This debug message is now visible after SetLevel()")
 
 	// 3. Update a configuration value dynamically (e.g., simulated remote update)
