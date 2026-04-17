@@ -31,6 +31,9 @@ func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 		Metadata: make(map[string]string),
 	}
 
+	// Initialize with 1 to skip this facade layer by default
+	res.Logger.SetCallerSkip(2)
+
 	// Register finalizer for automatic cleanup
 	runtime.SetFinalizer(res, func(ul *UniLog) {
 		ul.Close()
@@ -147,6 +150,14 @@ func (s *UniLog) Log(level utils.Level, format string, args ...any) {
 
 // -------------------------------------------------------------------------
 
+// SetCallerSkip sets the number of stack frames to skip when detecting source info.
+// It automatically adds 1 to the provided skip value to account for this facade layer.
+func (s *UniLog) SetCallerSkip(skip int) {
+	s.Logger.SetCallerSkip(skip + 1)
+}
+
+// -------------------------------------------------------------------------
+
 // SetLocalNotifQueue sets the notification channel for the local notifier.
 // It performs a type assertion to find the appropriate wrapper that supports this.
 func (s *UniLog) SetLocalNotifQueue(notifChan chan *interfaces.NotifMessage) {
@@ -162,8 +173,6 @@ func (s *UniLog) SetLocalNotifQueue(notifChan chan *interfaces.NotifMessage) {
 func (s *UniLog) GetNotifQueue() <-chan *utils.NotifMessage {
 	return s.NotifQueue
 }
-
-// -------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------
 
