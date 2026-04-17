@@ -145,7 +145,7 @@ extern "C" {
 extern __declspec(dllexport) char* UniLog_Config_Get(GoUintptr handle, char* section, char* key);
 extern __declspec(dllexport) void UniLog_Config_Set(GoUintptr handle, char* section, char* key, char* value);
 extern __declspec(dllexport) void UniLog_OnMemConfUpdate(GoUintptr handle, config_update_cb cb);
-extern __declspec(dllexport) GoUintptr UniLog_Init(char* configProfile, char* appName, char* loggerProfile, int logLevel, int useLocalNotifier);
+extern __declspec(dllexport) GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier);
 extern __declspec(dllexport) void UniLog_Close(GoUintptr handle);
 extern __declspec(dllexport) void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
 extern __declspec(dllexport) void UniLog_SetLevel(GoUintptr handle, GoInt level);

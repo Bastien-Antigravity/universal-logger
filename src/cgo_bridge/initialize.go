@@ -35,7 +35,7 @@ func main() {}
 // -------------------------------------------------------------------------
 
 //export UniLog_Init
-func UniLog_Init(configProfile, appName, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int) uintptr {
+func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int) uintptr {
 	name := strings.TrimSpace(C.GoString(appName))
 	cfgProf := strings.TrimSpace(C.GoString(configProfile))
 	logProf := strings.TrimSpace(C.GoString(loggerProfile))

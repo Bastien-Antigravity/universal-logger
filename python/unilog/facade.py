@@ -18,7 +18,7 @@ class UniLog:
     Provides integrated configuration management and high-performance logging.
     """
 
-    def __init__(self, config_profile="standalone", app_name="python-app", 
+    def __init__(self, app_name="python-app", config_profile="standalone", 
                  logger_profile="standard", log_level="info", use_local_notifier=False):
         if not lib:
             raise RuntimeError("libunilog shared library not found. Please ensure it is built.")
@@ -27,8 +27,8 @@ class UniLog:
         level_val = LogLevel.from_str(log_level) if isinstance(log_level, str) else int(log_level)
 
         self._handle = lib.UniLog_Init(
-            config_profile.encode('utf-8'), 
             app_name.encode('utf-8'), 
+            config_profile.encode('utf-8'), 
             logger_profile.encode('utf-8'), 
             ctypeC_int(level_val),
             ctypeC_int(1 if use_local_notifier else 0)
