@@ -33,7 +33,7 @@ pip install .
 from unilog import UniLog
 
 # Initialize (loads libunilog.dll automatically)
-logger = UniLog(config_profile="standalone", app_name="demo-app")
+logger = UniLog(app_name="demo-app", config_profile="standalone")
 
 # Log messages
 logger.info("Application started")
@@ -59,10 +59,11 @@ asyncio.run(main())
 
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
-| `config_profile` | `"standalone"` | `production`, `preprod`, `test`, `standalone` |
 | `app_name` | `"python-app"` | Application identifier (Trimmmed for exact match) |
+| `config_profile` | `"standalone"` | `production`, `preprod`, `test`, `standalone` |
 | `logger_profile` | `"standard"` | `standard`, `devel`, `high_perf`, `minimal` |
 | `log_level` | `"info"` | `debug`, `info`, `warning`, `error`, `critical` |
+| `use_local_notifier` | `False` | Enable in-process 1024-buffered notification queue |
 
 ## 🧪 Testing
 

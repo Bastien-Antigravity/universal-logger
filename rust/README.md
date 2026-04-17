@@ -33,8 +33,8 @@ use unilog_rs::{UniLog, LogLevel};
 fn main() {
     // 1. Initialize the logger session (loads libunilog.dll)
     let logger = UniLog::new(
+        "rust-demo",    // app_name
         "standalone",   // config_profile
-        "rust-demo",     // app_name
         "standard",     // logger_profile
         LogLevel::Info, // log_level
         false           // use_local_notifier
