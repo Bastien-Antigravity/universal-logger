@@ -32,7 +32,7 @@ func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 	}
 
 	// Initialize with 1 to skip this facade layer by default
-	res.Logger.SetCallerSkip(2)
+	res.Logger.SetCallerSkip(1)
 
 	// Register finalizer for automatic cleanup
 	runtime.SetFinalizer(res, func(ul *UniLog) {
