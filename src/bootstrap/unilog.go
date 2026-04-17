@@ -59,23 +59,23 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 	var flexLogger flex_interfaces.Logger
 	switch opts.LoggerProfile {
 	case "audit":
-		flexLogger = profiles.NewAuditLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewAuditLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	case "cloud", "cloud_native":
-		flexLogger = profiles.NewCloudLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewCloudLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	case "devel":
-		flexLogger = profiles.NewDevelLogger(opts.Name)
+		flexLogger = profiles.NewDevelLogger(opts.Name, opts.UseLocalNotifier)
 	case "high_perf":
-		flexLogger = profiles.NewHighPerfLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewHighPerfLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	case "minimal":
-		flexLogger = profiles.NewMinimalLogger(opts.Name)
+		flexLogger = profiles.NewMinimalLogger(opts.Name, opts.UseLocalNotifier)
 	case "no_lock":
-		flexLogger = profiles.NewNoLockLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewNoLockLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	case "notif_logger":
-		flexLogger = profiles.NewNotifLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewNotifLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	case "standard":
-		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	default:
-		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config)
+		flexLogger = profiles.NewStandardLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
 	}
 
 	// 4. Apply initial Log Level and Metadata
