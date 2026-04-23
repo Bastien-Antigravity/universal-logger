@@ -40,7 +40,7 @@ class TestUnilog(unitTestCase):
     #         time.sleep(0.5)
             
     def test_log_level_change(self):
-        with UniLog(config_profile="standalone", app_name="test-level", log_level="info") as logger:
+        with UniLog(config_profile="standalone", app_name="test-level", logger_profile="devel", log_level="info") as logger:
             logger.set_level(LogLevel.DEBUG)
             logger.debug("This should be visible after set_level")
 

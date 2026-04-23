@@ -121,8 +121,8 @@ class UniLog:
             print(f"!!! Python: Registering C bridge for handle: {self._handle}")
             self._callback_ref = CALLBACK_TYPE(self._dispatch_update)
             print(f"!!! Python: callback_ref created: {self._callback_ref}")
-            lib.UniLog_OnMemConfUpdate(self._handle, self._callback_ref)
-            print("!!! Python: UniLog_OnMemConfUpdate call finished.")
+            lib.UniLog_OnConfigUpdate(self._handle, self._callback_ref)
+            print("!!! Python: UniLog_OnConfigUpdate call finished.")
             self._initialized_bridge = True
 
         if callback is not None:

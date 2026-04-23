@@ -58,22 +58,14 @@ static void call_notif_callback(UniLogNotifCallback cb, const char* json_msg) {
 
 #line 1 "cgo-generated-wrapper"
 
-#line 6 "vba_message_pump.go"
+#line 6 "vba_message_pump_stub.go"
 
-#include <windows.h>
 #include <stdlib.h>
 
 // Define the callback type for C
 typedef void (*config_update_cb)(const char* json_data);
 
-// Helper to call PostMessageA from CGO on Windows
-static void PostVbaMessage(HWND hwnd, UINT msg, const char* json_data) {
-    if (hwnd) {
-        PostMessageA(hwnd, msg, 0, (LPARAM)json_data);
-    }
-}
-
-// C helper to call the configuration update callback
+// C helper to call the callback
 static void call_config_update_cb(config_update_cb cb, const char* json_data) {
     if (cb) {
         cb(json_data);
@@ -142,18 +134,15 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern __declspec(dllexport) char* UniLog_Config_Get(GoUintptr handle, char* section, char* key);
-extern __declspec(dllexport) void UniLog_Config_Set(GoUintptr handle, char* section, char* key, char* value);
-extern __declspec(dllexport) void UniLog_OnMemConfUpdate(GoUintptr handle, config_update_cb cb);
-extern __declspec(dllexport) GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier);
-extern __declspec(dllexport) void UniLog_Close(GoUintptr handle);
-extern __declspec(dllexport) void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
-extern __declspec(dllexport) void UniLog_SetLevel(GoUintptr handle, GoInt level);
-extern __declspec(dllexport) void UniLog_RegisterNotifCallback(GoUintptr handle, UniLogNotifCallback callback);
-
-// UniLog_RegisterVBAWindow registers a Windows HWND and Message ID for 
-// receiving asynchronous configuration updates in VBA.
-extern __declspec(dllexport) void UniLog_RegisterVBAWindow(GoUintptr handle, GoUintptr hwnd, GoUint32 msgId);
+extern char* UniLog_Config_Get(GoUintptr handle, char* section, char* key);
+extern void UniLog_Config_Set(GoUintptr handle, char* section, char* key, char* value);
+extern void UniLog_OnConfigUpdate(GoUintptr handle, config_update_cb cb);
+extern GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier);
+extern void UniLog_Close(GoUintptr handle);
+extern void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
+extern void UniLog_SetLevel(GoUintptr handle, GoInt level);
+extern void UniLog_RegisterNotifCallback(GoUintptr handle, UniLogNotifCallback callback);
+extern void UniLog_RegisterVBAWindow(GoUintptr handle, GoUintptr hwnd, GoUint32 msgId);
 
 #ifdef __cplusplus
 }

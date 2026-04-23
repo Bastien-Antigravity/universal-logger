@@ -47,7 +47,9 @@ sequenceDiagram
 ### 2. The CGO Bridge (`src/cgo_bridge/`)
 The Bridge serves as the "Universal Translator":
 - **FFI Stability**: Exposes a stable C ABI (Application Binary Interface).
+- **Naming Standardization**: Starting in **v1.1.7**, all FFI methods follow a strict naming convention (e.g., `UniLog_OnConfigUpdate` replaced the legacy `UniLog_OnMemConfUpdate`).
 - **Thread-Safe Unified Dispatcher**: Uses a "Platform-Aware" dispatcher (`dispatchConfigurationUpdate`) to route updates to either standard C-callbacks (Python/Rust/CPP) or the Windows Message Pump (VBA).
+- **State Inspection**: Added `UniLog_GetLevel` to allow facades to verify the active log level synchronized from the Go core.
 - **Callback Dispatching**: Handles the transition from Go goroutines to language-specific threads (e.g., acquiring the Python GIL) or posting asynchronous Windows messages.
 - **String/Memory Safety**: Manages memory allocation/deallocation across the boundary (using `C.CString` and `C.free`).
 

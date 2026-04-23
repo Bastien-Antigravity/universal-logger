@@ -51,19 +51,28 @@ The project has transitioned to a **Shared Library First** approach:
 - **DLL-Based Core**: One library to rule them all—fixes applied to the Go core benefit all languages instantly.
 - **Asynchronous Logging**: Non-blocking log dispatching across all supported languages.
 - **Dynamic Configuration**: Real-time configuration updates with language-native callback support.
+- **State Inspection**: `GetLevel()` accessor across all facades for real-time verification of active log levels.
 - **Lifecycle Management**: Robust resource handling with context managers and automatic cleanup.
 
 ## 📊 Operational Profiles
 
-The logger supports various synergistic profiles out of the box:
+Universal Logger uses "prescribed strategies" to ensure the right balance of reliability and performance for every use case.
 
-| Profile | Config | Logger | Primary Use Case |
-| :--- | :--- | :--- | :--- |
-| **Local Dev** | `standalone` | `devel` | Rapid local iteration with text logs. |
-| **Production** | `production` | `standard` | Full remote orchestration and multi-sink logging. |
-| **High Load** | `production` | `high_perf` | Low-latency async network logging (UDP/Capnp). |
-| **Testing** | `test` | `minimal` | Optimized for CI/CD environments. |
-| **Monitor** | `preprod` | `notif_logger` | Notification-focused with remote monitoring. |
+| Profile | Config | Logger | Connection Strategy | Mode | Use Case |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Local Dev** | `standalone` | `devel` | Standard | Blocking | Rapid local iteration. |
+| **Production** | `production` | `standard` | Standard | Non-Blocking | General multi-sink logging. |
+| **Audit** | `production` | `audit` | **Critical** | **Indefinite** | Financial/Compliance (No loss). |
+| **Cloud Native** | `production` | `cloud` | Standard | Non-Blocking | Microservices / K8s. |
+| **High Load** | `production` | `high_perf` | **Performance** | Non-Blocking | Low-latency telemetry (UDP). |
+| **Testing** | `test` | `minimal` | Standard | Blocking | CI/CD environments. |
+| **Monitor** | `preprod` | `notif_logger` | Standard | Non-Blocking | Remote health monitoring. |
+
+### 🛡️ Reliability & Connection Modes
+Starting in **v1.1.7**, connection management is profile-driven:
+- **Blocking**: Wait for a successful connection before starting the service (standard for dev/test).
+- **Non-Blocking**: Start the application immediately; the logger connects in the background.
+- **Indefinite**: Used by the `Audit` profile. It will retry forever with exponential backoff and jitter, ensuring no data is lost even during long outages.
 
 ## 🛠️ Project Structure
 

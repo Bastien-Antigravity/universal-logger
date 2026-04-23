@@ -13,6 +13,7 @@ Since Modernization 2026, the C++ wrapper relies on the **compiled Go shared lib
 - **RAII Managed**: Automatic handle cleanup through the `UniLog` class destructor.
 - **Header-Only Wrapper**: No separate C++ library to build—just include the header and link the Go library.
 - **Telemetry Parity**: Shared library ensures your C++ logs match the format and performance of Go/Rust/Python services.
+- **State Inspection**: `getLevel()` method to verify active log level state.
 
 ## 🔧 Installation and Linking
 

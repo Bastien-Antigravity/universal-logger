@@ -62,6 +62,9 @@ type Logger interface {
 	// SetLevel sets the current log level.
 	SetLevel(level Level)
 
+	// GetLevel returns the current log level.
+	GetLevel() Level
+
 	// SetCallerSkip sets the number of stack frames to skip when detecting source info.
 	SetCallerSkip(skip int)
 

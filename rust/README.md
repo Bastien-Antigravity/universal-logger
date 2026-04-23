@@ -13,6 +13,8 @@ Since Modernization 2026, the Rust facade relies on the **compiled Go shared lib
 - **Safe Pointers**: Handle memory securely with Rust lifetimes and `Drop` trait for automated cleanup.
 - **Cargo Integration**: Full support for your Rust builds with automated linking via `build.rs`.
 - **Async Ready**: Seamless integration with `tokio` or other async runtimes via callbacks.
+- **Resilient Connectivity**: Profiles like `audit` and `high_perf` now include built-in retry and background connection logic.
+- **State Verification**: `get_level()` method for real-time log level inspection.
 - **Zero Overhead**: Minimal abstraction over the low-level FFI calls.
 
 ## 🔧 Installation

@@ -3,8 +3,8 @@ module github.com/Bastien-Antigravity/universal-logger
 go 1.25.4
 
 require (
-	github.com/Bastien-Antigravity/distributed-config v1.7.8
-	github.com/Bastien-Antigravity/flexible-logger v1.1.7
+	github.com/Bastien-Antigravity/distributed-config v1.8.0
+	github.com/Bastien-Antigravity/flexible-logger v1.2.0
 )
 
 require (
@@ -18,3 +18,5 @@ require (
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+

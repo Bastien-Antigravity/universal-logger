@@ -14,6 +14,7 @@ Since Modernization 2026, the Python facade relies on the **compiled Go shared l
 - **Dynamic Config**: `async for` support for real-time configuration updates.
 - **Thread Safe**: Safe for multi-threaded and multi-coroutine environments.
 - **Centralized Engine**: Shares the exact same logic and performance as the Rust and Go clients.
+- **State Verification**: `get_level()` accessor for real-time log level inspection.
 
 ## 🔧 Installation
 
@@ -61,7 +62,7 @@ asyncio.run(main())
 | :--- | :--- | :--- |
 | `app_name` | `"python-app"` | Application identifier (Trimmmed for exact match) |
 | `config_profile` | `"standalone"` | `production`, `preprod`, `test`, `standalone` |
-| `logger_profile` | `"standard"` | `standard`, `devel`, `high_perf`, `minimal` |
+| `logger_profile` | `"standard"` | `standard`, `devel`, `high_perf`, `minimal`, `audit`, `cloud_native`, `no_lock`, `notif_logger` |
 | `log_level` | `"info"` | `debug`, `info`, `warning`, `error`, `critical` |
 | `use_local_notifier` | `False` | Enable in-process 1024-buffered notification queue |
 

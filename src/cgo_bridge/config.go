@@ -46,9 +46,9 @@ func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
 
 // -------------------------------------------------------------------------
 
-//export UniLog_OnMemConfUpdate
-func UniLog_OnMemConfUpdate(handle uintptr, cb C.config_update_cb) {
-	println("!!! Go: UniLog_OnMemConfUpdate called for handle:", handle)
+//export UniLog_OnConfigUpdate
+func UniLog_OnConfigUpdate(handle uintptr, cb C.config_update_cb) {
+	println("!!! Go: UniLog_OnConfigUpdate called for handle:", handle)
 	facadeMu.Lock()
 	session, ok := facadeStore[handle]
 	facadeMu.Unlock()

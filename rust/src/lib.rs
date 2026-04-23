@@ -14,7 +14,7 @@ extern "C" {
     fn UniLog_Close(handle: uintptr_t);
     fn UniLog_Config_Get(handle: uintptr_t, section: *const c_char, key: *const c_char) -> *mut c_char;
     fn UniLog_Config_Set(handle: uintptr_t, section: *const c_char, key: *const c_char, value: *const c_char);
-    fn UniLog_OnMemConfUpdate(handle: uintptr_t, cb: extern "C" fn(*const c_char));
+    fn UniLog_OnConfigUpdate(handle: uintptr_t, cb: extern "C" fn(*const c_char));
     fn UniLog_RegisterNotifCallback(handle: uintptr_t, cb: extern "C" fn(*const c_char));
     fn UniLog_LogWithMetadata(handle: uintptr_t, level: i64, msg: *const c_char, file: *const c_char, line: *const c_char, function: *const c_char, module: *const c_char);
     fn UniLog_SetLevel(handle: uintptr_t, level: i64);
@@ -132,7 +132,7 @@ impl UniLog {
             *guard = Some(Box::new(cb));
         }
         unsafe {
-            UniLog_OnMemConfUpdate(self.handle, c_callback_bridge);
+            UniLog_OnConfigUpdate(self.handle, c_callback_bridge);
         }
     }
 

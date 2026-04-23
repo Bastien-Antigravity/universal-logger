@@ -29,10 +29,15 @@ make rust
 ```
 
 ### 2. Go Core (`src/`)
-Automated tests verify the internal state of the facade and the capability mapping between subsystems.
+Automated tests verify the internal state of the facade, capability mapping, and network resilience.
 ```bash
-go test -v ./src/...
+# Run all Go tests including integration and resilience
+go test -v ./src/bootstrap/...
 ```
+
+#### Key Test Suites:
+- **Integration Tests** ([integration_test.go](file:///Users/imac/Desktop/Bastien-Antigravity/universal-logger/src/bootstrap/integration_test.go)): Verifies Log Level synchronization, Metadata injection, and Manual Notifier binding.
+- **Resilience Tests** ([resilience_test.go](file:///Users/imac/Desktop/Bastien-Antigravity/universal-logger/src/bootstrap/resilience_test.go)): Uses a `MockServer` to simulate server crashes, network outages, and automatic background reconnection logic.
 
 ### 3. Python (`python/`)
 Verifies asynchronous logging, thread-safe configuration updates, and the `async for` listener.
@@ -62,10 +67,11 @@ Every release is verified against the following matrix:
 
 | Platform | Feature | Test Target |
 | :--- | :--- | :--- |
-| **Go** | Orchestration | `src/facade/facade_test.go` |
+| **Go** | Integration | `src/bootstrap/integration_test.go` |
+| **Go** | Resilience | `src/bootstrap/resilience_test.go` |
 | **Python** | Async I/O | `python/test_async_logging.py` |
 | **Python** | Callbacks | `python/test_unified_callback.py` |
-| **Rust** | Memory Safety | `rust/src/lib.rs` (Doc tests) |
+| **Rust** | FFI Parity | `rust/src/lib.rs` (UniLog_OnConfigUpdate) |
 | **C++** | Thread Safety | `cpp/main.cpp` |
 | **VBA** | Message Pump | Manual (Excel Mock) |
 

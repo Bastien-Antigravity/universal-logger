@@ -141,6 +141,11 @@ func (s *UniLog) SetLevel(level utils.Level) {
 	s.Logger.SetLevel(level)
 }
 
+// GetLevel returns the current log level.
+func (s *UniLog) GetLevel() utils.Level {
+	return s.Logger.GetLevel()
+}
+
 // -------------------------------------------------------------------------
 
 // Log logs a message at a specific level.

@@ -31,7 +31,7 @@ core: $(LIB_DIR)/libunilog.$(LIB_EXT)
 $(LIB_DIR)/libunilog.$(LIB_EXT): $(CORE_SRC)
 	@echo ">>> Building Go Shared Library (CGO)..."
 	@mkdir -p $(LIB_DIR)
-	go build -buildmode=c-shared -o $(LIB_DIR)/libunilog.$(LIB_EXT) $(CORE_SRC)
+	go build -buildmode=c-shared -o $(LIB_DIR)/libunilog.$(LIB_EXT) ./src/cgo_bridge
 	@if [ "$(UNAME_S)" = "Darwin" ]; then \
 		install_name_tool -id "@rpath/libunilog.dylib" $(LIB_DIR)/libunilog.dylib; \
 	fi
