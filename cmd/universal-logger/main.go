@@ -29,7 +29,7 @@ func main() {
 		name          string
 		configProfile string
 		loggerProfile string
-		logLevel      = "INFO"
+		logLevel         string
 		useLocalNotifier = false
 	)
 
