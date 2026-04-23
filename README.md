@@ -18,6 +18,7 @@ Universal Logger acts as a "Universal Adapter." Since modernization 2026, it cen
 ```mermaid
 flowchart TD
     subgraph Client_Layers [Native Facades]
+        direction LR
         Py["Python (ctypes)"] 
         Rs["Rust (FFI/unilog-rs)"]
         Cpp["C++ (RAII Wrapper)"]
@@ -26,16 +27,17 @@ flowchart TD
     end
 
     subgraph Bridge_Layer [Shared Engine]
-        DLL[libunilog.dll/so]
+        DLL["libunilog.dll/so"]
     end
 
     subgraph Core_Layer [Go Core]
-        Facade[Universal Facade]
+        Facade["Universal Facade"]
     end
 
     subgraph Components [Underlying Systems]
-        Config[Distributed Config]
-        Logger[Flexible Logger]
+        direction LR
+        Config["Distributed Config"]
+        Logger["Flexible Logger"]
     end
 
     Client_Layers --> Bridge_Layer
