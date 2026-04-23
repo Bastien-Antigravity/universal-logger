@@ -57,7 +57,7 @@ func UniLog_OnMemConfUpdate(handle uintptr, cb C.config_update_cb) {
 		println("!!! Go: Handle NOT FOUND in facadeStore:", handle)
 		return
 	}
-	session.Config.OnMemConfUpdate(func(update map[string]map[string]string) {
+	session.Config.OnConfigUpdate(func(update map[string]map[string]string) {
 		jsonData, err := json.Marshal(update)
 		if err != nil {
 			return

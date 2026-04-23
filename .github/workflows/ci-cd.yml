@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GOTOOLCHAIN: auto
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -45,6 +49,13 @@ jobs:
         run: |
           go mod tidy
           go test -v ./src/...
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: Run golangci-lint
+        working-directory: universal-logger
+        run: $(go env GOPATH)/bin/golangci-lint run
 
       - name: Verify CLI Compilation
         working-directory: universal-logger

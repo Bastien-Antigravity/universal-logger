@@ -1,0 +1,7 @@
+./python/README.md:70:[TESTING.md](TESTING.md)
+./rust/README.md:66:[TESTING.md](TESTING.md)
+./vba/README.md:79:[TESTING.md](TESTING.md)
+./README.md:12:[Distributed-Config](https://github.com/Bastien-Antigravity/distributed-config) and [Flexible-Logger](https://github.com/Bastien-Antigravity/flexible-logger)
+./cpp/README.md:68:[TESTING.md](TESTING.md)
+./AI-Init.md:6:[[00-Master-MOC]]** and restore session state from **[[universal-logger/AI-Session-State]]**. Follow the standardized loop in **[[00-Daily-AI-Playbook]]
+./src/README.md:37:[TESTING.md](TESTING.md)

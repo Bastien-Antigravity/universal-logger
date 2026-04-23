@@ -39,5 +39,5 @@ func (s *DistConfig) GetConfig(section, key string) string {
 
 // OnConfigUpdate registers a callback for configuration updates.
 func (s *DistConfig) OnConfigUpdate(fn func(map[string]map[string]string)) {
-	s.Config.OnMemConfUpdate(fn)
+	s.Config.OnLiveConfUpdate(fn)
 }

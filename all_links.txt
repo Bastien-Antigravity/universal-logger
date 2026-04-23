@@ -1,0 +1,7 @@
+./python/README.md:70:Refer to [TESTING.md](TESTING.md) for detailed test instructions.
+./rust/README.md:66:Refer to [TESTING.md](TESTING.md) for detailed test instructions.
+./vba/README.md:79:Refer to [TESTING.md](TESTING.md) for detailed test instructions.
+./README.md:12:A unified, high-performance, cross-platform logging and configuration facade. Universal Logger provides a single, consistent API across multiple languages (Go, Python, Rust, C++, VBA) by orchestrating [Distributed-Config](https://github.com/Bastien-Antigravity/distributed-config) and [Flexible-Logger](https://github.com/Bastien-Antigravity/flexible-logger) via a high-performance CGO bridge.
+./cpp/README.md:68:Refer to [TESTING.md](TESTING.md) for detailed test instructions.
+./AI-Init.md:6:> *"Read the ecosystem map in **[[00-Master-MOC]]** and restore session state from **[[universal-logger/AI-Session-State]]**. Follow the standardized loop in **[[00-Daily-AI-Playbook]]**."*
+./src/README.md:37:Refer to [TESTING.md](TESTING.md) for detailed Go-side test instructions.
