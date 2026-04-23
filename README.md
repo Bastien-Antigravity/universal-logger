@@ -18,11 +18,11 @@ Universal Logger acts as a "Universal Adapter." Since modernization 2026, it cen
 ```mermaid
 flowchart TD
     subgraph Client_Layers [Native Facades]
-        Py[Python (ctypes)] 
-        Rs[Rust (FFI/unilog-rs)]
-        Cpp[C++ (RAII Wrapper)]
-        VBA[VBA (WinMessagePump)]
-        Go[Go Native]
+        Py["Python (ctypes)"] 
+        Rs["Rust (FFI/unilog-rs)"]
+        Cpp["C++ (RAII Wrapper)"]
+        VBA["VBA (WinMessagePump)"]
+        Go["Go Native"]
     end
 
     subgraph Bridge_Layer [Shared Engine]
