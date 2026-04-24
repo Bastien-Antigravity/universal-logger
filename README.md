@@ -66,7 +66,7 @@ Universal Logger uses "prescribed strategies" to ensure the right balance of rel
 | **Cloud Native** | `production` | `cloud` | Standard | Non-Blocking | Microservices / K8s. |
 | **High Load** | `production` | `high_perf` | **Performance** | Non-Blocking | Low-latency telemetry (UDP). |
 | **Testing** | `test` | `minimal` | Standard | Blocking | CI/CD environments. |
-| **Monitor** | `preprod` | `notif_logger` | Standard | Non-Blocking | Remote health monitoring. |
+| **Monitor** | `staging` | `notif_logger` | Standard | Non-Blocking | Remote health monitoring. |
 
 ### 🛡️ Reliability & Connection Modes
 Starting in **v1.1.7**, connection management is profile-driven:

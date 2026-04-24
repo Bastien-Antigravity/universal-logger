@@ -61,7 +61,7 @@ asyncio.run(main())
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
 | `app_name` | `"python-app"` | Application identifier (Trimmmed for exact match) |
-| `config_profile` | `"standalone"` | `production`, `preprod`, `test`, `standalone` |
+| `config_profile` | `"standalone"` | `production`, `staging`, `test`, `standalone` |
 | `logger_profile` | `"standard"` | `standard`, `devel`, `high_perf`, `minimal`, `audit`, `cloud_native`, `no_lock`, `notif_logger` |
 | `log_level` | `"info"` | `debug`, `info`, `warning`, `error`, `critical` |
 | `use_local_notifier` | `False` | Enable in-process 1024-buffered notification queue |

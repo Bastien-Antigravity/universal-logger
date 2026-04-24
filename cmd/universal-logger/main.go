@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("  2: Production Standard (production + standard)")
 		fmt.Println("  3: High Throughput (production + high_perf)")
 		fmt.Println("  4: Testing (test + minimal)")
-		fmt.Println("  5: Monitoring (preprod + notif_logger)")
+		fmt.Println("  5: Monitoring (staging + notif_logger)")
 		fmt.Println("  6: Lock-Free Performance (production + no_lock)")
 		return
 	}
@@ -70,7 +70,7 @@ func main() {
 		// SCENARIO 5: MONITORING & ALERTING
 		fmt.Println(">>> Starting Scenario 5: Monitoring focused")
 		name = "monitor-svc"
-		configProfile = "preprod"
+		configProfile = "staging"
 		loggerProfile = "notif_logger"
 		logLevel = "INFO"
 
