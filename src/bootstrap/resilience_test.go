@@ -196,7 +196,7 @@ func TestFullEcosystemResilience(t *testing.T) {
 	}
 	// If it was the hello message, the next one should be the log
 	if len(msg) < 5 { // simple check to see if it's a capnp hello (usually short) vs log message
-		msg, ok = logServer.GetLastMessage(2 * time.Second)
+		_, ok = logServer.GetLastMessage(2 * time.Second)
 		if !ok {
 			t.Error("Log server did not receive log message after potential hello")
 		}
