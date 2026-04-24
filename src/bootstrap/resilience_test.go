@@ -6,70 +6,140 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Bastien-Antigravity/safe-socket/src/facade"
+	"github.com/Bastien-Antigravity/safe-socket/src/interfaces"
+	"github.com/Bastien-Antigravity/safe-socket/src/models"
+	"github.com/Bastien-Antigravity/safe-socket/src/profiles"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
-// MockServer simulates a remote service (Log or Notif server)
+// MockServer simulates a remote service using the safe-socket library.
 type MockServer struct {
-	addr     string
-	listener net.Listener
-	mu       sync.Mutex
+	server   *facade.SocketServer
 	received chan string
+	shutdown chan struct{}
+	port     string
+	mu       sync.Mutex
 	running  bool
+	conns    []interfaces.TransportConnection
 }
 
-func NewMockServer() *MockServer {
-	return &MockServer{
-		received: make(chan string, 100),
+func NewMockServer(t *testing.T, name string, profileType string) (*MockServer, string, string) {
+	t.Helper()
+
+	var profile interfaces.SocketProfile
+	if profileType == "tcp-hello" {
+		profile = profiles.NewTcpHelloServerProfile(name, "127.0.0.1:0", 5000)
+	} else {
+		profile = profiles.NewTcpServerProfile(name, "127.0.0.1:0", 5000)
 	}
-}
 
-func (m *MockServer) Start() (string, string, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	config := models.SocketConfig{
+		Deadline: 30 * time.Second,
+	}
 
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	server := facade.NewSocketServer(profile, config)
+	if err := server.Listen(); err != nil {
+		t.Fatalf("Failed to start safe-socket MockServer [%s]: %v", name, err)
+	}
+
+	addr, err := server.GetAddr()
 	if err != nil {
-		return "", "", err
+		t.Fatalf("Failed to get address for MockServer [%s]: %v", name, err)
 	}
-	m.listener = ln
-	m.addr = ln.Addr().String()
-	m.running = true
+	host, port, _ := net.SplitHostPort(addr)
 
-	host, port, _ := net.SplitHostPort(m.addr)
+	m := &MockServer{
+		server:   server,
+		received: make(chan string, 100),
+		shutdown: make(chan struct{}),
+		port:     port,
+		running:  true,
+	}
 
-	go func() {
-		for {
-			conn, err := ln.Accept()
-			if err != nil {
-				return
-			}
-			go m.handleConnection(conn)
-		}
-	}()
-
-	return host, port, nil
+	go m.acceptLoop()
+	return m, host, port
 }
 
-func (m *MockServer) handleConnection(conn net.Conn) {
+// NewMockServerOnPort creates a MockServer bound to a specific port.
+func NewMockServerOnPort(t *testing.T, name string, profileType string, port string) *MockServer {
+	t.Helper()
+
+	var profile interfaces.SocketProfile
+	addr := "127.0.0.1:" + port
+	if profileType == "tcp-hello" {
+		profile = profiles.NewTcpHelloServerProfile(name, addr, 5000)
+	} else {
+		profile = profiles.NewTcpServerProfile(name, addr, 5000)
+	}
+
+	config := models.SocketConfig{
+		Deadline: 30 * time.Second,
+	}
+
+	server := facade.NewSocketServer(profile, config)
+	if err := server.Listen(); err != nil {
+		t.Fatalf("Failed to restart safe-socket MockServer [%s] on port %s: %v", name, port, err)
+	}
+
+	m := &MockServer{
+		server:   server,
+		received: make(chan string, 100),
+		shutdown: make(chan struct{}),
+		port:     port,
+		running:  true,
+	}
+
+	go m.acceptLoop()
+	return m
+}
+
+func (m *MockServer) acceptLoop() {
+	for {
+		conn, err := m.server.Accept()
+		if err != nil {
+			select {
+			case <-m.shutdown:
+				return
+			default:
+				continue
+			}
+		}
+		m.mu.Lock()
+		m.conns = append(m.conns, conn)
+		m.mu.Unlock()
+		go m.handleConnection(conn)
+	}
+}
+
+func (m *MockServer) handleConnection(conn interfaces.TransportConnection) {
 	defer conn.Close()
-	m.mu.Lock()
-	m.mu.Unlock()
-	
-	b := make([]byte, 4096)
-	n, err := conn.Read(b)
-	if err == nil && n > 0 {
-		msg := string(b[:n])
-		// fmt.Printf("!!! MockServer [%s] received: %s\n", m.addr, msg)
-		m.received <- msg
+
+	for {
+		msg, err := conn.ReadMessage()
+		if err != nil {
+			return
+		}
+
+		// Non-blocking send to channel
+		select {
+		case m.received <- string(msg):
+		default:
+		}
 	}
 }
 
 func (m *MockServer) Stop() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if m.listener != nil {
-		m.listener.Close()
+	if m.running {
+		close(m.shutdown)
+		m.server.Close()
+		// Force close all active connections
+		for _, c := range m.conns {
+			c.Close()
+		}
+		m.conns = nil
 		m.running = false
 	}
 }
@@ -86,14 +156,10 @@ func (m *MockServer) GetLastMessage(timeout time.Duration) (string, bool) {
 // -----------------------------------------------------------------------------
 
 func TestFullEcosystemResilience(t *testing.T) {
-	// 1. Setup Mock Servers
-	logServer := NewMockServer()
-	logHost, logPort, _ := logServer.Start()
-	defer logServer.Stop()
-
-	notifServer := NewMockServer()
-	notifHost, notifPort, _ := notifServer.Start()
-	defer notifServer.Stop()
+	// 1. Setup Mock Servers using safe-socket
+	// Log server uses "tcp" (Raw Framed TCP), Notif server uses "tcp-hello"
+	logServer, logHost, logPort := NewMockServer(t, "log-server-mock", "tcp")
+	notifServer, notifHost, notifPort := NewMockServer(t, "notif-server-mock", "tcp-hello")
 
 	// 2. Setup Config
 	baseConfig, _ := Init("resilience-test", "standalone", "devel", "INFO", false, nil)
@@ -115,12 +181,25 @@ func TestFullEcosystemResilience(t *testing.T) {
 	}
 
 	_, uniLog := InitWithOptions(opts)
-	defer uniLog.Close()
+
+	// Since Log Server is "tcp", the first message might be the hello message.
+	// We need to consume it if it arrives.
+	// Actually, the standard profile DOES send a hello message.
 
 	// 4. Verify baseline connection
 	uniLog.Info("Baseline Log")
-	if _, ok := logServer.GetLastMessage(2 * time.Second); !ok {
-		t.Error("Log server did not receive baseline log")
+	
+	// Consume first message for log server (might be hello)
+	msg, ok := logServer.GetLastMessage(2 * time.Second)
+	if !ok {
+		t.Error("Log server did not receive anything")
+	}
+	// If it was the hello message, the next one should be the log
+	if len(msg) < 5 { // simple check to see if it's a capnp hello (usually short) vs log message
+		msg, ok = logServer.GetLastMessage(2 * time.Second)
+		if !ok {
+			t.Error("Log server did not receive log message after potential hello")
+		}
 	}
 
 	uniLog.Warning("Baseline Notif")
@@ -128,7 +207,7 @@ func TestFullEcosystemResilience(t *testing.T) {
 		t.Error("Notif server did not receive baseline notification")
 	}
 
-	// 5. Simulate CRASH (Stop servers)
+	// 5. Simulate CRASH
 	logServer.Stop()
 	notifServer.Stop()
 	t.Log("Servers stopped, logging into the void...")
@@ -137,63 +216,26 @@ func TestFullEcosystemResilience(t *testing.T) {
 		uniLog.Warning("Message during outage")
 	}
 
-	// 6. RESTART Servers (on same ports)
-	// We need to re-bind manually to the same ports if possible, 
-	// but for the test we'll just verify the logger can RE-resolve or re-connect 
-	// if we update the config or if it keeps trying the same address.
-	// Note: Flexible-logger keeps the IP/Port pointers from the config.
-	
-	newLogServer := NewMockServer()
-	lnLog, err := net.Listen("tcp", "127.0.0.1:"+logPort)
-	if err != nil {
-		t.Fatalf("Failed to restart LogServer: %v", err)
-	}
-	newLogServer.listener = lnLog
-	go func() {
-		for {
-			conn, err := lnLog.Accept()
-			if err != nil {
-				return
-			}
-			newLogServer.handleConnection(conn)
-		}
-	}()
-	defer lnLog.Close()
-
-	newNotifServer := NewMockServer()
-	lnNotif, err := net.Listen("tcp", "127.0.0.1:"+notifPort)
-	if err != nil {
-		t.Fatalf("Failed to restart NotifServer: %v", err)
-	}
-	newNotifServer.listener = lnNotif
-	go func() {
-		for {
-			conn, err := lnNotif.Accept()
-			if err != nil {
-				return
-			}
-			newNotifServer.handleConnection(conn)
-		}
-	}()
-	defer lnNotif.Close()
+	// 6. RESTART Servers
+	newLogServer := NewMockServerOnPort(t, "log-server-mock", "tcp", logPort)
+	newNotifServer := NewMockServerOnPort(t, "notif-server-mock", "tcp-hello", notifPort)
 
 	t.Log("Servers restarted, waiting for reconnection...")
 
 	// 7. Verify recovery
-	// Standard strategy retries every few seconds (max 2s in some configs)
 	recoveredLog := false
 	recoveredNotif := false
-	
+
 	for i := 0; i < 20; i++ {
 		uniLog.Warning("Recovery Check %d", i)
-		
+
 		if !recoveredLog {
 			if _, ok := newLogServer.GetLastMessage(500 * time.Millisecond); ok {
 				recoveredLog = true
 				t.Log("Log server RECOVERED")
 			}
 		}
-		
+
 		if !recoveredNotif {
 			if _, ok := newNotifServer.GetLastMessage(500 * time.Millisecond); ok {
 				recoveredNotif = true
@@ -213,4 +255,9 @@ func TestFullEcosystemResilience(t *testing.T) {
 	if !recoveredNotif {
 		t.Error("Notif server did not recover connection")
 	}
+
+	// 8. Cleanup
+	uniLog.Close()
+	newLogServer.Stop()
+	newNotifServer.Stop()
 }
