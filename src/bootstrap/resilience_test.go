@@ -158,7 +158,7 @@ func (m *MockServer) GetLastMessage(timeout time.Duration) (string, bool) {
 func TestFullEcosystemResilience(t *testing.T) {
 	// 1. Setup Mock Servers using safe-socket
 	// Log server uses "tcp" (Raw Framed TCP), Notif server uses "tcp-hello"
-	logServer, logHost, logPort := NewMockServer(t, "log-server-mock", "tcp")
+	logServer, logHost, logPort := NewMockServer(t, "log-server-mock", "tcp-hello")
 	notifServer, notifHost, notifPort := NewMockServer(t, "notif-server-mock", "tcp-hello")
 
 	// 2. Setup Config

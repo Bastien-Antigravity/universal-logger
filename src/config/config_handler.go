@@ -22,7 +22,7 @@ func NewDistributedConfig(profile string) *DistConfig {
 // -------------------------------------------------------------------------
 
 // SetConfig a configuration value for a given section and key.
-// Note: This specifically updates the in-memory configuration (MemConfig).
+// Note: This specifically updates the in-memory configuration (LiveConfig).
 // Subsystems monitoring updates via OnConfigUpdate will be notified.
 func (s *DistConfig) SetConfig(section, key, value string) {
 	s.Config.Set(section, key, value)

@@ -88,10 +88,12 @@ Starting in **v1.1.7**, connection management is profile-driven:
 To use the logger in any language, ensure `libunilog.dll` is in your `PATH` or application directory.
 
 ```go
-// Go Native Bootstrap
-import "github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+import (
+	unilog "github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
+)
 
-cfg, logger := bootstrap.Init("my-service", "standalone", "standard", "INFO", false, nil)
+// Go Native Bootstrap
+cfg, logger := unilog.Init("my-service", "standalone", "standard", "INFO", false, nil)
 ```
 
 ## 📜 Maintenance

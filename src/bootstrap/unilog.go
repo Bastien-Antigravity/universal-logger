@@ -6,8 +6,8 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/logger"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
-	flex_interfaces "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
-	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	flexible_logger "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
+	"github.com/Bastien-Antigravity/flexible-logger/src/models"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
 
@@ -56,7 +56,7 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 	}
 
 	// 3. Initialize Logger using the selected profile
-	var flexLogger flex_interfaces.Logger
+	var flexLogger flexible_logger.Logger
 	switch opts.LoggerProfile {
 	case "audit":
 		flexLogger = profiles.NewAuditLogger(opts.Name, distConfig.Config, opts.UseLocalNotifier)
