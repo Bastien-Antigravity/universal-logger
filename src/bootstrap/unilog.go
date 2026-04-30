@@ -7,11 +7,13 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
 	flexible_logger "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
-	"github.com/Bastien-Antigravity/flexible-logger/src/models"
+	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 	"github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
 
 // BootstrapOptions defines the configuration parameters for initializes the subsystems.
 type BootstrapOptions struct {
@@ -23,6 +25,10 @@ type BootstrapOptions struct {
 	ExistingConfig   *config.DistConfig // OPTIONAL: Inject an existing configuration instance
 	Metadata         map[string]string  // OPTIONAL: Fields to be added to all logs
 }
+
+// -----------------------------------------------------------------------------
+// Constructors
+// -----------------------------------------------------------------------------
 
 // Init initializes both subsystems and returns both directly.
 // It also sets up the automatic log-level synchronization.
