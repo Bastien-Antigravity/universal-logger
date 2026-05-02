@@ -14,7 +14,7 @@ endif
 LIB_DIR := $(PWD)/libunilog
 CORE_SRC := $(wildcard src/cgo_bridge/*.go)
 
-all: core cpp rust python
+all: core cpp rust python audit
 
 help:
 	@echo "Universal Logger Build System"
@@ -24,7 +24,12 @@ help:
 	@echo "  make cpp      - Build C++ example"
 	@echo "  make rust     - Build Rust example"
 	@echo "  make python   - Run Python tests (requires Core)"
+	@echo "  make audit    - Run polyglot parity audit"
 	@echo "  make clean    - Remove all build artifacts"
+
+audit:
+	@echo ">>> Running Polyglot Parity Audit..."
+	@python3 scripts/parity-audit.py
 
 core: $(LIB_DIR)/libunilog.$(LIB_EXT)
 
