@@ -8,6 +8,7 @@ import "C"
 import (
 	"strings"
 	"sync"
+	"unsafe"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 	"github.com/Bastien-Antigravity/universal-logger/src/config"
@@ -35,11 +36,28 @@ func main() {}
 // -------------------------------------------------------------------------
 
 //export UniLog_Init
-func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int) uintptr {
+func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int, configHandle uintptr) uintptr {
 	name := strings.TrimSpace(C.GoString(appName))
 	cfgProf := strings.TrimSpace(C.GoString(configProfile))
 	logProf := strings.TrimSpace(C.GoString(loggerProfile))
-	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel).String(), useLocalNotifier != 0, nil)
+
+	// Attempt to recover an existing config if handle is provided
+	var existingCfg *config.DistConfig
+	if configHandle != 0 {
+		facadeMu.Lock()
+		// First, check if it's one of OUR handles (from UniLog_Config_New)
+		if session, ok := facadeStore[configHandle]; ok && session.Config != nil {
+			existingCfg = session.Config
+		}
+		facadeMu.Unlock()
+
+		// If not found in our store, it might be a direct pointer (unsafe but possible in same runtime)
+		if existingCfg == nil {
+			existingCfg = (*config.DistConfig)(unsafe.Pointer(configHandle))
+		}
+	}
+
+	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel).String(), useLocalNotifier != 0, existingCfg)
 
 	facadeMu.Lock()
 	defer facadeMu.Unlock()

@@ -30,6 +30,23 @@ typedef void (*config_update_cb)(const char* json_data);
 
 #line 1 "cgo-generated-wrapper"
 
+#line 3 "distconf_bridge.go"
+
+#include <stdlib.h>
+#include <stdint.h>
+
+// Define the callback type for C
+typedef void (*distconf_update_cb)(uintptr_t handle, const char* json_data);
+
+// Helper to safely execute a C callback from Go
+static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, const char* json_data) {
+    if (cb != NULL) {
+        cb(handle, json_data);
+    }
+}
+
+#line 1 "cgo-generated-wrapper"
+
 #line 3 "initialize.go"
 
 #include <stdlib.h>
@@ -137,7 +154,17 @@ extern "C" {
 extern char* UniLog_Config_Get(GoUintptr handle, char* section, char* key);
 extern void UniLog_Config_Set(GoUintptr handle, char* section, char* key, char* value);
 extern void UniLog_OnConfigUpdate(GoUintptr handle, config_update_cb cb);
-extern GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier);
+extern void DistConf_FreeString(char* ptr);
+extern GoUintptr DistConf_New(char* profile);
+extern void DistConf_Close(GoUintptr handle);
+extern char* DistConf_Get(GoUintptr handle, char* section, char* key);
+extern GoInt DistConf_Set(GoUintptr handle, char* section, char* key, char* value);
+extern GoInt DistConf_Sync(GoUintptr handle);
+extern char* DistConf_GetAddress(GoUintptr handle, char* capability);
+extern char* DistConf_GetFullConfig(GoUintptr handle);
+extern char* DistConf_Decrypt(GoUintptr handle, char* ciphertext);
+extern void DistConf_OnLiveConfUpdate(GoUintptr handle, distconf_update_cb cb);
+extern GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier, GoUintptr configHandle);
 extern void UniLog_Close(GoUintptr handle);
 extern void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
 extern void UniLog_SetLevel(GoUintptr handle, GoInt level);

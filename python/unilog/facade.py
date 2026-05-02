@@ -19,7 +19,8 @@ class UniLog:
     """
 
     def __init__(self, app_name="python-app", config_profile="standalone", 
-                 logger_profile="standard", log_level="info", use_local_notifier=False):
+                 logger_profile="standard", log_level="info", use_local_notifier=False,
+                 config_handle=0):
         if not lib:
             raise RuntimeError("libunilog shared library not found. Please ensure it is built.")
         
@@ -31,7 +32,8 @@ class UniLog:
             config_profile.encode('utf-8'), 
             logger_profile.encode('utf-8'), 
             ctypeC_int(level_val),
-            ctypeC_int(1 if use_local_notifier else 0)
+            ctypeC_int(1 if use_local_notifier else 0),
+            config_handle
         )
         self._callback_ref = None # Keep reference to avoid GC
         self._sync_subscribers = []

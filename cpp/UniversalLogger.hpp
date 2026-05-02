@@ -35,14 +35,16 @@ public:
                     const std::string& config_profile = "standalone", 
                     const std::string& logger_profile = "standard", 
                     int log_level = INFO,
-                    bool use_local_notifier = false) {
+                    bool use_local_notifier = false,
+                    uintptr_t config_handle = 0) {
         
         handle_ = UniLog_Init(
             const_cast<char*>(app_name.c_str()),
             const_cast<char*>(config_profile.c_str()),
             const_cast<char*>(logger_profile.c_str()),
             log_level,
-            use_local_notifier ? 1 : 0
+            use_local_notifier ? 1 : 0,
+            config_handle
         );
 
         if (handle_ == 0) {

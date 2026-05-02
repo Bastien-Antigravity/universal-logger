@@ -69,9 +69,11 @@ except Exception:
 
 if lib:
     # Initialization & Lifecycle
-    lib.UniLog_Init.argtypes = [ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_int, ctypeC_int]
+    lib.UniLog_Init.argtypes = [
+        ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, 
+        ctypeC_int, ctypeC_int, ctypeC_size_t
+    ]
     lib.UniLog_Init.restype = ctypeC_size_t
-    
     lib.UniLog_Close.argtypes = [ctypeC_size_t]
 
     # Logging Interface
@@ -87,14 +89,25 @@ if lib:
     lib.UniLog_AddMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
     lib.UniLog_SetMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p]
 
-    # Configuration Interface
-    lib.UniLog_Config_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
-    lib.UniLog_Config_Get.restype = ctypeC_char_p
-    
-    lib.UniLog_Config_Set.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p]
-
     # Shared Bridge Callbacks
     CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
+
+    # Configuration Interface (Native UniLog)
+    lib.UniLog_Config_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
+    lib.UniLog_Config_Get.restype = ctypeC_char_p
+    lib.UniLog_Config_Set.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p]
     lib.UniLog_OnConfigUpdate.argtypes = [ctypeC_size_t, CALLBACK_TYPE]
-    
     lib.UniLog_RegisterNotifCallback.argtypes = [ctypeC_size_t, CALLBACK_TYPE]
+
+    # DISTCONF COMPATIBILITY LAYER (Microservice Toolbox Support)
+    try:
+        lib.DistConf_New.argtypes = [ctypeC_char_p]
+        lib.DistConf_New.restype = ctypeC_size_t
+        lib.DistConf_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
+        lib.DistConf_Get.restype = ctypeC_char_p
+        lib.DistConf_Set.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p]
+        lib.DistConf_GetFullConfig.argtypes = [ctypeC_size_t]
+        lib.DistConf_GetFullConfig.restype = ctypeC_char_p
+        lib.DistConf_Close.argtypes = [ctypeC_size_t]
+    except Exception:
+        pass # Compatibility layer might be missing if lib is old

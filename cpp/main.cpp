@@ -8,7 +8,7 @@ int main() {
               << std::endl;
 
     // 1. Initialize the logger using RAII (Order: app_name, config_profile, logger_profile)
-    UniLog logger("cpp-app-demo", "standalone", "devel", UniLog::DEBUG);
+    UniLog logger("cpp-app-demo", "standalone", "devel", UniLog::DEBUG, false, 0);
 
     // 2. Metadata management
     logger.add_metadata("version", "1.1.0");

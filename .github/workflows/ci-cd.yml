@@ -27,6 +27,18 @@ jobs:
           repository: Bastien-Antigravity/flexible-logger
           path: flexible-logger
 
+      - name: Checkout Microservice-Toolbox
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/microservice-toolbox
+          path: microservice-toolbox
+
+      - name: Checkout Safe-Socket
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/safe-socket
+          path: safe-socket
+
       # 2. Checkout Current Project
       - name: Checkout Distconf-Flexlog
         uses: actions/checkout@v4

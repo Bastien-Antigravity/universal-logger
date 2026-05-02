@@ -10,7 +10,7 @@ Attribute VB_Name = "UniLog"
 Option Explicit
 
     ' 64-bit Excel
-    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As LongPtr
+    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long, ByVal configHandle As LongPtr) As LongPtr
     Private Declare PtrSafe Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
     Private Declare PtrSafe Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
     Private Declare PtrSafe Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
@@ -19,7 +19,14 @@ Option Explicit
     Private Declare PtrSafe Function UniLog_GetLevel Lib "libunilog.dll" (ByVal handle As LongPtr) As Long
     Private Declare PtrSafe Sub UniLog_AddMetadata Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal key As String, ByVal value As String)
     
-    ' --- VBA CALLBACK BRIDGE (NEW) ---
+    ' DISTCONF COMPATIBILITY LAYER (Microservice Toolbox Support)
+    Private Declare PtrSafe Function DistConf_New Lib "libunilog.dll" (ByVal profile As String) As LongPtr
+    Private Declare PtrSafe Function DistConf_Get Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
+    Private Declare PtrSafe Sub DistConf_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
+    Private Declare PtrSafe Function DistConf_GetFullConfig Lib "libunilog.dll" (ByVal handle As LongPtr) As LongPtr
+    Private Declare PtrSafe Sub DistConf_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
+    
+    ' --- VBA CALLBACK BRIDGE ---
     Private Declare PtrSafe Sub UniLog_RegisterVBAWindow Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal hwnd As LongPtr, ByVal msgId As Long)
     Private Declare PtrSafe Sub UniLog_RegisterNotifCallback Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal callback As LongPtr)
 
@@ -48,12 +55,21 @@ Option Explicit
     Private Declare PtrSafe Sub lstrcpyA Lib "kernel32" (ByVal lpString1 As String, ByVal lpString2 As LongPtr)
 #Else
     ' 32-bit Excel (Note: libunilog.dll must also be 32-bit)
-    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As Long
+    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long, ByVal configHandle As Long) As Long
     Private Declare Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As Long)
     Private Declare Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
     Private Declare Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare Sub UniLog_LogWithMetadata Lib "libunilog.dll" (ByVal handle As Long, ByVal level As Long, ByVal msg As String, ByVal file As String, ByVal line As String, ByVal functionName As String, ByVal moduleName As String)
     Private Declare Sub UniLog_SetLevel Lib "libunilog.dll" (ByVal handle As Long, ByVal level As Long)
+    Private Declare Function UniLog_GetLevel Lib "libunilog.dll" (ByVal handle As Long) As Long
+    Private Declare Sub UniLog_AddMetadata Lib "libunilog.dll" (ByVal handle As Long, ByVal key As String, ByVal value As String)
+    
+    ' DISTCONF COMPATIBILITY LAYER
+    Private Declare Function DistConf_New Lib "libunilog.dll" (ByVal profile As String) As Long
+    Private Declare Function DistConf_Get Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
+    Private Declare Sub DistConf_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
+    Private Declare Function DistConf_GetFullConfig Lib "libunilog.dll" (ByVal handle As Long) As Long
+    Private Declare Sub DistConf_Close Lib "libunilog.dll" (ByVal handle As Long)
 #End If
 
 ' Shared Log Levels
@@ -182,8 +198,8 @@ Public Sub TestUniversalLogger()
     Dim handle As LongPtr
     Dim dbIp As String
     
-    ' 1. Initialize the logger (Order: appName, configProfile, loggerProfile)
-    handle = UniLog_Init("Excel-Tool", "standalone", "standard", Level_INFO, 0)
+    ' 1. Initialize the logger session
+    handle = UniLog_Init("vba-app-demo", "standalone", "devel", Level_DEBUG, 0, 0)
     
     If handle = 0 Then
         MsgBox "Failed to initialize Universal Logger!", vbCritical

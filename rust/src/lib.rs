@@ -10,7 +10,7 @@ use std::sync::Mutex;
 
 #[link(name = "unilog")]
 extern "C" {
-    fn UniLog_Init(app_name: *const c_char, config_profile: *const c_char, logger_profile: *const c_char, log_level: c_int, use_local_notifier: c_int) -> uintptr_t;
+    fn UniLog_Init(app_name: *const c_char, config_profile: *const c_char, logger_profile: *const c_char, log_level: c_int, use_local_notifier: c_int, config_handle: uintptr_t) -> uintptr_t;
     fn UniLog_Close(handle: uintptr_t);
     fn UniLog_Config_Get(handle: uintptr_t, section: *const c_char, key: *const c_char) -> *mut c_char;
     fn UniLog_Config_Set(handle: uintptr_t, section: *const c_char, key: *const c_char, value: *const c_char);
@@ -21,6 +21,13 @@ extern "C" {
     fn UniLog_GetLevel(handle: uintptr_t) -> c_int;
     fn UniLog_AddMetadata(handle: uintptr_t, key: *const c_char, value: *const c_char);
     fn UniLog_SetMetadata(handle: uintptr_t, json_metadata: *const c_char);
+
+    // DISTCONF COMPATIBILITY LAYER
+    fn DistConf_New(profile: *const c_char) -> uintptr_t;
+    fn DistConf_Get(handle: uintptr_t, section: *const c_char, key: *const c_char) -> *mut c_char;
+    fn DistConf_Set(handle: uintptr_t, section: *const c_char, key: *const c_char, value: *const c_char);
+    fn DistConf_GetFullConfig(handle: uintptr_t) -> *mut c_char;
+    fn DistConf_Close(handle: uintptr_t);
 }
 
 // -----------------------------------------------------------------------------
@@ -70,13 +77,19 @@ pub struct UniLog {
 
 impl UniLog {
     /// Initializes a new logger session via the Go shared library.
-    pub fn new(app_name: &str, config_profile: &str, logger_profile: &str, log_level: LogLevel, use_local_notifier: bool) -> Result<Self, String> {
-        let c_config = CString::new(config_profile).map_err(|e| e.to_string())?;
+    pub fn new(app_name: &str, config_profile: &str, logger_profile: &str, log_level: LogLevel, use_local_notifier: bool, config_handle: uintptr_t) -> Result<Self, String> {
         let c_app = CString::new(app_name).map_err(|e| e.to_string())?;
-        let c_logger = CString::new(logger_profile).map_err(|e| e.to_string())?;
-        
+        let c_conf = CString::new(config_profile).map_err(|e| e.to_string())?;
+        let c_log = CString::new(logger_profile).map_err(|e| e.to_string())?;
         let handle = unsafe {
-            UniLog_Init(c_app.as_ptr(), c_config.as_ptr(), c_logger.as_ptr(), log_level as c_int, if use_local_notifier { 1 } else { 0 })
+            UniLog_Init(
+                c_app.as_ptr(),
+                c_conf.as_ptr(),
+                c_log.as_ptr(),
+                log_level as c_int,
+                if use_local_notifier { 1 } else { 0 },
+                config_handle
+            )
         };
         
         if handle == 0 {
