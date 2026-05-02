@@ -18,6 +18,9 @@ extern "C" {
     fn UniLog_RegisterNotifCallback(handle: uintptr_t, cb: extern "C" fn(*const c_char));
     fn UniLog_LogWithMetadata(handle: uintptr_t, level: i64, msg: *const c_char, file: *const c_char, line: *const c_char, function: *const c_char, module: *const c_char);
     fn UniLog_SetLevel(handle: uintptr_t, level: i64);
+    fn UniLog_GetLevel(handle: uintptr_t) -> c_int;
+    fn UniLog_AddMetadata(handle: uintptr_t, key: *const c_char, value: *const c_char);
+    fn UniLog_SetMetadata(handle: uintptr_t, json_metadata: *const c_char);
 }
 
 // -----------------------------------------------------------------------------
@@ -51,6 +54,11 @@ pub enum LogLevel {
     Debug = 1,
     Stream = 2,
     Info = 3,
+    Logon = 4,
+    Logout = 5,
+    Trade = 6,
+    Schedule = 7,
+    Report = 8,
     Warning = 9,
     Error = 10,
     Critical = 11,
@@ -152,6 +160,44 @@ impl UniLog {
     pub fn set_level(&self, level: LogLevel) {
         unsafe {
             UniLog_SetLevel(self.handle, level as i64);
+        }
+    }
+
+    /// Retrieves the current log level from the Go core.
+    pub fn get_level(&self) -> LogLevel {
+        let level = unsafe { UniLog_GetLevel(self.handle) };
+        match level {
+            1 => LogLevel::Debug,
+            2 => LogLevel::Stream,
+            3 => LogLevel::Info,
+            4 => LogLevel::Logon,
+            5 => LogLevel::Logout,
+            6 => LogLevel::Trade,
+            7 => LogLevel::Schedule,
+            8 => LogLevel::Report,
+            9 => LogLevel::Warning,
+            10 => LogLevel::Error,
+            11 => LogLevel::Critical,
+            _ => LogLevel::Info,
+        }
+    }
+
+    /// Adds a single metadata field to all future logs.
+    pub fn add_metadata(&self, key: &str, value: &str) {
+        let c_key = CString::new(key).unwrap_or_default();
+        let c_val = CString::new(value).unwrap_or_default();
+        unsafe {
+            UniLog_AddMetadata(self.handle, c_key.as_ptr(), c_val.as_ptr());
+        }
+    }
+
+    /// Replaces all metadata with the provided JSON-serializable map.
+    pub fn set_metadata(&self, metadata: &std::collections::HashMap<String, String>) {
+        if let Ok(json_data) = serde_json::to_string(metadata) {
+            let c_json = CString::new(json_data).unwrap_or_default();
+            unsafe {
+                UniLog_SetMetadata(self.handle, c_json.as_ptr());
+            }
         }
     }
 }

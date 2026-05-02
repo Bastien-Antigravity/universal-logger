@@ -3,8 +3,8 @@ use unilog_rs::{UniLog, LogLevel, unilog_info, unilog_debug, unilog_warning};
 fn main() {
     println!(">>> Initializing Universal Logger from Rust...");
 
-    // 1. Initialize the logger safe wrapper
-    let logger = match UniLog::new("standalone", "rust-app-debug", "standard", LogLevel::Debug, false) {
+    // 1. Initialize the logger safe wrapper (Order: app_name, config_profile, logger_profile)
+    let logger = match UniLog::new("rust-app-demo", "standalone", "devel", LogLevel::Debug, false) {
         Ok(l) => l,
         Err(e) => {
             eprintln!("Error initializing logger: {}", e);
@@ -12,19 +12,34 @@ fn main() {
         }
     };
 
-    // 2. Register a configuration update callback
+    // 2. Metadata management
+    logger.add_metadata("version", "1.1.0");
+    logger.add_metadata("language", "rust");
+    
+    let mut meta = std::collections::HashMap::new();
+    meta.insert("env".to_string(), "development".to_string());
+    meta.insert("arch".to_string(), "parity-hardened".to_string());
+    logger.set_metadata(&meta);
+
+    // 3. Register a configuration update callback
     logger.on_config_update(|json_data| {
         println!(">>> [CALLBACK] Config Updated: {}", json_data);
     });
 
-    // 3. High-level logging using MACROS (Automatic Metadata!)
+    // 4. Verify Log Level
+    println!(">>> Initial Log Level: {:?}", logger.get_level() as i32);
+
+    // 5. High-level logging using MACROS (Automatic Metadata!)
     unilog_info!(logger, "Hello from safe Rust bindings with auto-metadata!");
     unilog_debug!(logger, "Debugging with macros is zero-cost and automatic.");
 
-    // 4. Automated Metadata logging (Warning)
+    // 6. Automated Metadata logging (Warning)
     unilog_warning!(logger, "System resources running high (detected automatically)!");
 
-    // 5. Configuration interaction (Explicit names)
+    // 7. Domain-specific levels
+    logger.log_with_metadata(LogLevel::Trade, "Simulated trade execution", file!(), &line!().to_string(), "main", module_path!());
+
+    // 8. Configuration interaction (Explicit names)
     if let Some(db_ip) = logger.get_config("database", "ip") {
         println!(">>> Config Database IP: {}", db_ip);
     }

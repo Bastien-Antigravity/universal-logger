@@ -10,12 +10,14 @@ Attribute VB_Name = "UniLog"
 Option Explicit
 
     ' 64-bit Excel
-    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As LongPtr
+    Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As LongPtr
     Private Declare PtrSafe Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
     Private Declare PtrSafe Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
     Private Declare PtrSafe Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare PtrSafe Sub UniLog_LogWithMetadata Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal level As LongLong, ByVal msg As String, ByVal file As String, ByVal line As String, ByVal functionName As String, ByVal moduleName As String)
     Private Declare PtrSafe Sub UniLog_SetLevel Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal level As LongLong)
+    Private Declare PtrSafe Function UniLog_GetLevel Lib "libunilog.dll" (ByVal handle As LongPtr) As Long
+    Private Declare PtrSafe Sub UniLog_AddMetadata Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal key As String, ByVal value As String)
     
     ' --- VBA CALLBACK BRIDGE (NEW) ---
     Private Declare PtrSafe Sub UniLog_RegisterVBAWindow Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal hwnd As LongPtr, ByVal msgId As Long)
@@ -46,7 +48,7 @@ Option Explicit
     Private Declare PtrSafe Sub lstrcpyA Lib "kernel32" (ByVal lpString1 As String, ByVal lpString2 As LongPtr)
 #Else
     ' 32-bit Excel (Note: libunilog.dll must also be 32-bit)
-    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal configProfile As String, ByVal appName As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As Long
+    Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long) As Long
     Private Declare Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As Long)
     Private Declare Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
     Private Declare Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
@@ -59,6 +61,11 @@ Public Enum UniLogLevel
     Level_DEBUG = 1
     Level_STREAM = 2
     Level_INFO = 3
+    Level_LOGON = 4
+    Level_LOGOUT = 5
+    Level_TRADE = 6
+    Level_SCHEDULE = 7
+    Level_REPORT = 8
     Level_WARNING = 9
     Level_ERROR = 10
     Level_CRITICAL = 11
@@ -159,6 +166,14 @@ Public Sub SetConfig(ByVal handle As LongPtr, ByVal section As String, ByVal key
     UniLog_Config_Set handle, section, key, value
 End Sub
 
+Public Function GetLevel(ByVal handle As LongPtr) As UniLogLevel
+    GetLevel = UniLog_GetLevel(handle)
+End Function
+
+Public Sub AddMetadata(ByVal handle As LongPtr, ByVal key As String, ByVal value As String)
+    UniLog_AddMetadata handle, key, value
+End Sub
+
 ' -----------------------------------------------------------------------------
 ' DEMONSTRATION SUB
 ' -----------------------------------------------------------------------------
@@ -167,24 +182,34 @@ Public Sub TestUniversalLogger()
     Dim handle As LongPtr
     Dim dbIp As String
     
-    ' 1. Initialize the logger
-    handle = UniLog_Init("standalone", "Excel-Tool", "standard", Level_INFO, 0)
+    ' 1. Initialize the logger (Order: appName, configProfile, loggerProfile)
+    handle = UniLog_Init("Excel-Tool", "standalone", "standard", Level_INFO, 0)
     
     If handle = 0 Then
         MsgBox "Failed to initialize Universal Logger!", vbCritical
         Exit Sub
     End If
     
-    ' 2. Log some messages
-    UniLog_LogWithMetadata handle, Level_INFO, "Universal Logger initialized from Excel VBA", "UniversalLogger.bas", "77", "TestUniversalLogger", "VBA-Module"
+    ' 2. Metadata management
+    AddMetadata handle, "version", "1.1.0"
+    AddMetadata handle, "language", "vba"
     
-    ' 3. Get configuration value (Using new standardized name)
+    ' 3. Verify Log Level
+    Debug.Print ">>> Initial Log Level: " & GetLevel(handle)
+    
+    ' 4. Log some messages
+    UniLog_LogWithMetadata handle, Level_INFO, "Universal Logger initialized from Excel VBA", "UniversalLogger.bas", "177", "TestUniversalLogger", "VBA-Module"
+    
+    ' 5. Domain-specific levels
+    UniLog_LogWithMetadata handle, Level_TRADE, "Simulated VBA trade execution", "UniversalLogger.bas", "180", "TestUniversalLogger", "VBA-Module"
+    
+    ' 6. Get configuration value (Using new standardized name)
     dbIp = GetConfig(handle, "database", "ip", "127.0.0.1")
     
     Debug.Print "Database IP from Config: " & dbIp
-    UniLog_LogWithMetadata handle, Level_DEBUG, "Configured DB IP: " & dbIp, "UniversalLogger.bas", "83", "TestUniversalLogger", "VBA-Module"
+    UniLog_LogWithMetadata handle, Level_DEBUG, "Configured DB IP: " & dbIp, "UniversalLogger.bas", "186", "TestUniversalLogger", "VBA-Module"
     
-    ' 4. Update configuration (Using new standardized name)
+    ' 7. Update configuration (Using new standardized name)
     SetConfig handle, "runtime", "last_run", Now()
     
     ' 5. Clean up

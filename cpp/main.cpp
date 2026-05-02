@@ -7,20 +7,26 @@ int main() {
     std::cout << ">>> Initializing Universal Logger from C++ Class..."
               << std::endl;
 
-    // 1. Initialize the logger using RAII
-    UniLog logger("standalone", "cpp-app", "standard", UniLog::DEBUG);
+    // 1. Initialize the logger using RAII (Order: app_name, config_profile, logger_profile)
+    UniLog logger("cpp-app-demo", "standalone", "devel", UniLog::DEBUG);
 
-    // 2. High-level logging using MACROS (Automatic Metadata!)
+    // 2. Metadata management
+    logger.add_metadata("version", "1.1.0");
+    logger.add_metadata("language", "cpp");
+    logger.set_metadata("{\"env\":\"production\",\"team\":\"antigravity\"}");
+
+    // 3. Verify Log Level
+    std::cout << ">>> Initial Log Level: " << static_cast<int>(logger.get_level()) << std::endl;
+
+    // 4. High-level logging using MACROS (Automatic Metadata!)
     UNILOG_INFO(logger, "Hello from C++ Class with automatic metadata!");
     UNILOG_DEBUG(logger, "Debugging with macros is fast and automatic.");
     UNILOG_ERROR(logger, "Error message from C++ Class");
 
-    // 3. Automated Metadata logging using standardized macros
-    UNILOG_WARNING(logger,
-                   "System resources running high (detected automatically)!");
-    UNILOG_CRITICAL(logger, "Critical failure simulation!");
+    // 5. Specialized Domain Levels
+    logger.log(UniLog::TRADE, "Simulated C++ trade execution");
 
-    // 4. Configuration interaction
+    // 6. Configuration interaction
     std::string db_ip =
         logger.get_config("database", "ip", "127.0.0.1 (Default)");
     std::cout << ">>> Config Database IP: " << db_ip << std::endl;

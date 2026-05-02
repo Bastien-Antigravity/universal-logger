@@ -141,6 +141,9 @@ extern GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerPro
 extern void UniLog_Close(GoUintptr handle);
 extern void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);
 extern void UniLog_SetLevel(GoUintptr handle, GoInt level);
+extern GoInt UniLog_GetLevel(GoUintptr handle);
+extern void UniLog_AddMetadata(GoUintptr handle, char* key, char* value);
+extern void UniLog_SetMetadata(GoUintptr handle, char* jsonMetadata);
 extern void UniLog_RegisterNotifCallback(GoUintptr handle, UniLogNotifCallback callback);
 extern void UniLog_RegisterVBAWindow(GoUintptr handle, GoUintptr hwnd, GoUint32 msgId);
 

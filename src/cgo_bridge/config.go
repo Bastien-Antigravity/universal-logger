@@ -40,7 +40,8 @@ func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
 	facadeMu.Unlock()
 
 	if ok && session.Config != nil {
-		session.Config.Set(C.GoString(section), C.GoString(key), C.GoString(value))
+		// We ignore the error here as the C boundary is void
+		_ = session.Config.SetConfig(C.GoString(section), C.GoString(key), C.GoString(value))
 	}
 }
 

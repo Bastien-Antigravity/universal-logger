@@ -18,6 +18,11 @@ public:
         DEBUG = 1,
         STREAM = 2,
         INFO = 3,
+        LOGON = 4,
+        LOGOUT = 5,
+        TRADE = 6,
+        SCHEDULE = 7,
+        REPORT = 8,
         WARNING = 9,
         ERROR = 10,
         CRITICAL = 11
@@ -26,15 +31,15 @@ public:
     /**
      * @brief Initialize a new logger session.
      */
-    UniLog(const std::string& config_profile = "standalone", 
-                    const std::string& app_name = "cpp-app", 
+    UniLog(const std::string& app_name = "cpp-app",
+                    const std::string& config_profile = "standalone", 
                     const std::string& logger_profile = "standard", 
                     int log_level = INFO,
                     bool use_local_notifier = false) {
         
         handle_ = UniLog_Init(
-            const_cast<char*>(config_profile.c_str()),
             const_cast<char*>(app_name.c_str()),
+            const_cast<char*>(config_profile.c_str()),
             const_cast<char*>(logger_profile.c_str()),
             log_level,
             use_local_notifier ? 1 : 0
@@ -115,6 +120,27 @@ public:
      */
     void set_level(int level) {
         UniLog_SetLevel(handle_, level);
+    }
+
+    /**
+     * @brief Get the current log level from the Go core.
+     */
+    Level get_level() {
+        return static_cast<Level>(UniLog_GetLevel(handle_));
+    }
+
+    /**
+     * @brief Add a single metadata field to all future logs.
+     */
+    void add_metadata(const std::string& key, const std::string& value) {
+        UniLog_AddMetadata(handle_, const_cast<char*>(key.c_str()), const_cast<char*>(value.c_str()));
+    }
+
+    /**
+     * @brief Set all metadata using a JSON string.
+     */
+    void set_metadata(const std::string& json_metadata) {
+        UniLog_SetMetadata(handle_, const_cast<char*>(json_metadata.c_str()));
     }
 
     /**

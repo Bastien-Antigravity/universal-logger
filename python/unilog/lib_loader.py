@@ -80,6 +80,12 @@ if lib:
         ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p
     ]
     lib.UniLog_SetLevel.argtypes = [ctypeC_size_t, ctypeC_longlong]
+    lib.UniLog_GetLevel.argtypes = [ctypeC_size_t]
+    lib.UniLog_GetLevel.restype = ctypeC_int
+
+    # Metadata Interface
+    lib.UniLog_AddMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
+    lib.UniLog_SetMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p]
 
     # Configuration Interface
     lib.UniLog_Config_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]

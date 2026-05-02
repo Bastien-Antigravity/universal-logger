@@ -6,6 +6,7 @@ package main
 import "C"
 
 import (
+	"encoding/json"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 )
@@ -43,5 +44,48 @@ func UniLog_SetLevel(handle uintptr, level int) {
 
 	if ok && session.Logger != nil {
 		session.Logger.SetLevel(logger_models.Level(level))
+	}
+}
+
+// -------------------------------------------------------------------------
+
+//export UniLog_GetLevel
+func UniLog_GetLevel(handle uintptr) int {
+	facadeMu.Lock()
+	session, ok := facadeStore[handle]
+	facadeMu.Unlock()
+
+	if ok && session.Logger != nil {
+		return int(session.Logger.GetLevel())
+	}
+	return 0
+}
+
+// -------------------------------------------------------------------------
+
+//export UniLog_AddMetadata
+func UniLog_AddMetadata(handle uintptr, key, value *C.char) {
+	facadeMu.Lock()
+	session, ok := facadeStore[handle]
+	facadeMu.Unlock()
+
+	if ok && session.Logger != nil {
+		session.Logger.AddMetadata(C.GoString(key), C.GoString(value))
+	}
+}
+
+// -------------------------------------------------------------------------
+
+//export UniLog_SetMetadata
+func UniLog_SetMetadata(handle uintptr, jsonMetadata *C.char) {
+	facadeMu.Lock()
+	session, ok := facadeStore[handle]
+	facadeMu.Unlock()
+
+	if ok && session.Logger != nil {
+		var metadata map[string]string
+		if err := json.Unmarshal([]byte(C.GoString(jsonMetadata)), &metadata); err == nil {
+			session.Logger.SetMetadata(metadata)
+		}
 	}
 }

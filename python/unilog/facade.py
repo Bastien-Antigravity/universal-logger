@@ -54,13 +54,37 @@ class UniLog:
     async def async_error(self, msg): await self._async_log(LogLevel.ERROR, msg)
     async def async_critical(self, msg): await self._async_log(LogLevel.CRITICAL, msg)
 
-    # Log level setter
+    # Specialized Domain Methods
+    def logon(self, msg): self._log(LogLevel.LOGON, msg)
+    def logout(self, msg): self._log(LogLevel.LOGOUT, msg)
+    def trade(self, msg): self._log(LogLevel.TRADE, msg)
+    def schedule(self, msg): self._log(LogLevel.SCHEDULE, msg)
+    def report(self, msg): self._log(LogLevel.REPORT, msg)
+
+    # Log level accessors
     def set_level(self, level):
         """Change the current log level dynamically."""
         if isinstance(level, str):
             level = LogLevel.from_str(level)
         lib.UniLog_SetLevel(self._handle, int(level))
         
+    def get_level(self) -> LogLevel:
+        """Retrieve the current log level from the Go core."""
+        return LogLevel(lib.UniLog_GetLevel(self._handle))
+        
+
+    ##########################################################################
+    # Metadata Methods ---
+
+    def add_metadata(self, key: str, value: str):
+        """Add a single key-value pair to all future logs."""
+        lib.UniLog_AddMetadata(self._handle, key.encode('utf-8'), value.encode('utf-8'))
+
+    def set_metadata(self, metadata: dict):
+        """Replace all existing metadata with the provided dictionary."""
+        import json
+        json_data = json.dumps(metadata)
+        lib.UniLog_SetMetadata(self._handle, json_data.encode('utf-8'))
 
     ##########################################################################
     # Config Methods ---

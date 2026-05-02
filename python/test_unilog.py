@@ -39,10 +39,34 @@ class TestUnilog(unitTestCase):
     #         logger.set_config("test_section", "test_key", "test_value")
     #         time.sleep(0.5)
             
-    def test_log_level_change(self):
-        with UniLog(config_profile="standalone", app_name="test-level", logger_profile="devel", log_level="info") as logger:
+    def test_all_levels(self):
+        """Verify that all log levels can be sent through the FFI boundary."""
+        with UniLog(config_profile="standalone", app_name="test-levels", logger_profile="devel") as logger:
+            for level in LogLevel:
+                logger._log(level, f"Testing level: {level.name}")
+            
+            # Verify GetLevel
+            logger.set_level(LogLevel.CRITICAL)
+            self.assertEqual(logger.get_level(), LogLevel.CRITICAL)
+            
             logger.set_level(LogLevel.DEBUG)
-            logger.debug("This should be visible after set_level")
+            self.assertEqual(logger.get_level(), LogLevel.DEBUG)
+
+    def test_metadata(self):
+        """Verify metadata management through the FFI boundary."""
+        with UniLog(config_profile="standalone", app_name="test-metadata", logger_profile="devel") as logger:
+            # Test individual metadata
+            logger.add_metadata("test_key", "test_value")
+            logger.info("Log with individual metadata")
+            
+            # Test bulk metadata
+            meta = {
+                "system": "antigravity",
+                "parity": "hardened",
+                "version": "1.2.0"
+            }
+            logger.set_metadata(meta)
+            logger.info("Log with bulk metadata")
 
 
 ##########################################################################
