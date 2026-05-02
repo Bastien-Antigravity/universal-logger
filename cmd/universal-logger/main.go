@@ -110,7 +110,9 @@ func main() {
 
 	// 3. Update a configuration value dynamically (e.g., simulated remote update)
 	fmt.Println(">>> [Demo] Updating memory configuration dynamically")
-	distConfig.SetConfig("system", "status", "maintenance")
+	if err := distConfig.SetConfig("system", "status", "maintenance"); err != nil {
+		fmt.Printf(">>> [Error] Failed to set config: %v\n", err)
+	}
 
 	// 4. Verify value retrieval
 	status := distConfig.GetConfig("system", "status")

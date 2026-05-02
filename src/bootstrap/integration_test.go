@@ -17,7 +17,9 @@ func TestLogLevelSynchronization(t *testing.T) {
 	}
 
 	// 2. Simulate configuration update (logger.level = DEBUG)
-	distConfig.SetConfig("logger", "level", "DEBUG")
+	if err := distConfig.SetConfig("logger", "level", "DEBUG"); err != nil {
+		t.Fatalf("Failed to set config: %v", err)
+	}
 
 	// Give a small amount of time for the callback to propagate
 	time.Sleep(100 * time.Millisecond)
