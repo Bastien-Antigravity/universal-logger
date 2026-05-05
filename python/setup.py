@@ -65,7 +65,7 @@ setuptoolsSetup(
     name="unilog",
     version="1.4.2",
     packages=["unilog"],
-    package_dir={"": "python"},
+    package_dir={"": "."},
     package_data={"unilog": ["*.so", "*.dylib", "*.dll", "*.h"]},
     # Custom build commands including the Go bridge compilation
     cmdclass={
