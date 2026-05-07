@@ -1,3 +1,9 @@
+---
+microservice: universal-logger
+type: governance
+status: active
+---
+
 # ⚡ AI Initialization: universal-logger
 
 > [!IMPORTANT] MANDATORY INITIALIZATION
