@@ -6,6 +6,7 @@ require (
 	github.com/Bastien-Antigravity/distributed-config v1.9.922
 	github.com/Bastien-Antigravity/flexible-logger v1.3.3
 	github.com/Bastien-Antigravity/safe-socket v1.8.2
+	github.com/mitchellh/mapstructure v1.5.0
 )
 
 require (
