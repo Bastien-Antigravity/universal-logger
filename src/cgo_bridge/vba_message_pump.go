@@ -29,7 +29,7 @@ import (
 	"unsafe"
 )
 
-// UniLog_RegisterVBAWindow registers a Windows HWND and Message ID for 
+// UniLog_RegisterVBAWindow registers a Windows HWND and Message ID for
 // receiving asynchronous configuration updates in VBA.
 //export UniLog_RegisterVBAWindow
 func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
@@ -43,7 +43,7 @@ func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 	}
 }
 
-// dispatchConfigurationUpdate handles the logic of routing a configuration 
+// dispatchConfigurationUpdate handles the logic of routing a configuration
 // update to the correct destination (VBA Message Pump and/or Standard FFI Callback).
 func dispatchConfigurationUpdate(handle uintptr, cb C.config_update_cb, jsonData string) {
 	facadeMu.Lock()

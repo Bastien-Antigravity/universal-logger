@@ -53,7 +53,7 @@ func UniLog_OnConfigUpdate(handle uintptr, cb C.config_update_cb) {
 	facadeMu.Lock()
 	session, ok := facadeStore[handle]
 	facadeMu.Unlock()
-	
+
 	if !ok {
 		println("!!! Go: Handle NOT FOUND in facadeStore:", handle)
 		return

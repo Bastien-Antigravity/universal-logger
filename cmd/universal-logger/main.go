@@ -26,9 +26,9 @@ func main() {
 
 	scenario := os.Args[1]
 	var (
-		name          string
-		configProfile string
-		loggerProfile string
+		name             string
+		configProfile    string
+		loggerProfile    string
 		logLevel         string
 		useLocalNotifier = false
 	)
@@ -122,17 +122,17 @@ func main() {
 	if useLocalNotifier {
 		fmt.Println(">>> [Demo] Waiting for a local notification...")
 		notifQueue := uniLog.GetNotifQueue()
-		
+
 		// In a real app, this would be a background goroutine
 		go func() {
 			for msg := range notifQueue {
 				fmt.Printf(">>> [NOTIF] Received: %s (Tags: %v)\n", msg.Message, msg.Tags)
 			}
 		}()
-		
+
 		// Trigger a notification (assuming the mock server or some logic triggers it)
 		// For the demo, we just log something that might trigger a notification
-		uniLog.Critical("ALERT: High resource usage detected!") 
+		uniLog.Critical("ALERT: High resource usage detected!")
 	}
 
 	// -------------------------------------------------------------------------
@@ -140,7 +140,7 @@ func main() {
 	fmt.Printf("Config Object initialized: %v\n", distConfig.Common.Name)
 
 	uniLog.Info("Walkthrough complete.")
-	
+
 	// Wait a moment for background events (callbacks, notifications) to finish
 	time.Sleep(200 * time.Millisecond)
 }

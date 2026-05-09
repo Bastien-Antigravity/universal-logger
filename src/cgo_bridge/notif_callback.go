@@ -16,8 +16,8 @@ static void call_notif_callback(UniLogNotifCallback cb, const char* json_msg) {
 import "C"
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
+	"unsafe"
 )
 
 // -------------------------------------------------------------------------
@@ -37,7 +37,7 @@ func internalNotificationPump(notifQueue <-chan *utils.NotifMessage, callback C.
 
 		// 2. Convert to C string
 		cStr := C.CString(string(jsonBytes))
-		
+
 		// 3. Execute the C callback (Sync / Fire-and-Forget)
 		C.call_notif_callback(callback, cStr)
 

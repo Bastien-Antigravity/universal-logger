@@ -18,8 +18,8 @@ import "C"
 
 import (
 	"encoding/json"
-	"unsafe"
 	"github.com/Bastien-Antigravity/distributed-config/src/cgo_bridge"
+	"unsafe"
 )
 
 // -------------------------------------------------------------------------
@@ -100,11 +100,11 @@ func DistConf_OnLiveConfUpdate(handle uintptr, cb C.distconf_update_cb) {
 	// Note: callbacks require more complex handling if the logic is in a separate package,
 	// because the C callback function pointer needs to be passed correctly.
 	// However, since we are building one binary, we can define the listener here.
-	
+
 	cgo_bridge.FacadeMu.Lock()
 	session, ok := cgo_bridge.FacadeStore[handle]
 	cgo_bridge.FacadeMu.Unlock()
-	
+
 	if !ok || session.Config == nil {
 		return
 	}
