@@ -67,6 +67,9 @@ except Exception:
 ##########################################################################
 # FFI Declarations
 
+# Shared Bridge Callbacks (defined globally to prevent ImportErrors)
+CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
+
 if lib:
     # Initialization & Lifecycle
     lib.UniLog_Init.argtypes = [
@@ -88,9 +91,6 @@ if lib:
     # Metadata Interface
     lib.UniLog_AddMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
     lib.UniLog_SetMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p]
-
-    # Shared Bridge Callbacks
-    CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
 
     # Configuration Interface (Native UniLog)
     lib.UniLog_Config_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
