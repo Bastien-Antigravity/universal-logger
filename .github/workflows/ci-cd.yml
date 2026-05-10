@@ -1,4 +1,4 @@
-name: CI/CD
+name: Polyglot CI
 
 on:
   push:
@@ -7,63 +7,127 @@ on:
     branches: [main]
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   GOTOOLCHAIN: auto
 
 jobs:
-  test:
+  go-ci:
+    name: Go Tests
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout Sibling Dependencies
       - name: Checkout Distributed-Config
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/distributed-config
           path: distributed-config
-
       - name: Checkout Flexible-Logger
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/flexible-logger
           path: flexible-logger
-
       - name: Checkout Microservice-Toolbox
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/microservice-toolbox
           path: microservice-toolbox
-
-      # 2. Checkout Current Project
-      - name: Checkout Distconf-Flexlog
+      - name: Checkout Universal-Logger
         uses: actions/checkout@v4
         with:
           path: universal-logger
 
-      # 3. Setup Go
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.25'
-          cache-dependency-path: universal-logger/go.sum
 
-      # 4. Run Tests
-      # We move into the universal-logger directory but the 'replace' 
-      # directives ../distributed-config and ../flexible-logger 
-      # will resolve correctly because they are siblings in the runner workspace.
-      - name: Run Facade Integration Tests
+      - name: Run Go Tests
         working-directory: universal-logger
         run: |
           go mod tidy
           go test -v ./src/...
 
       - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
 
       - name: Run golangci-lint
         working-directory: universal-logger
         run: $(go env GOPATH)/bin/golangci-lint run
 
-      - name: Verify CLI Compilation
-        working-directory: universal-logger
+  python-ci:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Distributed-Config
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/distributed-config
+          path: distributed-config
+      - name: Checkout Flexible-Logger
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/flexible-logger
+          path: flexible-logger
+      - name: Checkout Microservice-Toolbox
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/microservice-toolbox
+          path: microservice-toolbox
+      - name: Checkout Universal-Logger
+        uses: actions/checkout@v4
+        with:
+          path: universal-logger
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test Python SDK
+        working-directory: universal-logger/python
         run: |
-          go build ./cmd/universal-logger/main.go
+          pip install pytest
+          python setup.py build_go
+          pip install -e .
+          pytest
+
+  rust-ci:
+    name: Rust Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Distributed-Config
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/distributed-config
+          path: distributed-config
+      - name: Checkout Flexible-Logger
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/flexible-logger
+          path: flexible-logger
+      - name: Checkout Microservice-Toolbox
+        uses: actions/checkout@v4
+        with:
+          repository: Bastien-Antigravity/microservice-toolbox
+          path: microservice-toolbox
+      - name: Checkout Universal-Logger
+        uses: actions/checkout@v4
+        with:
+          path: universal-logger
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.91
+
+      - name: Test Rust SDK
+        working-directory: universal-logger/rust
+        run: cargo test
