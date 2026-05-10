@@ -19,16 +19,19 @@ jobs:
         with:
           repository: Bastien-Antigravity/distributed-config
           path: distributed-config
+          ref: ${{ github.ref_name }}
       - name: Checkout Flexible-Logger
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/flexible-logger
           path: flexible-logger
+          ref: ${{ github.ref_name }}
       - name: Checkout Microservice-Toolbox
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/microservice-toolbox
           path: microservice-toolbox
+          ref: ${{ github.ref_name }}
       - name: Checkout Universal-Logger
         uses: actions/checkout@v4
         with:
@@ -61,16 +64,19 @@ jobs:
         with:
           repository: Bastien-Antigravity/distributed-config
           path: distributed-config
+          ref: ${{ github.ref_name }}
       - name: Checkout Flexible-Logger
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/flexible-logger
           path: flexible-logger
+          ref: ${{ github.ref_name }}
       - name: Checkout Microservice-Toolbox
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/microservice-toolbox
           path: microservice-toolbox
+          ref: ${{ github.ref_name }}
       - name: Checkout Universal-Logger
         uses: actions/checkout@v4
         with:
@@ -103,16 +109,19 @@ jobs:
         with:
           repository: Bastien-Antigravity/distributed-config
           path: distributed-config
+          ref: ${{ github.ref_name }}
       - name: Checkout Flexible-Logger
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/flexible-logger
           path: flexible-logger
+          ref: ${{ github.ref_name }}
       - name: Checkout Microservice-Toolbox
         uses: actions/checkout@v4
         with:
           repository: Bastien-Antigravity/microservice-toolbox
           path: microservice-toolbox
+          ref: ${{ github.ref_name }}
       - name: Checkout Universal-Logger
         uses: actions/checkout@v4
         with:
