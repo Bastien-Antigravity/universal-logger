@@ -17,35 +17,24 @@ jobs:
     with:
       working_directory: '.'
       go_version: '1.25'
-      artifact_name: 'libunilog'
-      artifact_path: 'libunilog/'
     secrets: inherit
   python-ci:
-    needs: [go-ci]
     uses: Bastien-Antigravity/fleet-operation-brain/.github/workflows/workflow-python.yml@develop
     with:
       working_directory: 'python'
       python_version: '3.12'
       go_version: '1.25'
-      artifact_name: 'libunilog'
-      artifact_path: 'libunilog/'
     secrets: inherit
   rust-ci:
-    needs: [go-ci]
     uses: Bastien-Antigravity/fleet-operation-brain/.github/workflows/workflow-rust.yml@develop
     with:
       working_directory: 'rust'
       rust_version: '1.91'
       go_version: '1.25'
-      artifact_name: 'libunilog'
-      artifact_path: 'libunilog/'
     secrets: inherit
   cpp-ci:
-    needs: [go-ci]
     uses: Bastien-Antigravity/fleet-operation-brain/.github/workflows/workflow-cpp.yml@develop
     with:
       working_directory: 'cpp'
       go_version: '1.25'
-      artifact_name: 'libunilog'
-      artifact_path: 'libunilog/'
     secrets: inherit
