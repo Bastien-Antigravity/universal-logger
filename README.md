@@ -4,8 +4,9 @@ type: repository
 status: active
 language: polyglot
 tags:
-- \'#service/universal-logger\'
-  - '#domain/observability'
+- '#service/universal-logger'
+- '#domain/observability'
+- '#zone/3-fleet'
 ---
 
 # Universal Logger

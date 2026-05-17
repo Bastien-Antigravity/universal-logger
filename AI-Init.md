@@ -2,6 +2,9 @@
 microservice: universal-logger
 type: governance
 status: active
+tags:
+- '#service/universal-logger'
+- '#zone/3-fleet'
 ---
 
 # ⚡ AI Initialization: universal-logger

@@ -36,8 +36,8 @@ go test -v ./src/bootstrap/...
 ```
 
 #### Key Test Suites:
-- **Integration Tests** ([integration_test.go](file:///Users/imac/Desktop/Bastien-Antigravity/universal-logger/src/bootstrap/integration_test.go)): Verifies Log Level synchronization, Metadata injection, and Manual Notifier binding.
-- **Resilience Tests** ([resilience_test.go](file:///Users/imac/Desktop/Bastien-Antigravity/universal-logger/src/bootstrap/resilience_test.go)): Uses a `MockServer` to simulate server crashes, network outages, and automatic background reconnection logic.
+- **Integration Tests** ([integration_test.go](src/bootstrap/integration_test.go)): Verifies Log Level synchronization, Metadata injection, and Manual Notifier binding.
+- **Resilience Tests** ([resilience_test.go](src/bootstrap/resilience_test.go)): Uses a `MockServer` to simulate server crashes, network outages, and automatic background reconnection logic.
 
 ### 3. Python (`python/`)
 Verifies asynchronous logging, thread-safe configuration updates, and the `async for` listener.
