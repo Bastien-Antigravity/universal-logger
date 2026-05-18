@@ -20,6 +20,7 @@ import "C"
 import "unsafe"
 
 // UniLog_RegisterVBAWindow is a stub for non-Windows platforms.
+//
 //export UniLog_RegisterVBAWindow
 func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 	// No-op on macOS/Linux

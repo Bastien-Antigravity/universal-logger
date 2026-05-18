@@ -31,6 +31,7 @@ import (
 
 // UniLog_RegisterVBAWindow registers a Windows HWND and Message ID for
 // receiving asynchronous configuration updates in VBA.
+//
 //export UniLog_RegisterVBAWindow
 func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 	facadeMu.Lock()

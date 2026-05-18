@@ -1,6 +1,5 @@
 use libc::{c_char, c_int, uintptr_t, free};
 use std::ffi::{CStr, CString};
-use std::ptr;
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
@@ -9,6 +8,7 @@ use std::sync::Mutex;
 // -----------------------------------------------------------------------------
 
 #[link(name = "unilog")]
+#[allow(dead_code)]
 extern "C" {
     fn UniLog_Init(app_name: *const c_char, config_profile: *const c_char, logger_profile: *const c_char, log_level: c_int, use_local_notifier: c_int, config_handle: uintptr_t) -> uintptr_t;
     fn UniLog_Close(handle: uintptr_t);
