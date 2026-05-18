@@ -4,6 +4,8 @@ type: governance
 status: active
 tags:
 - '#service/universal-logger'
+- '#type/governance'
+- '#state/active'
 - '#zone/3-fleet'
 ---
 

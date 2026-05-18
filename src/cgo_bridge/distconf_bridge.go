@@ -35,7 +35,7 @@ func DistConf_FreeString(ptr *C.char) {
 
 //export DistConf_New
 func DistConf_New(profile *C.char) uintptr {
-	return cgo_bridge.New(C.GoString(profile))
+	return cgo_bridge.New(sanitizeFFIString(profile))
 }
 
 //export DistConf_Close

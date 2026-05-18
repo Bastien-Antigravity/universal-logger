@@ -4,10 +4,13 @@ use std::process::Command;
 
 fn main() {
     let project_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-    let mut root_dir = PathBuf::from(project_dir);
-    root_dir.pop(); // Go to universal-logger root
+    let mut unilog_dir = PathBuf::from(&project_dir);
+    unilog_dir.pop(); // Go to unilog dir
+    
+    let mut root_dir = unilog_dir.clone();
+    root_dir.pop(); // Go to true universal-logger root
 
-    let lib_dir = root_dir.join("libunilog");
+    let lib_dir = unilog_dir.join("libunilog");
     
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap_or_default();
     let is_windows = target_os == "windows" || (target_os.is_empty() && cfg!(windows));

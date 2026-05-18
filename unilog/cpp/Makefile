@@ -13,7 +13,7 @@ endif
 LIB_DIR := ../libunilog
 LIB_NAME := unilog
 TARGET := unilog_cpp
-CORE_SRC := $(wildcard ../src/cgo_bridge/*.go)
+CORE_SRC := $(wildcard ../../src/cgo_bridge/*.go)
 
 # Compilation
 CXX := g++

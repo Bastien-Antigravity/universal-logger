@@ -4,7 +4,8 @@ about: Suggest an idea for this project
 title: ''
 labels: enhancement
 assignees: ''
-
+tags:
+- '#zone/3-fleet'
 ---
 
 **Is your feature request related to a problem? Please describe.**

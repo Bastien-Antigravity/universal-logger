@@ -12,26 +12,26 @@ from typing import List, Dict, Set
 
 ROOT_DIR = osPathDirname(osPathDirname(osPathAbspath(__file__)))
 
-SOURCE_OF_TRUTH = osPathJoin(ROOT_DIR, "libunilog", "libunilog.h")
+SOURCE_OF_TRUTH = osPathJoin(ROOT_DIR, "unilog", "libunilog", "libunilog.h")
 
 FACADES = {
     "Python": {
-        "file": osPathJoin(ROOT_DIR, "python", "unilog", "facade.py"),
+        "file": osPathJoin(ROOT_DIR, "unilog", "python", "unilog", "facade.py"),
         "type": "def",
         "pattern": r"def\s+([a-zA-Z0-9_]+)\("
     },
     "Rust": {
-        "file": osPathJoin(ROOT_DIR, "rust", "src", "lib.rs"),
+        "file": osPathJoin(ROOT_DIR, "unilog", "rust", "src", "lib.rs"),
         "type": "fn",
         "pattern": r"pub\s+fn\s+([a-z0-9_]+)\("
     },
     "C++": {
-        "file": osPathJoin(ROOT_DIR, "cpp", "UniversalLogger.hpp"),
+        "file": osPathJoin(ROOT_DIR, "unilog", "cpp", "UniversalLogger.hpp"),
         "type": "method",
         "pattern": r"([a-zA-Z0-9_]+)\("
     },
     "VBA": {
-        "file": osPathJoin(ROOT_DIR, "vba", "UniversalLogger.bas"),
+        "file": osPathJoin(ROOT_DIR, "unilog", "vba", "UniversalLogger.bas"),
         "type": "function",
         "pattern": r"(?:Function|Sub)\s+([a-zA-Z0-9_]+)\("
     }

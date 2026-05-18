@@ -4,7 +4,8 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
+tags:
+- '#zone/3-fleet'
 ---
 
 **Describe the bug**

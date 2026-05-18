@@ -151,6 +151,7 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
+extern char* UniLog_Config_Get_Safe(GoUintptr handle, char* section, char* key);
 extern char* UniLog_Config_Get(GoUintptr handle, char* section, char* key);
 extern void UniLog_Config_Set(GoUintptr handle, char* section, char* key, char* value);
 extern void UniLog_OnConfigUpdate(GoUintptr handle, config_update_cb cb);

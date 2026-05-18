@@ -13,6 +13,7 @@ Option Explicit
     Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long, ByVal configHandle As LongPtr) As LongPtr
     Private Declare PtrSafe Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
     Private Declare PtrSafe Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
+    Private Declare PtrSafe Function UniLog_Config_Get_Safe Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String) As LongPtr
     Private Declare PtrSafe Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare PtrSafe Sub UniLog_LogWithMetadata Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal level As LongLong, ByVal msg As String, ByVal file As String, ByVal line As String, ByVal functionName As String, ByVal moduleName As String)
     Private Declare PtrSafe Sub UniLog_SetLevel Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal level As LongLong)
@@ -58,6 +59,7 @@ Option Explicit
     Private Declare Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long, ByVal configHandle As Long) As Long
     Private Declare Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As Long)
     Private Declare Function UniLog_Config_Get Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
+    Private Declare Function UniLog_Config_Get_Safe Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String) As Long
     Private Declare Sub UniLog_Config_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare Sub UniLog_LogWithMetadata Lib "libunilog.dll" (ByVal handle As Long, ByVal level As Long, ByVal msg As String, ByVal file As String, ByVal line As String, ByVal functionName As String, ByVal moduleName As String)
     Private Declare Sub UniLog_SetLevel Lib "libunilog.dll" (ByVal handle As Long, ByVal level As Long)
@@ -170,7 +172,7 @@ End Sub
 
 Public Function GetConfig(ByVal handle As LongPtr, ByVal section As String, ByVal key As String, Optional ByVal defaultVal As String = "") As String
     Dim ptr As LongPtr
-    ptr = UniLog_Config_Get(handle, section, key)
+    ptr = UniLog_Config_Get_Safe(handle, section, key)
     If ptr = 0 Then
         GetConfig = defaultVal
     Else

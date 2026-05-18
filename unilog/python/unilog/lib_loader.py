@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from ctypes import CDLL as ctypeCDLL, CFUNCTYPE as ctypeCFUNCTYPE, c_char_p as ctypeC_char_p, \
-                   c_int as ctypeC_int, c_size_t as ctypeC_size_t, c_longlong as ctypeC_longlong
+                   c_int as ctypeC_int, c_size_t as ctypeC_size_t, c_longlong as ctypeC_longlong, \
+                   c_void_p as ctypeC_void_p
 from ctypes.util import find_library as ctypeUtilFindLibrary
 from pathlib import Path as pathlibPath
+from typing import Any
 
 
 ##########################################################################
 # Loader logic
 
 # Discovery function to find the shared library across development and production environments
-def _load_lib():
+def _load_lib() -> Any:
     lib_name = "libunilog"
     
     # 1. Check local package directory (for distributed wheels)
@@ -93,8 +95,9 @@ if lib:
     lib.UniLog_SetMetadata.argtypes = [ctypeC_size_t, ctypeC_char_p]
 
     # Configuration Interface (Native UniLog)
+    lib.DistConf_FreeString.argtypes = [ctypeC_void_p]
     lib.UniLog_Config_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
-    lib.UniLog_Config_Get.restype = ctypeC_char_p
+    lib.UniLog_Config_Get.restype = ctypeC_void_p
     lib.UniLog_Config_Set.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p]
     lib.UniLog_OnConfigUpdate.argtypes = [ctypeC_size_t, CALLBACK_TYPE]
     lib.UniLog_RegisterNotifCallback.argtypes = [ctypeC_size_t, CALLBACK_TYPE]
@@ -104,10 +107,10 @@ if lib:
         lib.DistConf_New.argtypes = [ctypeC_char_p]
         lib.DistConf_New.restype = ctypeC_size_t
         lib.DistConf_Get.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p]
-        lib.DistConf_Get.restype = ctypeC_char_p
+        lib.DistConf_Get.restype = ctypeC_void_p
         lib.DistConf_Set.argtypes = [ctypeC_size_t, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p]
         lib.DistConf_GetFullConfig.argtypes = [ctypeC_size_t]
-        lib.DistConf_GetFullConfig.restype = ctypeC_char_p
+        lib.DistConf_GetFullConfig.restype = ctypeC_void_p
         lib.DistConf_Close.argtypes = [ctypeC_size_t]
     except Exception:
         pass # Compatibility layer might be missing if lib is old
