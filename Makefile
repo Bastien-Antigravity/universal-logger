@@ -58,6 +58,10 @@ $(LIB_DIR)/libunilog.$(LIB_EXT): $(CORE_SRC)
 cpp: core
 	@echo ">>> Building C++ Client..."
 	$(MAKE) -C unilog/cpp
+	@echo ">>> Running C++ Tests..."
+	export DYLD_LIBRARY_PATH=$(LIB_DIR):$$DYLD_LIBRARY_PATH && \
+	export LD_LIBRARY_PATH=$(LIB_DIR):$$LD_LIBRARY_PATH && \
+	$(MAKE) -C unilog/cpp test
 
 rust: core
 	@echo ">>> Building Rust Client (Library + Demo)..."

@@ -13,6 +13,7 @@ endif
 LIB_DIR := ../libunilog
 LIB_NAME := unilog
 TARGET := unilog_cpp
+TEST_TARGET := test_unilog
 CORE_SRC := $(wildcard ../../src/cgo_bridge/*.go)
 
 # Compilation
@@ -25,7 +26,7 @@ ifeq ($(UNAME_S),Darwin)
     LDFLAGS += -Wl,-rpath,@loader_path/$(LIB_DIR)
 endif
 
-all: $(TARGET)
+all: $(TARGET) $(TEST_TARGET)
 
 # Rule to build the Go shared library and header
 $(LIB_DIR)/libunilog.$(LIB_EXT) $(LIB_DIR)/libunilog.h: $(CORE_SRC)
@@ -36,8 +37,15 @@ $(LIB_DIR)/libunilog.$(LIB_EXT) $(LIB_DIR)/libunilog.h: $(CORE_SRC)
 $(TARGET): main.cpp $(LIB_DIR)/libunilog.h
 	$(CXX) $(CXXFLAGS) main.cpp -o $(TARGET) $(LDFLAGS)
 
+$(TEST_TARGET): test_unilog.cpp $(LIB_DIR)/libunilog.h
+	$(CXX) $(CXXFLAGS) test_unilog.cpp -o $(TEST_TARGET) $(LDFLAGS)
+
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(TEST_TARGET)
+	rm -rf *.dSYM
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
 
 run: all
 	./$(TARGET)

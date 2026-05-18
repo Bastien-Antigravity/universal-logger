@@ -126,3 +126,4 @@ secrets.yaml
 *.tmp
 *.dylib
 **/unilog_cpp
+**/test_unilog
