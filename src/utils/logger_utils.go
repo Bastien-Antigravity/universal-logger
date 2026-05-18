@@ -5,8 +5,8 @@ import (
 
 	"github.com/Bastien-Antigravity/flexible-logger/src/engine"
 	"github.com/Bastien-Antigravity/flexible-logger/src/error_handler"
-	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )
 
 // -------------------------------------------------------------------------
@@ -65,11 +65,9 @@ func Log(logger Logger, level Level, format string, args ...any) {
 	logger.Log(level, format, args...)
 }
 
-
 // -------------------------------------------------------------------------
 
 // GetUnderlyingLogger is a helper to access the raw interface (maintained for compatibility/utility).
 func GetUnderlyingLogger(logger Logger) Logger {
 	return logger
 }
-

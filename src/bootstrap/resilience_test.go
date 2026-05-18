@@ -188,7 +188,7 @@ func TestFullEcosystemResilience(t *testing.T) {
 
 	// 4. Verify baseline connection
 	uniLog.Info("Baseline Log")
-	
+
 	// Consume first message for log server (might be hello)
 	msg, ok := logServer.GetLastMessage(2 * time.Second)
 	if !ok {

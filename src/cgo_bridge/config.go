@@ -10,7 +10,45 @@ import "C"
 
 import (
 	"encoding/json"
+	"sync"
+	"unsafe"
 )
+
+var (
+	vbaBufferMu sync.Mutex
+	vbaBuffer   [4096]byte
+)
+
+// -------------------------------------------------------------------------
+
+//export UniLog_Config_Get_Safe
+func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
+	facadeMu.Lock()
+	session, ok := facadeStore[handle]
+	facadeMu.Unlock()
+
+	if !ok || session.Config == nil {
+		return nil
+	}
+
+	val := session.Config.Get(C.GoString(section), C.GoString(key))
+	if val == "" {
+		return nil
+	}
+
+	vbaBufferMu.Lock()
+	defer vbaBufferMu.Unlock()
+
+	// Safe Copy to Static Buffer (truncate if exceeds size)
+	copy(vbaBuffer[:], val)
+	length := len(val)
+	if length >= len(vbaBuffer) {
+		length = len(vbaBuffer) - 1
+	}
+	vbaBuffer[length] = 0 // Enforce NULL terminator
+
+	return (*C.char)(unsafe.Pointer(&vbaBuffer[0]))
+}
 
 // -------------------------------------------------------------------------
 
@@ -53,7 +91,7 @@ func UniLog_OnConfigUpdate(handle uintptr, cb C.config_update_cb) {
 	facadeMu.Lock()
 	session, ok := facadeStore[handle]
 	facadeMu.Unlock()
-	
+
 	if !ok {
 		println("!!! Go: Handle NOT FOUND in facadeStore:", handle)
 		return

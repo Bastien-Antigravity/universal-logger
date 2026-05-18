@@ -20,12 +20,13 @@ import "C"
 import "unsafe"
 
 // UniLog_RegisterVBAWindow is a stub for non-Windows platforms.
+//
 //export UniLog_RegisterVBAWindow
 func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 	// No-op on macOS/Linux
 }
 
-// dispatchConfigurationUpdate handles the logic of routing a configuration 
+// dispatchConfigurationUpdate handles the logic of routing a configuration
 // update on non-Windows platforms (Standard FFI Callback only).
 func dispatchConfigurationUpdate(handle uintptr, cb C.config_update_cb, jsonData string) {
 	if cb != nil {

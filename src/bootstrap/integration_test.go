@@ -34,7 +34,7 @@ func TestMetadataInjection(t *testing.T) {
 		"env":     "test",
 		"version": "1.1.7",
 	}
-	
+
 	opts := BootstrapOptions{
 		Name:            "meta-test",
 		ConfigProfile:   "standalone",

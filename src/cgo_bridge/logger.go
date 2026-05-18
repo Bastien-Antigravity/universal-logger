@@ -7,8 +7,8 @@ import "C"
 
 import (
 	"encoding/json"
-	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
 // -------------------------------------------------------------------------

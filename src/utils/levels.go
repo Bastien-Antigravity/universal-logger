@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )
 
 // -------------------------------------------------------------------------

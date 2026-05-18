@@ -35,11 +35,23 @@ func main() {}
 
 // -------------------------------------------------------------------------
 
+// sanitizeFFIString cleans C strings coming across the frontier
+func sanitizeFFIString(cStr *C.char) string {
+	if cStr == nil {
+		return ""
+	}
+	goStr := C.GoString(cStr)
+	// Remove standard null chars and embedded controls
+	goStr = strings.ReplaceAll(goStr, "\x00", "")
+	// Trim surrounding spaces, tabs, and newlines
+	return strings.TrimSpace(goStr)
+}
+
 //export UniLog_Init
 func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, useLocalNotifier C.int, configHandle uintptr) uintptr {
-	name := strings.TrimSpace(C.GoString(appName))
-	cfgProf := strings.TrimSpace(C.GoString(configProfile))
-	logProf := strings.TrimSpace(C.GoString(loggerProfile))
+	name := sanitizeFFIString(appName)
+	cfgProf := sanitizeFFIString(configProfile)
+	logProf := sanitizeFFIString(loggerProfile)
 
 	// Attempt to recover an existing config if handle is provided
 	var existingCfg *config.DistConfig

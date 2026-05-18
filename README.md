@@ -1,10 +1,12 @@
 ---
 microservice: universal-logger
-type: repository
+type: service-hub
 status: active
-language: polyglot
 tags:
-  - domain/observability
+- '#service/universal-logger'
+- '#type/service-hub'
+- '#state/active'
+- '#zone/3-fleet'
 ---
 
 # Universal Logger
@@ -77,11 +79,12 @@ Starting in **v1.1.7**, connection management is profile-driven:
 ## 🛠️ Project Structure
 
 - `src/`: Go core and CGO bridge implementation.
-- `libunilog/`: Compiled shared libraries (`libunilog.dll`, `libunilog.a`) and C headers.
-- `python/`: Python facade with `UniLogger` wrapper.
-- `rust/`: Rust `unilog-rs` crate and FFI integration.
-- `vba/`: Excel/Access integration via Windows Message Pump.
-- `cpp/`: C++ RAII wrapper header.
+- `unilog/`: Consolidated wrapper and library directory:
+  - `unilog/libunilog/`: Compiled shared libraries (`libunilog.dylib`, `libunilog.so`, `libunilog.h`).
+  - `unilog/python/`: Python facade with `UniLogger` wrapper.
+  - `unilog/rust/`: Rust `unilog-rs` crate and FFI integration.
+  - `unilog/vba/`: Excel/Access integration via Windows Message Pump.
+  - `unilog/cpp/`: C++ RAII wrapper header.
 
 ## 🚀 Quick Start (Shared Library)
 
