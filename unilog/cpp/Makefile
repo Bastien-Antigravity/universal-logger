@@ -18,7 +18,7 @@ CORE_SRC := $(wildcard ../../src/cgo_bridge/*.go)
 
 # Compilation
 CXX := g++
-CXXFLAGS := -std=c++11 -Wall -I$(LIB_DIR)
+CXXFLAGS := -std=c++11 -Wall -Wno-unused-function -I$(LIB_DIR)
 LDFLAGS := -L$(LIB_DIR) -l$(LIB_NAME)
 
 # Ensure the library can be found at runtime on macOS
@@ -45,6 +45,8 @@ clean:
 	rm -rf *.dSYM
 
 test: $(TEST_TARGET)
+	export DYLD_LIBRARY_PATH=$(LIB_DIR):$$DYLD_LIBRARY_PATH && \
+	export LD_LIBRARY_PATH=$(LIB_DIR):$$LD_LIBRARY_PATH && \
 	./$(TEST_TARGET)
 
 run: all
