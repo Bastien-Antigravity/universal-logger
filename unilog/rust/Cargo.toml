@@ -1,6 +1,6 @@
 [package]
 name = "unilog-rs"
-version = "1.4.2"
+version = "0.0.1"
 authors = ["Bastien-Antigravity"]
 edition = "2021"
 description = "Rust safe wrapper for Universal Logger (Go) CGO shared library"

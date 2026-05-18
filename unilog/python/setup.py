@@ -63,7 +63,7 @@ class BuildGoLib(setuptoolsCommand):
 
 setuptoolsSetup(
     name="unilog",
-    version="1.4.2",
+    version="0.0.1",
     packages=["unilog"],
     package_dir={"": "."},
     package_data={"unilog": ["*.so", "*.dylib", "*.dll", "*.h"]},

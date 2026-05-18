@@ -8,7 +8,7 @@ lifecycle:
   protected_branches:
   - main
   - master
-  current_version: 1.4.2
+  current_version: 0.0.1
   version_source: VERSION.txt
 done_when:
 - 'parity_validator_passed: true'
