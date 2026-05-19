@@ -50,9 +50,9 @@ func internalNotificationPump(notifQueue <-chan *utils.NotifMessage, callback C.
 
 //export UniLog_RegisterNotifCallback
 func UniLog_RegisterNotifCallback(handle uintptr, callback C.UniLogNotifCallback) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if !ok || session.Logger == nil {
 		return

@@ -23,9 +23,9 @@ var (
 
 //export UniLog_Config_Get_Safe
 func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if !ok || session.Config == nil {
 		return nil
@@ -54,9 +54,9 @@ func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
 
 //export UniLog_Config_Get
 func UniLog_Config_Get(handle uintptr, section, key *C.char) *C.char {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if !ok || session.Config == nil {
 		return nil
@@ -73,9 +73,9 @@ func UniLog_Config_Get(handle uintptr, section, key *C.char) *C.char {
 
 //export UniLog_Config_Set
 func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if ok && session.Config != nil {
 		// We ignore the error here as the C boundary is void
@@ -88,9 +88,9 @@ func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
 //export UniLog_OnConfigUpdate
 func UniLog_OnConfigUpdate(handle uintptr, cb C.config_update_cb) {
 	println("!!! Go: UniLog_OnConfigUpdate called for handle:", handle)
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if !ok {
 		println("!!! Go: Handle NOT FOUND in facadeStore:", handle)

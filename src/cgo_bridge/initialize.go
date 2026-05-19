@@ -8,12 +8,12 @@ import "C"
 import (
 	"strings"
 	"sync"
-	"unsafe"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 	"github.com/Bastien-Antigravity/universal-logger/src/config"
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 
+	distconf_bridge "github.com/Bastien-Antigravity/distributed-config/src/cgo_bridge"
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 )
 
@@ -26,9 +26,10 @@ type FacadeSession struct {
 }
 
 var (
-	facadeMu    sync.Mutex
+	facadeMu    sync.RWMutex
 	facadeStore         = make(map[uintptr]*FacadeSession)
-	facadeId    uintptr = 1
+	// Start at a high base to avoid collisions with distributed-config IDs (which start at 1)
+	facadeId uintptr = 0x10000
 )
 
 func main() {}
@@ -56,17 +57,23 @@ func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, 
 	// Attempt to recover an existing config if handle is provided
 	var existingCfg *config.DistConfig
 	if configHandle != 0 {
-		facadeMu.Lock()
-		// First, check if it's one of OUR handles (from UniLog_Config_New)
+		// 1. First, check if it's one of OUR handles (from UniLog_Init or UniLog_Config_New)
+		facadeMu.RLock()
 		if session, ok := facadeStore[configHandle]; ok && session.Config != nil {
 			existingCfg = session.Config
 		}
-		facadeMu.Unlock()
+		facadeMu.RUnlock()
 
-		// If not found in our store, it might be a direct pointer (unsafe but possible in same runtime)
+		// 2. If not found, check if it's a handle from the distributed-config bridge
 		if existingCfg == nil {
-			existingCfg = (*config.DistConfig)(unsafe.Pointer(configHandle))
+			distconf_bridge.FacadeMu.RLock()
+			if session, ok := distconf_bridge.FacadeStore[configHandle]; ok && session.Config != nil {
+				existingCfg = &config.DistConfig{Config: session.Config}
+			}
+			distconf_bridge.FacadeMu.RUnlock()
 		}
+
+		// SAFETY: NEVER attempt a raw pointer cast here. Handles are IDs, not memory addresses.
 	}
 
 	cfg, log := bootstrap.Init(name, cfgProf, logProf, logger_models.Level(logLevel).String(), useLocalNotifier != 0, existingCfg)

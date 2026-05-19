@@ -26,6 +26,7 @@ Option Explicit
     Private Declare PtrSafe Sub DistConf_Set Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare PtrSafe Function DistConf_GetFullConfig Lib "libunilog.dll" (ByVal handle As LongPtr) As LongPtr
     Private Declare PtrSafe Sub DistConf_Close Lib "libunilog.dll" (ByVal handle As LongPtr)
+    Private Declare PtrSafe Sub DistConf_FreeString Lib "libunilog.dll" (ByVal ptr As LongPtr)
     
     ' --- VBA CALLBACK BRIDGE ---
     Private Declare PtrSafe Sub UniLog_RegisterVBAWindow Lib "libunilog.dll" (ByVal handle As LongPtr, ByVal hwnd As LongPtr, ByVal msgId As Long)
@@ -72,6 +73,7 @@ Option Explicit
     Private Declare Sub DistConf_Set Lib "libunilog.dll" (ByVal handle As Long, ByVal section As String, ByVal key As String, ByVal value As String)
     Private Declare Function DistConf_GetFullConfig Lib "libunilog.dll" (ByVal handle As Long) As Long
     Private Declare Sub DistConf_Close Lib "libunilog.dll" (ByVal handle As Long)
+    Private Declare Sub DistConf_FreeString Lib "libunilog.dll" (ByVal ptr As Long)
 #End If
 
 ' Shared Log Levels
@@ -116,6 +118,9 @@ Public Function UniLog_WindowProc(ByVal hwnd As LongPtr, ByVal msg As Long, ByVa
         ' lParam contains the pointer to the JSON string from Go
         Dim jsonUpdate As String
         jsonUpdate = PtrToString(lParam)
+        
+        ' Free the string allocated by the Go DLL (Asynchronous PostMessage transfer)
+        DistConf_FreeString lParam
         
         ' Dispatch to the active listener if any
         ' (Users can add their own event dispatching logic here)

@@ -15,9 +15,9 @@ import (
 
 //export UniLog_LogWithMetadata
 func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function, module *C.char) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if !ok || session.Logger == nil {
 		return
@@ -38,9 +38,9 @@ func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function
 
 //export UniLog_SetLevel
 func UniLog_SetLevel(handle uintptr, level int) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if ok && session.Logger != nil {
 		session.Logger.SetLevel(logger_models.Level(level))
@@ -51,9 +51,9 @@ func UniLog_SetLevel(handle uintptr, level int) {
 
 //export UniLog_GetLevel
 func UniLog_GetLevel(handle uintptr) int {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if ok && session.Logger != nil {
 		return int(session.Logger.GetLevel())
@@ -65,9 +65,9 @@ func UniLog_GetLevel(handle uintptr) int {
 
 //export UniLog_AddMetadata
 func UniLog_AddMetadata(handle uintptr, key, value *C.char) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if ok && session.Logger != nil {
 		session.Logger.AddMetadata(C.GoString(key), C.GoString(value))
@@ -78,9 +78,9 @@ func UniLog_AddMetadata(handle uintptr, key, value *C.char) {
 
 //export UniLog_SetMetadata
 func UniLog_SetMetadata(handle uintptr, jsonMetadata *C.char) {
-	facadeMu.Lock()
+	facadeMu.RLock()
 	session, ok := facadeStore[handle]
-	facadeMu.Unlock()
+	facadeMu.RUnlock()
 
 	if ok && session.Logger != nil {
 		var metadata map[string]string
