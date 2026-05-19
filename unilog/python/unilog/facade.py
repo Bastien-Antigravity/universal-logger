@@ -3,7 +3,7 @@
 
 from os.path import basename as osPathBasename
 from ctypes import c_int as ctypeC_int
-from inspect import stack as inspectStack
+from sys import _getframe as sysGetFrame
 from json import loads as jsonLoads
 from asyncio import get_running_loop as asyncioGetRunningLoop
 from typing import Union, Dict, List, Callable, Optional, Set, Any, Tuple
@@ -217,11 +217,11 @@ class UniLog:
 
     # Capture caller metadata from the current stack trace
     def _get_caller_info(self, depth: int) -> Tuple[str, str, str, str]:
-        caller = inspectStack()[depth]
-        filename = osPathBasename(caller.filename)
-        lineno = str(caller.lineno)
-        function = caller.function
-        module = caller.frame.f_globals.get('__name__', 'unknown')
+        frame = sysGetFrame(depth)
+        filename = osPathBasename(frame.f_code.co_filename)
+        lineno = str(frame.f_lineno)
+        function = frame.f_code.co_name
+        module = frame.f_globals.get('__name__', 'unknown')
         return filename, lineno, function, module
 
     # Primary bridge to the Go shared library for all logging events
