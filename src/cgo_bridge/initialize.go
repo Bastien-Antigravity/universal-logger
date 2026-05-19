@@ -27,7 +27,7 @@ type FacadeSession struct {
 
 var (
 	facadeMu    sync.RWMutex
-	facadeStore         = make(map[uintptr]*FacadeSession)
+	facadeStore = make(map[uintptr]*FacadeSession)
 	// Start at a high base to avoid collisions with distributed-config IDs (which start at 1)
 	facadeId uintptr = 0x10000
 )
@@ -66,11 +66,11 @@ func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, 
 
 		// 2. If not found, check if it's a handle from the distributed-config bridge
 		if existingCfg == nil {
-			distconf_bridge.FacadeMu.RLock()
+			distconf_bridge.FacadeMu.Lock()
 			if session, ok := distconf_bridge.FacadeStore[configHandle]; ok && session.Config != nil {
 				existingCfg = &config.DistConfig{Config: session.Config}
 			}
-			distconf_bridge.FacadeMu.RUnlock()
+			distconf_bridge.FacadeMu.Unlock()
 		}
 
 		// SAFETY: NEVER attempt a raw pointer cast here. Handles are IDs, not memory addresses.
