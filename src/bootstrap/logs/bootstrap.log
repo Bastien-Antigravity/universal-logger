@@ -1,0 +1,6 @@
+[2026-05-18 16:43:41.224] [WARNING ] [64992] [integration_test.go:82] notif-test: Test notification
+[2026-05-18 16:43:41.226] [INFO    ] [64992] [resilience_test.go:190] resilience-test: Baseline Log
+[2026-05-18 16:43:41.226] [WARNING ] [64992] [resilience_test.go:205] resilience-test: Baseline Notif
+[2026-05-18 16:53:07.086] [WARNING ] [66301] [integration_test.go:82] notif-test: Test notification
+[2026-05-18 16:53:07.087] [INFO    ] [66301] [resilience_test.go:190] resilience-test: Baseline Log
+[2026-05-18 16:53:07.088] [WARNING ] [66301] [resilience_test.go:205] resilience-test: Baseline Notif

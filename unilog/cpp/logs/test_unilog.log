@@ -1,0 +1,10 @@
+[2026-05-18 20:12:28.359] [INFO    ] [] [test_unilog.cpp:36] cpp-test-suite: C++ Info message from automated test
+[2026-05-18 20:12:28.360] [DEBUG   ] [] [test_unilog.cpp:37] cpp-test-suite: C++ Debug message from automated test
+[2026-05-18 20:12:28.360] [WARNING ] [] [test_unilog.cpp:38] cpp-test-suite: C++ Warning message from automated test
+[2026-05-18 20:12:28.361] [ERROR   ] [] [test_unilog.cpp:39] cpp-test-suite: C++ Error message from automated test
+[2026-05-18 20:12:28.361] [CRITICAL] [] [test_unilog.cpp:40] cpp-test-suite: C++ Critical message from automated test
+[2026-05-18 20:24:06.169] [INFO    ] [] [test_unilog.cpp:36] cpp-test-suite: C++ Info message from automated test
+[2026-05-18 20:24:06.170] [DEBUG   ] [] [test_unilog.cpp:37] cpp-test-suite: C++ Debug message from automated test
+[2026-05-18 20:24:06.170] [WARNING ] [] [test_unilog.cpp:38] cpp-test-suite: C++ Warning message from automated test
+[2026-05-18 20:24:06.170] [ERROR   ] [] [test_unilog.cpp:39] cpp-test-suite: C++ Error message from automated test
+[2026-05-18 20:24:06.170] [CRITICAL] [] [test_unilog.cpp:40] cpp-test-suite: C++ Critical message from automated test

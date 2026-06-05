@@ -1,0 +1,414 @@
+[2026-05-18 16:43:33.359] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 16:43:33.361] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 16:43:33.374] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 16:43:33.378] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 16:43:33.379] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 16:43:33.379] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 16:43:33.380] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 16:43:33.381] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 16:43:33.382] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 16:43:33.382] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 16:43:33.383] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 16:43:33.384] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 16:43:33.385] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 16:43:33.386] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 16:43:33.386] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 16:43:33.387] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 16:43:33.388] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 16:43:34.289] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 16:43:34.291] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 16:43:34.295] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 16:43:34.297] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 16:43:34.299] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 16:43:34.301] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 16:43:34.302] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 16:43:34.303] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 16:43:34.306] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 16:43:34.308] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 16:43:34.309] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 16:43:34.311] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 16:43:34.312] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 16:43:34.313] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 16:43:34.315] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 16:43:34.316] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 16:43:34.319] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 16:43:34.320] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 16:43:34.321] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 16:43:34.322] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 16:43:34.324] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 16:43:34.329] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 16:43:34.330] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 16:43:34.332] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 16:43:34.333] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 16:43:34.334] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 16:43:34.335] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 16:43:34.337] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 16:43:34.338] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 16:43:34.339] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 16:43:34.340] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 16:43:34.342] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 16:43:34.343] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 16:43:34.344] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 16:43:34.346] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 16:43:34.348] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 16:43:34.349] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 16:43:34.351] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 16:43:34.352] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 16:43:34.356] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 16:43:34.357] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 16:43:34.358] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 16:43:34.359] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 16:43:34.361] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 16:43:34.362] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 16:43:34.365] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 16:43:34.366] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 16:43:34.368] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 16:43:34.369] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 16:43:34.370] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 16:43:34.371] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 16:43:34.373] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
+[2026-05-18 17:09:23.049] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 17:09:23.052] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 17:09:23.053] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 17:09:23.053] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 17:09:23.054] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 17:09:23.055] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 17:09:23.055] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 17:09:23.056] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 17:09:23.057] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 17:09:23.057] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 17:09:23.058] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 17:09:23.059] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 17:09:23.060] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 17:09:23.061] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 17:09:23.062] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 17:09:23.063] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 17:09:23.065] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 17:09:23.976] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 17:09:23.978] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 17:09:23.982] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 17:09:23.983] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 17:09:23.985] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 17:09:23.986] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 17:09:23.987] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 17:09:23.989] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 17:09:23.991] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 17:09:23.993] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 17:09:23.995] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 17:09:23.997] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 17:09:24.000] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 17:09:24.003] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 17:09:24.005] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 17:09:24.009] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 17:09:24.009] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 17:09:24.013] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 17:09:24.016] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 17:09:24.022] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 17:09:24.022] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 17:09:24.022] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 17:09:24.025] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 17:09:24.026] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 17:09:24.028] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 17:09:24.030] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 17:09:24.032] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 17:09:24.038] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 17:09:24.038] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 17:09:24.042] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 17:09:24.043] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 17:09:24.052] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 17:09:24.052] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 17:09:24.052] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 17:09:24.061] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 17:09:24.061] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 17:09:24.062] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 17:09:24.062] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 17:09:24.069] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 17:09:24.069] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 17:09:24.069] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 17:09:24.077] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 17:09:24.077] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 17:09:24.078] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 17:09:24.084] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 17:09:24.085] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 17:09:24.085] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 17:09:24.088] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 17:09:24.090] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 17:09:24.092] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 17:09:24.094] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 17:09:24.096] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
+[2026-05-18 17:14:42.247] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 17:14:42.248] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 17:14:42.249] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 17:14:42.249] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 17:14:42.250] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 17:14:42.250] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 17:14:42.251] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 17:14:42.252] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 17:14:42.252] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 17:14:42.253] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 17:14:42.254] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 17:14:42.256] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 17:14:42.256] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 17:14:42.257] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 17:14:42.258] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 17:14:42.259] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 17:14:42.261] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 17:14:43.200] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 17:14:43.201] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 17:14:43.205] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 17:14:43.206] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 17:14:43.207] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 17:14:43.208] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 17:14:43.209] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 17:14:43.211] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 17:14:43.212] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 17:14:43.215] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 17:14:43.215] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 17:14:43.228] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 17:14:43.228] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 17:14:43.228] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 17:14:43.235] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 17:14:43.235] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 17:14:43.235] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 17:14:43.243] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 17:14:43.243] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 17:14:43.243] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 17:14:43.246] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 17:14:43.248] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 17:14:43.249] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 17:14:43.251] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 17:14:43.253] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 17:14:43.254] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 17:14:43.255] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 17:14:43.256] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 17:14:43.257] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 17:14:43.259] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 17:14:43.260] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 17:14:43.262] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 17:14:43.264] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 17:14:43.266] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 17:14:43.268] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 17:14:43.269] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 17:14:43.270] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 17:14:43.272] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 17:14:43.274] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 17:14:43.276] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 17:14:43.277] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 17:14:43.278] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 17:14:43.280] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 17:14:43.281] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 17:14:43.282] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 17:14:43.283] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 17:14:43.285] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 17:14:43.286] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 17:14:43.287] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 17:14:43.288] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 17:14:43.290] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 17:14:43.292] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
+[2026-05-18 17:16:46.411] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 17:16:46.412] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 17:16:46.413] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 17:16:46.413] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 17:16:46.414] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 17:16:46.415] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 17:16:46.416] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 17:16:46.417] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 17:16:46.418] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 17:16:46.420] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 17:16:46.421] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 17:16:46.424] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 17:16:46.425] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 17:16:46.425] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 17:16:46.426] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 17:16:46.427] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 17:16:46.431] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 17:16:47.303] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 17:16:47.304] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 17:16:47.308] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 17:16:47.309] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 17:16:47.311] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 17:16:47.312] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 17:16:47.313] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 17:16:47.314] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 17:16:47.327] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 17:16:47.328] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 17:16:47.330] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 17:16:47.333] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 17:16:47.335] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 17:16:47.336] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 17:16:47.338] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 17:16:47.339] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 17:16:47.340] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 17:16:47.342] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 17:16:47.343] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 17:16:47.344] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 17:16:47.345] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 17:16:47.347] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 17:16:47.348] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 17:16:47.349] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 17:16:47.350] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 17:16:47.352] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 17:16:47.353] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 17:16:47.354] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 17:16:47.356] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 17:16:47.358] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 17:16:47.359] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 17:16:47.360] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 17:16:47.361] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 17:16:47.362] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 17:16:47.364] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 17:16:47.366] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 17:16:47.367] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 17:16:47.368] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 17:16:47.370] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 17:16:47.371] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 17:16:47.373] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 17:16:47.374] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 17:16:47.375] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 17:16:47.377] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 17:16:47.380] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 17:16:47.381] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 17:16:47.382] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 17:16:47.383] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 17:16:47.385] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 17:16:47.387] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 17:16:47.388] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 17:16:47.390] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
+[2026-05-18 19:10:38.250] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 19:10:38.251] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 19:10:38.252] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 19:10:38.252] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 19:10:38.253] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 19:10:38.254] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 19:10:38.255] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 19:10:38.255] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 19:10:38.256] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 19:10:38.256] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 19:10:38.257] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 19:10:38.260] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 19:10:38.260] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 19:10:38.261] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 19:10:38.262] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 19:10:38.263] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 19:10:38.265] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 19:10:39.116] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 19:10:39.117] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 19:10:39.120] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 19:10:39.122] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 19:10:39.123] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 19:10:39.126] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 19:10:39.127] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 19:10:39.136] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 19:10:39.151] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 19:10:39.152] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 19:10:39.152] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 19:10:39.154] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 19:10:39.156] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 19:10:39.157] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 19:10:39.158] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 19:10:39.162] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 19:10:39.163] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 19:10:39.164] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 19:10:39.165] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 19:10:39.166] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 19:10:39.168] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 19:10:39.171] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 19:10:39.172] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 19:10:39.173] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 19:10:39.174] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 19:10:39.176] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 19:10:39.177] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 19:10:39.179] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 19:10:39.180] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 19:10:39.183] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 19:10:39.184] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 19:10:39.187] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 19:10:39.188] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 19:10:39.190] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 19:10:39.191] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 19:10:39.195] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 19:10:39.197] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 19:10:39.198] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 19:10:39.199] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 19:10:39.200] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 19:10:39.201] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 19:10:39.203] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 19:10:39.205] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 19:10:39.206] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 19:10:39.208] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 19:10:39.209] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 19:10:39.210] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 19:10:39.211] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 19:10:39.212] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 19:10:39.213] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 19:10:39.215] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 19:10:39.218] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
+[2026-05-18 19:19:34.514] [DEBUG   ] [] [case.py:589] test-levels: Testing level: DEBUG
+[2026-05-18 19:19:34.515] [STREAM  ] [] [case.py:589] test-levels: Testing level: STREAM
+[2026-05-18 19:19:34.516] [INFO    ] [] [case.py:589] test-levels: Testing level: INFO
+[2026-05-18 19:19:34.519] [LOGON   ] [] [case.py:589] test-levels: Testing level: LOGON
+[2026-05-18 19:19:34.520] [LOGOUT  ] [] [case.py:589] test-levels: Testing level: LOGOUT
+[2026-05-18 19:19:34.521] [TRADE   ] [] [case.py:589] test-levels: Testing level: TRADE
+[2026-05-18 19:19:34.524] [SCHEDULE] [] [case.py:589] test-levels: Testing level: SCHEDULE
+[2026-05-18 19:19:34.526] [REPORT  ] [] [case.py:589] test-levels: Testing level: REPORT
+[2026-05-18 19:19:34.527] [WARNING ] [] [case.py:589] test-levels: Testing level: WARNING
+[2026-05-18 19:19:34.528] [ERROR   ] [] [case.py:589] test-levels: Testing level: ERROR
+[2026-05-18 19:19:34.529] [CRITICAL] [] [case.py:589] test-levels: Testing level: CRITICAL
+[2026-05-18 19:19:34.533] [INFO    ] [] [test_unilog.py:20] test-basic: Testing Python info log
+[2026-05-18 19:19:34.535] [DEBUG   ] [] [test_unilog.py:21] test-basic: Testing Python debug log
+[2026-05-18 19:19:34.536] [WARNING ] [] [test_unilog.py:22] test-basic: Testing Python warning log
+[2026-05-18 19:19:34.537] [ERROR   ] [] [test_unilog.py:23] test-basic: Testing Python error log
+[2026-05-18 19:19:34.540] [INFO    ] [] [test_unilog.py:60] test-metadata: Log with individual metadata
+[2026-05-18 19:19:34.541] [INFO    ] [] [test_unilog.py:69] test-metadata: Log with bulk metadata
+[2026-05-18 19:19:35.495] [INFO    ] [] [test_async_logging.py:55] test-async-meta: Verifying stack capture depth [3]
+[2026-05-18 19:19:35.496] [DEBUG   ] [] [test_async_logging.py:56] test-async-meta: Verifying debug stack capture
+[2026-05-18 19:19:35.501] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 0
+[2026-05-18 19:19:35.503] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 1
+[2026-05-18 19:19:35.504] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 2
+[2026-05-18 19:19:35.509] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 3
+[2026-05-18 19:19:35.509] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 4
+[2026-05-18 19:19:35.517] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 5
+[2026-05-18 19:19:35.517] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 6
+[2026-05-18 19:19:35.519] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 7
+[2026-05-18 19:19:35.521] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 8
+[2026-05-18 19:19:35.523] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 9
+[2026-05-18 19:19:35.524] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 10
+[2026-05-18 19:19:35.526] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 11
+[2026-05-18 19:19:35.528] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 12
+[2026-05-18 19:19:35.529] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 13
+[2026-05-18 19:19:35.533] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 14
+[2026-05-18 19:19:35.535] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 15
+[2026-05-18 19:19:35.538] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 16
+[2026-05-18 19:19:35.540] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 17
+[2026-05-18 19:19:35.541] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 18
+[2026-05-18 19:19:35.543] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 19
+[2026-05-18 19:19:35.545] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 20
+[2026-05-18 19:19:35.547] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 21
+[2026-05-18 19:19:35.550] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 22
+[2026-05-18 19:19:35.553] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 23
+[2026-05-18 19:19:35.554] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 24
+[2026-05-18 19:19:35.557] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 25
+[2026-05-18 19:19:35.559] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 26
+[2026-05-18 19:19:35.560] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 27
+[2026-05-18 19:19:35.562] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 28
+[2026-05-18 19:19:35.565] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 29
+[2026-05-18 19:19:35.572] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 30
+[2026-05-18 19:19:35.575] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 31
+[2026-05-18 19:19:35.577] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 32
+[2026-05-18 19:19:35.579] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 33
+[2026-05-18 19:19:35.580] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 34
+[2026-05-18 19:19:35.582] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 35
+[2026-05-18 19:19:35.585] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 36
+[2026-05-18 19:19:35.587] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 37
+[2026-05-18 19:19:35.590] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 38
+[2026-05-18 19:19:35.592] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 39
+[2026-05-18 19:19:35.595] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 40
+[2026-05-18 19:19:35.597] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 41
+[2026-05-18 19:19:35.599] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 42
+[2026-05-18 19:19:35.602] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 43
+[2026-05-18 19:19:35.604] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 44
+[2026-05-18 19:19:35.606] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 45
+[2026-05-18 19:19:35.608] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 46
+[2026-05-18 19:19:35.610] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 47
+[2026-05-18 19:19:35.612] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 48
+[2026-05-18 19:19:35.615] [INFO    ] [] [events.py:88] test-async-perf: Parallel log 49
