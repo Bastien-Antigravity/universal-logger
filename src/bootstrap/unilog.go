@@ -99,7 +99,9 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 		unilog.NotifQueue = notifQueue
 
 		// Bind the channel only if the logger profile supports it
-		unilog.SetLocalNotifQueue(notifQueue)
+		if wrapper, ok := flexLogger.(interface{ SetLocalNotifQueue(chan *logger_models.NotifMessage) }); ok {
+			wrapper.SetLocalNotifQueue(notifQueue)
+		}
 	}
 
 	// 6. Register automatic LogLevel update from config
