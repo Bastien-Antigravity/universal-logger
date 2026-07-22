@@ -1,10 +1,10 @@
 ---
 microservice: universal-logger
-type: reference
+type: features-behavior
 status: active
 tags:
 - '#service/universal-logger'
-- '#type/reference'
+- '#type/features-behavior'
 - '#state/active'
 - '#zone/3-fleet'
 - '#ai/ignore'

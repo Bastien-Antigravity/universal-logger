@@ -1,10 +1,10 @@
 ---
 microservice: universal-logger
-type: reference
+type: general-misc
 status: active
 tags:
 - '#service/universal-logger'
-- '#type/reference'
+- '#type/general-misc'
 - '#state/active'
 - '#zone/3-fleet'
 - '#ai/ignore'

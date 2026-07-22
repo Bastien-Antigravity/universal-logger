@@ -7,6 +7,7 @@ from ctypes import CDLL as ctypeCDLL, CFUNCTYPE as ctypeCFUNCTYPE, c_char_p as c
 from ctypes.util import find_library as ctypeUtilFindLibrary
 from pathlib import Path as pathlibPath
 from typing import Any
+from sys import stderr as sysStderr
 
 
 ##########################################################################
@@ -15,6 +16,13 @@ from typing import Any
 # Discovery function to find the shared library across development and production environments
 def _load_lib() -> Any:
     lib_name = "libunilog"
+    
+    # Prioritize LIBUNILOG_PATH or LIBDISTCONF_PATH environment variables if defined
+    import os
+    env_path = os.environ.get("LIBUNILOG_PATH") or os.environ.get("LIBDISTCONF_PATH")
+    if env_path and os.path.exists(env_path):
+        print(f"!!! libunilog: Loading from environment variable -> {env_path}", file=sysStderr)
+        return ctypeCDLL(env_path)
     
     # 1. Check local package directory (for distributed wheels)
     lib_path = pathlibPath(__file__).parent / f"{lib_name}.so"
@@ -49,10 +57,10 @@ def _load_lib() -> Any:
     if not found:
         # Fallback to system path lookup using standard OS utilities
         res = ctypeUtilFindLibrary(lib_name)
-        print(f"!!! libunilog: System fallback -> {res}")
+        print(f"!!! libunilog: System fallback -> {res}", file=sysStderr)
         return ctypeCDLL(res or lib_name)
     
-    print(f"!!! libunilog: Loading from -> {lib_path}")
+    print(f"!!! libunilog: Loading from -> {lib_path}", file=sysStderr)
     return ctypeCDLL(str(lib_path))
 
 

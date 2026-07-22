@@ -34,6 +34,7 @@ typedef void (*config_update_cb)(const char* json_data);
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 // Define the callback type for C
 typedef void (*distconf_update_cb)(uintptr_t handle, const char* json_data);
@@ -42,6 +43,31 @@ typedef void (*distconf_update_cb)(uintptr_t handle, const char* json_data);
 static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, const char* json_data) {
     if (cb != NULL) {
         cb(handle, json_data);
+    }
+}
+
+// Standardized Error Codes
+#define DISTCONF_SUCCESS                0
+#define DISTCONF_ERR_GENERIC            1
+#define DISTCONF_ERR_INVALID_HANDLE      2
+#define DISTCONF_ERR_KEY_NOT_FOUND       3
+#define DISTCONF_ERR_VALIDATION_FAILED   4
+#define DISTCONF_ERR_NETWORK_FAILURE     5
+#define DISTCONF_ERR_DECRYPTION_FAILED   6
+#define DISTCONF_ERR_INVALID_INPUT       7
+
+static char* last_error = NULL;
+static int last_error_code = 0;
+
+static void set_last_error(int code, const char* err) {
+    last_error_code = code;
+    if (last_error != NULL) {
+        free(last_error);
+    }
+    if (err == NULL) {
+        last_error = NULL;
+    } else {
+        last_error = strdup(err);
     }
 }
 
@@ -162,9 +188,16 @@ extern char* DistConf_Get(GoUintptr handle, char* section, char* key);
 extern GoInt DistConf_Set(GoUintptr handle, char* section, char* key, char* value);
 extern GoInt DistConf_Sync(GoUintptr handle);
 extern char* DistConf_GetAddress(GoUintptr handle, char* capability);
+extern char* DistConf_GetGRPCAddress(GoUintptr handle, char* capability);
+extern char* DistConf_GetCapability(GoUintptr handle, char* capability);
 extern char* DistConf_GetFullConfig(GoUintptr handle);
+extern char* DistConf_GetLastError(void);
+extern GoInt DistConf_GetLastErrorCode(void);
 extern char* DistConf_Decrypt(GoUintptr handle, char* ciphertext);
+extern char* DistConf_ApplyFileOverride(GoUintptr handle, char* filename);
+extern GoInt DistConf_ShareConfig(GoUintptr handle, char* jsonData);
 extern void DistConf_OnLiveConfUpdate(GoUintptr handle, distconf_update_cb cb);
+extern void DistConf_OnRegistryUpdate(GoUintptr handle, distconf_update_cb cb);
 extern GoUintptr UniLog_Init(char* appName, char* configProfile, char* loggerProfile, int logLevel, int useLocalNotifier, GoUintptr configHandle);
 extern void UniLog_Close(GoUintptr handle);
 extern void UniLog_LogWithMetadata(GoUintptr handle, GoInt level, char* msg, char* file, char* line, char* function, char* module);

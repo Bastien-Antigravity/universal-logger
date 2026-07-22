@@ -22,6 +22,7 @@ type BootstrapOptions struct {
 	LoggerProfile    string
 	InitialLogLevel  interfaces.Level
 	UseLocalNotifier bool
+	NotifQueueBuffer int               // Size of the local notification queue (default: 1024)
 	ExistingConfig   *config.DistConfig // OPTIONAL: Inject an existing configuration instance
 	Metadata         map[string]string  // OPTIONAL: Fields to be added to all logs
 }

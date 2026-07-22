@@ -10,7 +10,18 @@ fn main() {
     let mut root_dir = unilog_dir.clone();
     root_dir.pop(); // Go to true universal-logger root
 
-    let lib_dir = unilog_dir.join("libunilog");
+    let lib_dir = if let Ok(val) = env::var("LIBUNILOG_PATH") {
+        let p = PathBuf::from(val);
+        if p.is_file() {
+            p.parent().unwrap().to_path_buf()
+        } else {
+            p
+        }
+    } else if let Ok(val) = env::var("LIBUNILOG_DIR") {
+        PathBuf::from(val)
+    } else {
+        unilog_dir.join("libunilog")
+    };
     
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap_or_default();
     let is_windows = target_os == "windows" || (target_os.is_empty() && cfg!(windows));

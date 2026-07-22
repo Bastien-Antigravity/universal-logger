@@ -63,6 +63,7 @@ class UniLog:
     def trade(self, msg: str) -> None: self._log(LogLevel.TRADE, msg)
     def schedule(self, msg: str) -> None: self._log(LogLevel.SCHEDULE, msg)
     def report(self, msg: str) -> None: self._log(LogLevel.REPORT, msg)
+    def stream(self, msg: str) -> None: self._log(LogLevel.STREAM, msg)
 
     # Log level accessors
     def set_level(self, level: Union[str, int, LogLevel]) -> None:

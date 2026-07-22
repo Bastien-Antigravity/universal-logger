@@ -1,10 +1,10 @@
 ---
 microservice: universal-logger
-type: guide
+type: testing-playbook
 status: active
 tags:
 - '#service/universal-logger'
-- '#type/guide'
+- '#type/testing-playbook'
 - '#state/active'
 - '#zone/3-fleet'
 - '#ai/ignore'
