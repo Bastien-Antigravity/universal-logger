@@ -22,7 +22,7 @@ type BootstrapOptions struct {
 	LoggerProfile    string
 	InitialLogLevel  interfaces.Level
 	UseLocalNotifier bool
-	NotifQueueBuffer int               // Size of the local notification queue (default: 1024)
+	NotifQueueBuffer int                // Size of the local notification queue (default: 1024)
 	ExistingConfig   *config.DistConfig // OPTIONAL: Inject an existing configuration instance
 	Metadata         map[string]string  // OPTIONAL: Fields to be added to all logs
 }
@@ -100,7 +100,9 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 		unilog.NotifQueue = notifQueue
 
 		// Bind the channel only if the logger profile supports it
-		if wrapper, ok := flexLogger.(interface{ SetLocalNotifQueue(chan *logger_models.NotifMessage) }); ok {
+		if wrapper, ok := flexLogger.(interface {
+			SetLocalNotifQueue(chan *logger_models.NotifMessage)
+		}); ok {
 			wrapper.SetLocalNotifQueue(notifQueue)
 		}
 	}
