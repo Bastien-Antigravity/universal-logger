@@ -1,13 +1,22 @@
 VERSION := "0.0.1"
 
-.PHONY: all build test version clean
+.PHONY: all build build-lib core test version clean
 
 all: build
 
 version:
 	@echo 
 
-build:
+build-lib core:
+	@echo "Building CGO shared library libunilog..."
+	@mkdir -p libunilog
+	@if [ "$$(uname -s)" = "Darwin" ]; then \
+		go build -buildmode=c-shared -o libunilog/libunilog.dylib ./src/cgo_bridge || true; \
+	else \
+		go build -buildmode=c-shared -o libunilog/libunilog.so ./src/cgo_bridge || true; \
+	fi
+
+build: build-lib
 	@echo "Building repository (version )..."
 	@if [ -f "go.mod" ]; then go build ./... || true; fi
 	@if [ -f "Cargo.toml" ]; then cargo build --release || true; fi
