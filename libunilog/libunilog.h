@@ -21,7 +21,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 /* Start of preamble from import "C" comments.  */
 
 
-#line 3 "config.go"
+#line 17 "config.go"
 
 #include <stdlib.h>
 
@@ -30,7 +30,7 @@ typedef void (*config_update_cb)(const char* json_data);
 
 #line 1 "cgo-generated-wrapper"
 
-#line 3 "distconf_bridge.go"
+#line 14 "distconf_bridge.go"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -73,19 +73,19 @@ static void set_last_error(int code, const char* err) {
 
 #line 1 "cgo-generated-wrapper"
 
-#line 3 "initialize.go"
+#line 17 "initialize.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 3 "logger.go"
+#line 16 "logger.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 3 "notif_callback.go"
+#line 15 "notif_callback.go"
 
 #include <stdlib.h>
 
@@ -101,7 +101,7 @@ static void call_notif_callback(UniLogNotifCallback cb, const char* json_msg) {
 
 #line 1 "cgo-generated-wrapper"
 
-#line 6 "vba_message_pump_stub.go"
+#line 16 "vba_message_pump_stub.go"
 
 #include <stdlib.h>
 

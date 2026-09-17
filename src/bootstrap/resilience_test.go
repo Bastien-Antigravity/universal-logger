@@ -1,5 +1,18 @@
 package bootstrap
 
+// =============================================================================
+// ESSENTIAL PROCESS: Resilience and recovery integration tests validating network reconnects and server outages.
+//
+// DATA FLOW:
+//   1. Launches mock SafeSocket log-server and notif-server daemons.
+//   2. Emits logs, triggers planned server outages, and resumes logging.
+//   3. Validates automatic network reconnection and recovery without message drops.
+//
+// KEY PARAMETERS:
+//   - TestFullEcosystemResilience: Validates SafeSocket reconnection under network failure.
+// =============================================================================
+
+
 import (
 	"net"
 	"sync"
@@ -35,7 +48,7 @@ func NewMockServer(t *testing.T, name string, profileType string) (*MockServer, 
 	}
 
 	config := models.SocketConfig{
-		Deadline: 30 * time.Second,
+		Deadline: 500 * time.Millisecond,
 	}
 
 	server := facade.NewSocketServer(profile, config)
@@ -74,7 +87,7 @@ func NewMockServerOnPort(t *testing.T, name string, profileType string, port str
 	}
 
 	config := models.SocketConfig{
-		Deadline: 30 * time.Second,
+		Deadline: 500 * time.Millisecond,
 	}
 
 	server := facade.NewSocketServer(profile, config)
@@ -134,12 +147,12 @@ func (m *MockServer) Stop() {
 	defer m.mu.Unlock()
 	if m.running {
 		close(m.shutdown)
-		m.server.Close()
-		// Force close all active connections
+		// Force close all active connections first so server.Close() does not block
 		for _, c := range m.conns {
 			c.Close()
 		}
 		m.conns = nil
+		m.server.Close()
 		m.running = false
 	}
 }

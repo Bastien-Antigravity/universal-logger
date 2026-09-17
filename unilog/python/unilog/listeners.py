@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Asynchronous event listeners and subscription streams for configuration updates
+and telemetry notifications in the Python UniLog client.
+
+DATA FLOW:
+1. Input: Raw CGO callback events from Go background workers.
+2. Logic: Buffers updates into thread-safe queues and yields items to async generators.
+3. Output: Async iterable stream of configuration and notification payloads.
+
+KEY PARAMETERS:
+- queue_size: Maximum capacity of the background update event buffer.
+=============================================================================
+"""
+
 
 from asyncio import Queue as asyncioQueue, get_running_loop as asyncioGetRunningLoop, \
     get_event_loop as asyncioGetEventLoop, CancelledError as asyncioCancelledError

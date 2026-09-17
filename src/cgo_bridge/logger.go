@@ -1,5 +1,18 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: CGO export functions for polyglot logging, caller stack injection, and level adjustments.
+//
+// DATA FLOW:
+//   1. Ingests log messages with caller stack metadata from Python/Rust/C++/VBA.
+//   2. Dispatches events through utils.LogWithMetadata preserving level filtering and alerts.
+//
+// KEY PARAMETERS:
+//   - UniLog_LogWithMetadata: Central logging bridge across the C ABI.
+//   - UniLog_SetLevel / UniLog_GetLevel: Runtime log level controls.
+// =============================================================================
+
+
 /*
 #include <stdlib.h>
 */

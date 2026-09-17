@@ -1,3 +1,16 @@
+// =============================================================================
+// ESSENTIAL PROCESS:
+// Interactive CLI demonstration and sample client showcasing C++ UniLog usage.
+//
+// DATA FLOW:
+// 1. Input: Sample logging statements, log level updates, and metadata tags.
+// 2. Logic: Instantiates UniLog and executes sample log calls across multiple levels.
+// 3. Output: Formatted log output in console and configured sinks.
+//
+// KEY PARAMETERS:
+// - None
+// =============================================================================
+
 #include "UniversalLogger.hpp"
 #include <iostream>
 #include <string>

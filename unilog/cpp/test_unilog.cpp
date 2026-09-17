@@ -1,3 +1,17 @@
+// =============================================================================
+// ESSENTIAL PROCESS:
+// Unit test runner verifying C++ UniLog instantiation, configuration roundtrips,
+// dynamic metadata, caller metadata propagation, and logging macros.
+//
+// DATA FLOW:
+// 1. Input: Programmatic test cases exercising UniLog methods.
+// 2. Logic: Executes methods and asserts expected states via assert().
+// 3. Output: Pass/fail exit code and console execution diagnostics.
+//
+// KEY PARAMETERS:
+// - None
+// =============================================================================
+
 #include "UniversalLogger.hpp"
 #include <iostream>
 #include <cassert>
@@ -32,7 +46,11 @@ int main() {
         logger.set_metadata("{\"test_env\":\"ci\"}");
         std::cout << "  - Metadata management passed" << std::endl;
 
-        // 5. Test Macros & Logging (should execute without crash)
+        // 5. Test Direct Caller Metadata
+        logger.log_with_metadata(UniLog::INFO, "Explicit caller from C++ test", "test_unilog.cpp", "42", "main", "cpp_tests");
+        std::cout << "  - Direct log_with_metadata passed" << std::endl;
+
+        // 6. Test Macros & Logging (should execute without crash)
         UNILOG_INFO(logger, "C++ Info message from automated test");
         UNILOG_DEBUG(logger, "C++ Debug message from automated test");
         UNILOG_WARNING(logger, "C++ Warning message from automated test");

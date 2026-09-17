@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Asynchronous logging benchmark and correctness test suite verifying non-blocking
+log execution in asyncio event loops.
+
+DATA FLOW:
+1. Input: High-volume concurrent asynchronous log requests.
+2. Logic: Executes asyncio tasks against UniLog's thread-pool executor bridge.
+3. Output: Verified asynchronous log processing without event loop blockage.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 
 import asyncio
 from unittest import main as unitMain, TestCase as unitTestCase

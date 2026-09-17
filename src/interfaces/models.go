@@ -1,5 +1,18 @@
 package interfaces
 
+// =============================================================================
+// ESSENTIAL PROCESS: Domain models and type definitions for log levels and notification messages.
+//
+// DATA FLOW:
+//   1. Declares Level constants and severity hierarchy.
+//   2. Defines NotifMessage payload structure for inter-service alerts.
+//
+// KEY PARAMETERS:
+//   - Level: Log severity enumeration.
+//   - NotifMessage: Structured alert notification payload.
+// =============================================================================
+
+
 import logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 
 // -------------------------------------------------------------------------

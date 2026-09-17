@@ -1,13 +1,11 @@
-# Metadata
-- Version: 0.0.1
-- Classification: Library
-
 ---
 microservice: universal-logger
 type: governance
 status: active
 tags:
 - '#service/universal-logger'
+- '#domain/observability'
+- '#layer/library'
 - '#type/governance'
 - '#state/active'
 - '#zone/3-fleet'

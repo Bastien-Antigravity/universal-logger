@@ -15,6 +15,6 @@ serde_json = "1.0"
 name = "unilog_rs"
 path = "src/lib.rs"
 
-[[example]]
-name = "demo"
+[[bin]]
+name = "unilog_demo"
 path = "src/main.rs"

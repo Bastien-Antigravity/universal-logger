@@ -1,3 +1,16 @@
+// =============================================================================
+// ESSENTIAL PROCESS:
+// Rust example and demonstration CLI showcasing unilog-rs integration.
+//
+// DATA FLOW:
+// 1. Input: Command-line invocation.
+// 2. Logic: Initializes UniLog and emits sample log messages using macros.
+// 3. Output: Console logs verifying Rust-to-Go logging bridge.
+//
+// KEY PARAMETERS:
+// - None
+// =============================================================================
+
 use unilog_rs::{UniLog, LogLevel, unilog_info, unilog_debug, unilog_warning};
 
 fn main() {

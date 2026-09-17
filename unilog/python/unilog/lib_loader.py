@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Dynamic library loader for libunilog, locating and binding ctypes FFI function
+signatures across Linux (.so), macOS (.dylib), and Windows (.dll).
+
+DATA FLOW:
+1. Input: Platform OS identifier, environment variables, and filesystem search paths.
+2. Logic: Resolves library file path, loads shared dynamic object, and defines ctypes prototypes.
+3. Output: Bound ctypes.CDLL object ready for FFI function invocation.
+
+KEY PARAMETERS:
+- LIBUNILOG_PATH / LIBUNILOG_DIR: Optional environment override paths.
+=============================================================================
+"""
+
 
 from ctypes import CDLL as ctypeCDLL, CFUNCTYPE as ctypeCFUNCTYPE, c_char_p as ctypeC_char_p, \
                    c_int as ctypeC_int, c_size_t as ctypeC_size_t, c_longlong as ctypeC_longlong, \

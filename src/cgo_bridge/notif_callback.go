@@ -1,5 +1,17 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: Notification callback registry bridging local alerts from Go channels to C function pointers.
+//
+// DATA FLOW:
+//   1. Listens on UniLog NotifQueue channel for high-severity alerts.
+//   2. Serializes notification payloads to JSON and dispatches to registered C callbacks.
+//
+// KEY PARAMETERS:
+//   - UniLog_RegisterNotifCallback: Binds external notification handler across C ABI.
+// =============================================================================
+
+
 /*
 #include <stdlib.h>
 

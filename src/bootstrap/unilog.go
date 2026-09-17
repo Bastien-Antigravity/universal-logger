@@ -1,5 +1,19 @@
 package bootstrap
 
+// =============================================================================
+// ESSENTIAL PROCESS: Central bootstrap engine initializing distributed-config and flexible-logger into a unified UniLog facade.
+//
+// DATA FLOW:
+//   1. Loads configuration profile via distributed-config.
+//   2. Instantiates target profile logger in flexible-logger.
+//   3. Synchronizes dynamic log levels and binds local notification queues.
+//   4. Returns configured DistConfig and UniLog instances.
+//
+// KEY PARAMETERS:
+//   - Init / InitWithOptions / InitService: Factory entrypoints for ecosystem services.
+// =============================================================================
+
+
 import (
 	"os"
 

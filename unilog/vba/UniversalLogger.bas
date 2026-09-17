@@ -1,3 +1,17 @@
+' =============================================================================
+' ESSENTIAL PROCESS:
+' VBA standard module providing Excel / Office integration for universal-logger,
+' exposing Declare statements, COM wrapper functions, and message pump hooks.
+'
+' DATA FLOW:
+' 1. Input: VBA string messages, log levels, and procedure caller metadata.
+' 2. Logic: Marshalling VBA strings to C-style null-terminated byte arrays and invoking DLL.
+' 3. Output: Dispatches logs from Excel/Access macros to the central telemetry daemon.
+'
+' KEY PARAMETERS:
+' - app_name: Identifier for the Excel workbook or VBA project.
+' =============================================================================
+
 Attribute VB_Name = "UniLog"
 ' -----------------------------------------------------------------------------
 ' UniLog - VBA Bridge for Microsoft Excel

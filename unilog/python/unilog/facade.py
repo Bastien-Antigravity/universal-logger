@@ -1,5 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Primary Python facade for the universal-logger library, providing synchronous
+and asynchronous logging methods, caller stack inspection, and CGO bridge interop.
+
+DATA FLOW:
+1. Input: Application log messages, log levels, metadata, and config keys.
+2. Logic: Inspects caller frames via sys._getframe(), serializes metadata to JSON,
+   and delegates calls to the libunilog CGO shared library.
+3. Output: Dispatches logs, config updates, and local alerts across FFI boundaries.
+
+KEY PARAMETERS:
+- app_name: Identifier of the client microservice or application.
+- config_profile: Configuration strategy ('standalone' or 'service').
+- logger_profile: Logging sink configuration profile ('devel', 'production').
+=============================================================================
+"""
+
 
 from os.path import basename as osPathBasename
 from ctypes import c_int as ctypeC_int
@@ -112,26 +131,22 @@ class UniLog:
     # Trigger on_config_update regarding the caller and caller method
     def _dispatch_update(self, json_data: bytes) -> None:
         """Internal bridge called from Go shared library background thread."""
-        print(f"!!! _dispatch_update entered with: {json_data}")
         try:
             raw_val = json_data.decode('utf-8')
-            print(f"!!! Decoding successful: {raw_val}")
             data = jsonLoads(raw_val)
             
             # 1. Dispatch to synchronous subscribers
             for cb in self._sync_subscribers:
                 try:
-                    print(f"!!! Calling sync subscriber: {cb}")
                     cb(data)
-                except Exception as e:
-                    print(f"!!! Sync subscriber error: {e}")
+                except Exception:
+                    pass
             
             # 2. Dispatch to asynchronous listeners (thread-safe)
             for listener in list(self._async_listeners): # Copy list to avoid concurrent mutation
-                print(f"!!! Calling async listener: {listener}")
                 listener._put(data)
-        except Exception as e:
-            print(f"!!! _dispatch_update EXCEPTION: {e}")
+        except Exception:
+            pass
 
 
     ##########################################################################
@@ -151,11 +166,8 @@ class UniLog:
         """
         # Lazy initialization of the single C bridge
         if not self._initialized_bridge:
-            print(f"!!! Python: Registering C bridge for handle: {self._handle}")
             self._callback_ref = CALLBACK_TYPE(self._dispatch_update)
-            print(f"!!! Python: callback_ref created: {self._callback_ref}")
             lib.UniLog_OnConfigUpdate(self._handle, self._callback_ref)
-            print("!!! Python: UniLog_OnConfigUpdate call finished.")
             self._initialized_bridge = True
 
         if callback is not None:
@@ -177,8 +189,8 @@ class UniLog:
             try:
                 data = jsonLoads(json_data.decode('utf-8'))
                 callback(data)
-            except Exception as e:
-                print(f"!!! on_notification EXCEPTION: {e}")
+            except Exception:
+                pass
 
         # Keep a reference to the bridge callback to avoid GC
         self._notif_callback_ref = CALLBACK_TYPE(_bridge_cb)

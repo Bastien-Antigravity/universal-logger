@@ -1,6 +1,16 @@
 //go:build windows
 // +build windows
 
+// =============================================================================
+// ESSENTIAL PROCESS: Windows message pump dispatcher for Excel/Access VBA single-threaded COM apartment compatibility.
+//
+// DATA FLOW:
+//   1. Posts Windows messages containing JSON config update payloads to VBA main thread.
+//
+// KEY PARAMETERS:
+//   - PostVbaMessage: CGO helper posting Windows messages.
+// =============================================================================
+
 package main
 
 /*

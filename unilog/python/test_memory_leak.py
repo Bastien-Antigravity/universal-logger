@@ -1,3 +1,19 @@
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Memory leak detection test suite monitoring memory consumption during sustained
+UniLog logging cycles.
+
+DATA FLOW:
+1. Input: Repetitive log generation over multiple iterations.
+2. Logic: Samples process RSS memory before and after log bursts.
+3. Output: Assertions verifying that memory growth remains within bounded limits.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 import sys
 import os
 try:

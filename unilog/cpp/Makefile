@@ -14,6 +14,7 @@ LIB_DIR := ../libunilog
 LIB_NAME := unilog
 TARGET := unilog_cpp
 TEST_TARGET := test_unilog
+CORE_PKG := ../../src/cgo_bridge
 CORE_SRC := $(wildcard ../../src/cgo_bridge/*.go)
 
 # Compilation
@@ -32,7 +33,7 @@ all: $(TARGET) $(TEST_TARGET)
 $(LIB_DIR)/libunilog.$(LIB_EXT) $(LIB_DIR)/libunilog.h: $(CORE_SRC)
 	@echo ">>> Building Go shared library (CGO)..."
 	@mkdir -p $(LIB_DIR)
-	go build -buildmode=c-shared -o $(LIB_DIR)/libunilog.$(LIB_EXT) $(CORE_SRC)
+	go build -buildmode=c-shared -o $(LIB_DIR)/libunilog.$(LIB_EXT) $(CORE_PKG)
 
 $(TARGET): main.cpp $(LIB_DIR)/libunilog.h
 	$(CXX) $(CXXFLAGS) main.cpp -o $(TARGET) $(LDFLAGS)

@@ -1,5 +1,16 @@
 package config
 
+// =============================================================================
+// ESSENTIAL PROCESS: Configuration wrapper providing type alias for distributed-config integration.
+//
+// DATA FLOW:
+//   1. Wraps distributed-config Config pointer to decouple logger consumers.
+//
+// KEY PARAMETERS:
+//   - DistConfig: Configuration engine wrapper struct.
+// =============================================================================
+
+
 import (
 	distributed_config "github.com/Bastien-Antigravity/distributed-config"
 )

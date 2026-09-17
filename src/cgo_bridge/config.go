@@ -1,5 +1,19 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: CGO export functions for distributed configuration access and dynamic update callbacks.
+//
+// DATA FLOW:
+//   1. Queries and updates configuration keys on behalf of polyglot consumers.
+//   2. Bridges Go configuration update channels to C function pointer callbacks.
+//
+// KEY PARAMETERS:
+//   - UniLog_Config_Get: Fetches configuration values across C ABI.
+//   - UniLog_Config_Set: Updates configuration values in memory.
+//   - UniLog_OnConfigUpdate: Registers update notification callbacks.
+// =============================================================================
+
+
 /*
 #include <stdlib.h>
 

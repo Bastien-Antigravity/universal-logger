@@ -1,3 +1,19 @@
+// =============================================================================
+// ESSENTIAL PROCESS:
+// Header-only C++ facade for the universal-logger library, providing RAII
+// lifecycle management, macro caller capture, and CGO bridge bindings.
+//
+// DATA FLOW:
+// 1. Input: C++ string log messages, severity levels, and configuration updates.
+// 2. Logic: Wraps libunilog C ABI, captures __FILE__ and __LINE__, and manages handles.
+// 3. Output: Dispatches logs and configuration queries to the shared Go core.
+//
+// KEY PARAMETERS:
+// - app_name: Name identifier for the calling C++ service or client.
+// - config_profile: Configuration strategy profile ('standalone', 'service').
+// - logger_profile: Log sink configuration profile ('devel', 'production').
+// =============================================================================
+
 #ifndef UNIVERSAL_LOGGER_HPP
 #define UNIVERSAL_LOGGER_HPP
 
@@ -82,6 +98,14 @@ public:
             const_cast<char*>(func.c_str()), 
             const_cast<char*>(module.c_str())
         );
+    }
+
+    void log_with_metadata(int level, const std::string& msg, 
+                           const std::string& file = "unknown", 
+                           const std::string& line = "0", 
+                           const std::string& func = "unknown", 
+                           const std::string& module = "cpp") {
+        log(level, msg, file, line, func, module);
     }
 
     void debug(const std::string& msg) { log(DEBUG, msg); }

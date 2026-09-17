@@ -1,71 +1,59 @@
 package utils
 
-import (
-	"time"
+// =============================================================================
+// ESSENTIAL PROCESS: Logging utilities providing polyglot caller metadata dispatch and facade bridging.
+//
+// DATA FLOW:
+//   1. Receives explicit caller stack metadata from polyglot CGO bridge.
+//   2. Delegates execution to LogWithCaller preserving filtering, sampling, and alerts.
+//   3. Falls back to standard logging if target does not support caller injection.
+//
+// KEY PARAMETERS:
+//   - LogWithMetadata: Injects explicit caller metadata (file, line, function, module).
+// =============================================================================
 
-	"github.com/Bastien-Antigravity/flexible-logger/src/engine"
-	"github.com/Bastien-Antigravity/flexible-logger/src/error_handler"
-	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
+import (
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // Logger mirrors the universal-logger main interface using a type alias.
 // This allows consumers to use the Logger interface without direct dependency on flexible-logger.
 type Logger = interfaces.Logger
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // LogWithMetadata allows manual injection of stack metadata.
-// It tries to access the underlying LogEngine sink for high-performance writing.
+// It delegates to LogWithCaller to ensure level filtering, sampling, and alert notifications are respected.
 func LogWithMetadata(logger Logger, level Level, msg, file, line, function, module string) {
 	var target any = logger
-
-	// 1. If it's unwrappable (like UniLog), get the inner logger
-	if unwrappable, ok := logger.(interface{ Unwrap() any }); ok {
-		target = unwrappable.Unwrap()
-	}
-
-	// 2. Try to access the underlying LogEngine to get the Sink from the target
-	if logEngine, ok := target.(*engine.LogEngine); ok {
-		// 2. Get an entry from the pool
-		e := logger_models.EntryPool.Get().(*logger_models.LogEntry)
-		e.Reset()
-
-		// 3. Fill basic fields
-		e.Level = level
-		e.Message = msg
-		e.Timestamp = time.Now().UTC()
-		e.LoggerName = logEngine.Name
-		e.Hostname = logEngine.Hostname
-		e.ServiceName = logEngine.ServiceName
-
-		// 4. Fill stack metadata
-		e.Filename = file
-		e.LineNumber = line
-		e.FunctionName = function
-		e.Module = module
-
-		// 5. Write to the sink
-		if err := logEngine.Sink.Write(e); err != nil {
-			error_handler.ReportInternalError(logEngine.Name, "logger_utils.LogWithMetadata", err, msg)
+	for target != nil {
+		if cl, ok := target.(interface {
+			LogWithCaller(level Level, msg, file, line, function, module string)
+		}); ok {
+			cl.LogWithCaller(level, msg, file, line, function, module)
+			return
 		}
-		return
+		if unwrapper, ok := target.(interface{ Unwrap() any }); ok {
+			target = unwrapper.Unwrap()
+		} else {
+			break
+		}
 	}
 
-	// Fallback to standard logging if not a LogEngine
-	logger.Log(level, msg)
+	// Fallback to standard logging if caller injection is not supported
+	logger.Log(level, "%s", msg)
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // Log logs a message at a specific level using the provided logger.
 func Log(logger Logger, level Level, format string, args ...any) {
 	logger.Log(level, format, args...)
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // GetUnderlyingLogger is a helper to access the raw interface (maintained for compatibility/utility).
 func GetUnderlyingLogger(logger Logger) Logger {

@@ -1,5 +1,18 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: Entry point and demonstration CLI for universal-logger initialization and polyglot logging.
+//
+// DATA FLOW:
+//   1. Bootstraps logger service via standard bootstrap routine.
+//   2. Emits baseline log messages across severity levels.
+//   3. Demonstrates lifecycle flush and closure.
+//
+// KEY PARAMETERS:
+//   - main: Command-line execution entry point.
+// =============================================================================
+
+
 import (
 	"fmt"
 	"os"

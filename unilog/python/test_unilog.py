@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Unit and integration test suite verifying Python UniLog lifecycle, log levels,
+metadata management, and CGO bridge interop.
+
+DATA FLOW:
+1. Input: Synthetic log messages and metadata across all severity levels.
+2. Logic: Exercises UniLog methods and asserts return values against expectations.
+3. Output: Pytest / unittest test execution report.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 
 from unittest import main as unitMain, TestCase as unitTestCase
 from unilog import UniLog, LogLevel

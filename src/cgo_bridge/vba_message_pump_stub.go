@@ -1,6 +1,16 @@
 //go:build !windows
 // +build !windows
 
+// =============================================================================
+// ESSENTIAL PROCESS: Non-Windows stub for VBA message pump functions ensuring cross-platform compilation.
+//
+// DATA FLOW:
+//   1. Provides no-op fallback implementations for non-Windows platforms (macOS / Linux).
+//
+// KEY PARAMETERS:
+//   - UniLog_RegisterVBAWindow: No-op stub outside Windows.
+// =============================================================================
+
 package main
 
 /*

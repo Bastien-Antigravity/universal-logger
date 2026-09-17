@@ -21,6 +21,7 @@ require (
 
 replace (
 	github.com/Bastien-Antigravity/distributed-config => ../distributed-config
+	github.com/Bastien-Antigravity/flexible-logger => ../flexible-logger
 	github.com/Bastien-Antigravity/microservice-toolbox => ../microservice-toolbox
 	github.com/Bastien-Antigravity/safe-socket => ../safe-socket
 )

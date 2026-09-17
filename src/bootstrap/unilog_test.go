@@ -1,5 +1,17 @@
 package bootstrap
 
+// =============================================================================
+// ESSENTIAL PROCESS: Unit tests validating bootstrap initialization and default profile behaviors.
+//
+// DATA FLOW:
+//   1. Executes bootstrap routines under test configurations.
+//   2. Asserts non-nil sessions, default log levels, and clean shutdown.
+//
+// KEY PARAMETERS:
+//   - TestInitService: Validates zero-config bootstrap entrypoint.
+// =============================================================================
+
+
 import (
 	"testing"
 )

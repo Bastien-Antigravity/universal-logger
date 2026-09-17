@@ -1,5 +1,18 @@
 package bootstrap
 
+// =============================================================================
+// ESSENTIAL PROCESS: Integration tests validating configuration injection, metadata passing, and manual notifier binding.
+//
+// DATA FLOW:
+//   1. Injects pre-existing configuration into logger initialization.
+//   2. Attaches local notification queues and verifies message delivery.
+//
+// KEY PARAMETERS:
+//   - TestMetadataInjection: Validates metadata options at startup.
+//   - TestManualNotifierBinding: Validates custom notification queue attachment.
+// =============================================================================
+
+
 import (
 	"testing"
 	"time"

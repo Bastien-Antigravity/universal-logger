@@ -1,4 +1,18 @@
 #!/bin/bash
+# =============================================================================
+# ESSENTIAL PROCESS:
+# Multi-language build orchestration script compiling Go core, CGO shared library,
+# C++ binaries, Rust crates, and verifying Python installations.
+#
+# DATA FLOW:
+# 1. Input: Ecosystem source code across all language subdirectories.
+# 2. Logic: Runs build pipelines sequentially, halting on any failure.
+# 3. Output: Compiled binary artifacts and deployment libraries.
+#
+# KEY PARAMETERS:
+# - None
+# =============================================================================
+
 set -e
 
 # Configuration

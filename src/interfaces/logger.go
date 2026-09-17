@@ -1,5 +1,18 @@
 package interfaces
 
+// =============================================================================
+// ESSENTIAL PROCESS: Core Logger facade interface definition establishing standard logging methods and caller injection.
+//
+// DATA FLOW:
+//   1. Defines contract for 12 log severity methods.
+//   2. Declares LogWithCaller for explicit caller stack metadata propagation.
+//   3. Specifies metadata inspection, level adjustment, and lifecycle closure contracts.
+//
+// KEY PARAMETERS:
+//   - Logger: Unified logging contract for the Bastien-Antigravity ecosystem.
+// =============================================================================
+
+
 // Logger is the main interface for logging across the Bastien-Antigravity ecosystem.
 // It is a facade that ensures microservices remain decoupled from the underlying logging engine.
 type Logger interface {
@@ -59,6 +72,9 @@ type Logger interface {
 	// Log logs a message at a specific level.
 	Log(level Level, format string, args ...any)
 
+	// LogWithCaller logs a message with explicit caller stack metadata.
+	LogWithCaller(level Level, msg, file, line, function, module string)
+
 	// SetLevel sets the current log level.
 	SetLevel(level Level)
 
@@ -77,6 +93,9 @@ type Logger interface {
 
 	// AddMetadata adds a single key-value pair to the logger's metadata.
 	AddMetadata(key, value string)
+
+	// GetMetadata returns a copy of the current logger metadata.
+	GetMetadata() map[string]string
 
 	// Close flushes any buffered logs and closes the handler.
 	Close()

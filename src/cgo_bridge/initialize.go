@@ -1,5 +1,19 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: CGO export entry points for session initialization, string sanitization, and lifecycle termination.
+//
+// DATA FLOW:
+//   1. Ingests C strings and parameters from polyglot callers (Python, Rust, C++, VBA).
+//   2. Initializes UniLog session and registers handle in session store.
+//   3. Manages thread-safe session lookup and resource deallocation.
+//
+// KEY PARAMETERS:
+//   - UniLog_Init: Exports session initialization to C ABI.
+//   - UniLog_Close: Releases session resources and closes loggers.
+// =============================================================================
+
+
 /*
 #include <stdlib.h>
 */

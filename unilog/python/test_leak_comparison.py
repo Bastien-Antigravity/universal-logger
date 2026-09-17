@@ -1,3 +1,19 @@
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Comparative memory profiling test assessing resource utilization differences
+between synchronous and asynchronous UniLog logging.
+
+DATA FLOW:
+1. Input: Synchronous vs asynchronous log generation streams.
+2. Logic: Measures memory delta and garbage collector metrics.
+3. Output: Comparative telemetry ensuring neither logging mode leaks handles.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 import sys
 import os
 import subprocess

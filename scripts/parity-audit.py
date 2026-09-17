@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 # coding:utf-8
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Automated cross-language parity audit script verifying that all exported CGO
+symbols from libunilog.h are implemented across Python, Rust, C++, and VBA.
+
+DATA FLOW:
+1. Input: libunilog.h C header declarations and language wrapper source files.
+2. Logic: Parses exported C functions and verifies matching bindings in each language.
+3. Output: Comprehensive parity report table and non-zero exit code on missing bindings.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 
 from os.path import join as osPathJoin, dirname as osPathDirname, abspath as osPathAbspath, exists as osPathExists
 from sys import exit as sysExit

@@ -1,4 +1,20 @@
 #!/usr/bin/env python3
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Diagnostic debug utility for interactively observing FFI callback behavior
+and runtime thread transitions.
+
+DATA FLOW:
+1. Input: Interactive configuration mutation events.
+2. Logic: Prints detailed diagnostics when CGO callbacks fire.
+3. Output: Console trace of callback execution and payload decoding.
+
+KEY PARAMETERS:
+- None
+=============================================================================
+"""
+
 import sys
 import os
 import time

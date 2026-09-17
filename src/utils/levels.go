@@ -1,5 +1,17 @@
 package utils
 
+// =============================================================================
+// ESSENTIAL PROCESS: Log level parsing and string conversion utilities for polyglot interoperability.
+//
+// DATA FLOW:
+//   1. Ingests string or integer severity representations.
+//   2. Maps to standardized Level enumeration constants.
+//
+// KEY PARAMETERS:
+//   - ParseLevel: Converts text level representation to Level enum.
+// =============================================================================
+
+
 import (
 	logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"

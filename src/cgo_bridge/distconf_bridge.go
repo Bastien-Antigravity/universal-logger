@@ -1,5 +1,16 @@
 package main
 
+// =============================================================================
+// ESSENTIAL PROCESS: Compatibility bridge exposing distributed-config API for non-Go callers.
+//
+// DATA FLOW:
+//   1. Proxies standalone configuration creation, key lookups, and lifecycle calls to distributed-config.
+//
+// KEY PARAMETERS:
+//   - DistConf_New / DistConf_Get / DistConf_Set: CGO exported config bridge.
+// =============================================================================
+
+
 /*
 #include <stdlib.h>
 #include <stdint.h>

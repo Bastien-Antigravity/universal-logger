@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Automated test suite validating Python caller frame capture and metadata
+propagation across the CGO boundary.
+
+DATA FLOW:
+1. Input: Caller frames extracted via sys._getframe() at various call depths.
+2. Logic: Compares extracted filename, line number, and function against current frame.
+3. Output: Assertion verifications for polyglot caller preservation.
+
+KEY PARAMETERS:
+- depth: Stack frame depth offset passed to _get_caller_info().
+=============================================================================
+"""
+
 
 import os
 import sys

@@ -1,3 +1,19 @@
+// =============================================================================
+// ESSENTIAL PROCESS:
+// Rust wrapper crate for universal-logger, providing safe Rust abstractions,
+// RAII lifecycle (Drop), logging macros, metadata management, and C FFI bindings.
+//
+// DATA FLOW:
+// 1. Input: Rust string slices (&str), LogLevel enum values, and metadata maps.
+// 2. Logic: Converts Rust types to C-compatible pointers and calls libunilog C ABI.
+// 3. Output: Transmits structured logs and configuration updates across the FFI frontier.
+//
+// KEY PARAMETERS:
+// - app_name: Name identifier for the calling Rust service or client.
+// - config_profile: Configuration strategy profile ('standalone', 'service').
+// - logger_profile: Log sink configuration profile ('devel', 'production').
+// =============================================================================
+
 use libc::{c_char, c_int, uintptr_t, free};
 use std::ffi::{CStr, CString};
 use once_cell::sync::Lazy;
@@ -57,6 +73,7 @@ extern "C" fn c_notif_callback_bridge(json_data: *const c_char) {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum LogLevel {
     Debug = 1,
     Stream = 2,
@@ -261,4 +278,88 @@ macro_rules! unilog_error {
         $logger.log_with_metadata($crate::LogLevel::Error, $msg, file!(), &line!().to_string(), "?", module_path!());
     };
 }
+
+// -----------------------------------------------------------------------------
+// TESTS
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_log_level_values() {
+        assert_eq!(LogLevel::Debug as i32, 1);
+        assert_eq!(LogLevel::Stream as i32, 2);
+        assert_eq!(LogLevel::Info as i32, 3);
+        assert_eq!(LogLevel::Warning as i32, 9);
+        assert_eq!(LogLevel::Error as i32, 10);
+        assert_eq!(LogLevel::Critical as i32, 11);
+    }
+
+    #[test]
+    fn test_logger_lifecycle() {
+        let logger = UniLog::new("rust-test-lifecycle", "standalone", "devel", LogLevel::Info, false, 0)
+            .expect("failed to initialize UniLog in test_logger_lifecycle");
+        
+        logger.set_level(LogLevel::Debug);
+        assert_eq!(logger.get_level(), LogLevel::Debug);
+
+        logger.set_level(LogLevel::Warning);
+        assert_eq!(logger.get_level(), LogLevel::Warning);
+    }
+
+    #[test]
+    fn test_metadata_operations() {
+        let logger = UniLog::new("rust-test-meta", "standalone", "devel", LogLevel::Debug, false, 0)
+            .expect("failed to initialize UniLog in test_metadata_operations");
+
+        // 1. Add individual metadata
+        logger.add_metadata("key1", "val1");
+        logger.add_metadata("key2", "val2");
+
+        // 2. Bulk set metadata
+        let mut map = HashMap::new();
+        map.insert("environment".to_string(), "test".to_string());
+        map.insert("subsystem".to_string(), "rust_wrapper".to_string());
+        logger.set_metadata(&map);
+
+        // 3. Direct log with caller metadata
+        logger.log_with_metadata(
+            LogLevel::Info,
+            "Rust message with caller metadata",
+            "lib.rs",
+            "320",
+            "test_metadata_operations",
+            "unilog::tests",
+        );
+    }
+
+    #[test]
+    fn test_logging_macros() {
+        let logger = UniLog::new("rust-test-macros", "standalone", "devel", LogLevel::Debug, false, 0)
+            .expect("failed to initialize UniLog in test_logging_macros");
+
+        unilog_debug!(logger, "Testing Rust debug macro");
+        unilog_info!(logger, "Testing Rust info macro");
+        unilog_warning!(logger, "Testing Rust warning macro");
+        unilog_error!(logger, "Testing Rust error macro");
+        unilog_critical!(logger, "Testing Rust critical macro");
+    }
+
+    #[test]
+    fn test_config_operations() {
+        let logger = UniLog::new("rust-test-config", "standalone", "devel", LogLevel::Info, false, 0)
+            .expect("failed to initialize UniLog in test_config_operations");
+
+        logger.set_config("rust_section", "my_key", "my_value");
+        let val = logger.get_config("rust_section", "my_key");
+        assert_eq!(val, Some("my_value".to_string()));
+
+        let missing = logger.get_config("rust_section", "non_existent");
+        assert_eq!(missing, None);
+    }
+}
+
 

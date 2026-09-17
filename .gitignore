@@ -76,6 +76,16 @@ temp/
 
 # --- Standard Ecosystem Protections ---
 *.log
+logs/
+**/logs/
+*.dylib
+*.dll
+*.so
+*.dSYM
+bin/
+cmd/universal-logger/universal-logger
+unilog/cpp/test_unilog
+unilog/cpp/unilog_cpp
 *.pyc
 .venv/
 .pytest_cache/

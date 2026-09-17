@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+=============================================================================
+ESSENTIAL PROCESS:
+Package packaging and distribution setup script for the unilog Python client library.
+
+DATA FLOW:
+1. Input: Package metadata, version strings, dependencies, and shared library assets.
+2. Logic: Packages unilog modules and binary libraries into Python wheel/sdist format.
+3. Output: Installable Python distribution package.
+
+KEY PARAMETERS:
+- name: Package distribution name ("unilog").
+=============================================================================
+"""
+
 
 from os import path as osPath, environ as osEnviron
 from subprocess import check_call as subprocessCheckCall, CalledProcessError as subprocessCalledProcessError
