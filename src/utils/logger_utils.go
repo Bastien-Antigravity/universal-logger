@@ -25,25 +25,12 @@ type Logger = interfaces.Logger
 // -----------------------------------------------------------------------------
 
 // LogWithMetadata allows manual injection of stack metadata.
-// It delegates to LogWithCaller to ensure level filtering, sampling, and alert notifications are respected.
+// It delegates directly to LogWithCaller on the Logger interface for maximum performance.
 func LogWithMetadata(logger Logger, level Level, msg, file, line, function, module string) {
-	var target any = logger
-	for target != nil {
-		if cl, ok := target.(interface {
-			LogWithCaller(level Level, msg, file, line, function, module string)
-		}); ok {
-			cl.LogWithCaller(level, msg, file, line, function, module)
-			return
-		}
-		if unwrapper, ok := target.(interface{ Unwrap() any }); ok {
-			target = unwrapper.Unwrap()
-		} else {
-			break
-		}
+	if logger == nil {
+		return
 	}
-
-	// Fallback to standard logging if caller injection is not supported
-	logger.Log(level, "%s", msg)
+	logger.LogWithCaller(level, msg, file, line, function, module)
 }
 
 // -----------------------------------------------------------------------------

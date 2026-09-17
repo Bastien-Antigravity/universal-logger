@@ -131,6 +131,40 @@ class TestUnifiedCallback(unitTestCase):
         asyncioRun(run_test())
 
 
+    ##########################################################################
+    # Notification Callback Tests
+
+    # Verify that local alert notifications triggered from Go reach Python callbacks
+    def test_notification_callback(self):
+        print("\n>>> Testing Notification Callback...")
+        from time import sleep as timeSleep
+
+        received_notifs = []
+        def notif_cb(data):
+            print(f"Notification received: {data}")
+            received_notifs.append(data)
+
+        with UniLog(config_profile="standalone", app_name="test-notif-cb", logger_profile="devel", use_local_notifier=True) as logger:
+            logger.on_notification(notif_cb)
+
+            # Debug and Info should be ignored by local notifier
+            logger.debug("Python debug message - no alert")
+            logger.info("Python info message - no alert")
+
+            # Warning and Error should trigger notifications
+            logger.warning("Python warning alert")
+            logger.error("Python error alert")
+
+            # Wait for background Go notification pump
+            timeSleep(0.3)
+
+        self.assertEqual(len(received_notifs), 2)
+        self.assertEqual(received_notifs[0]["level"], "WARNING")
+        self.assertIn("Python warning alert", received_notifs[0]["message"])
+        self.assertEqual(received_notifs[1]["level"], "ERROR")
+        self.assertIn("Python error alert", received_notifs[1]["message"])
+
+
 ##########################################################################
 # Entry point
 

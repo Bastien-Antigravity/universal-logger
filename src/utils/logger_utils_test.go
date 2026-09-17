@@ -141,3 +141,11 @@ func TestLogWithMetadata_UnwrapsTarget(t *testing.T) {
 	}
 }
 
+// -----------------------------------------------------------------------------
+
+func TestLogWithMetadata_NilLogger(t *testing.T) {
+	// Should safely return without panic
+	utils.LogWithMetadata(nil, interfaces.LevelInfo, "nil test", "f.go", "1", "fn", "mod")
+}
+
+

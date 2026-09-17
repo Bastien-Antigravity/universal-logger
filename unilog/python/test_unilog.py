@@ -84,6 +84,20 @@ class TestUnilog(unitTestCase):
             logger.set_metadata(meta)
             logger.info("Log with bulk metadata")
 
+    def test_dynamic_level_transitions(self):
+        """Verify dynamic log level adjustments through string and enum inputs."""
+        with UniLog(config_profile="standalone", app_name="test-dyn-level", logger_profile="devel", log_level="INFO") as logger:
+            self.assertEqual(logger.get_level(), LogLevel.INFO)
+
+            logger.set_level("WARNING")
+            self.assertEqual(logger.get_level(), LogLevel.WARNING)
+
+            logger.set_level("ERROR")
+            self.assertEqual(logger.get_level(), LogLevel.ERROR)
+
+            logger.set_level(LogLevel.DEBUG)
+            self.assertEqual(logger.get_level(), LogLevel.DEBUG)
+
 
 ##########################################################################
 # Entry point
