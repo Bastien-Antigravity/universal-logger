@@ -189,6 +189,7 @@ extern GoInt DistConf_Set(GoUintptr handle, char* section, char* key, char* valu
 extern GoInt DistConf_Sync(GoUintptr handle);
 extern char* DistConf_GetAddress(GoUintptr handle, char* capability);
 extern char* DistConf_GetGRPCAddress(GoUintptr handle, char* capability);
+extern char* DistConf_GetRESTAddress(GoUintptr handle, char* capability);
 extern char* DistConf_GetCapability(GoUintptr handle, char* capability);
 extern char* DistConf_GetFullConfig(GoUintptr handle);
 extern char* DistConf_GetLastError(void);
