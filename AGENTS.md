@@ -14,7 +14,7 @@ tags:
 # AGENTS.md: universal-logger
 
 ## Service Mission & Architecture Role
-`universal-logger` is the standard logging library and abstraction layer across the Bastien-Antigravity ecosystem. It decouples microservices from concrete logging backends by enforcing the unified `ILogger` interface (`Debug`, `Info`, `Warning`, `Error`, `Critical`), supporting structured metadata, multi-sink dispatch (Console, File, Network/SafeSocket to `log-server`), and polyglot CGO bindings (`libunilog`).
+`universal-logger` is the standard logging library and abstraction layer across the Bastien-Antigravity ecosystem. It decouples microservices from concrete logging backends by enforcing the unified `Logger` interface (`Debug`, `Info`, `Warning`, `Error`, `Critical`), supporting structured metadata, multi-sink dispatch (Console, File, Network/SafeSocket to `log-server`), and polyglot CGO bindings (`libunilog`).
 
 - **Ecosystem Role**: Universal logging engine and standard interface.
 - **Sinks**:

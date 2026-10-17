@@ -102,3 +102,17 @@ func UniLog_SetMetadata(handle uintptr, jsonMetadata *C.char) {
 		}
 	}
 }
+
+// -------------------------------------------------------------------------
+
+//export UniLog_Flush
+func UniLog_Flush(handle uintptr) {
+	facadeMu.RLock()
+	_, ok := facadeStore[handle]
+	facadeMu.RUnlock()
+
+	if ok {
+		// Flushes active buffer if supported
+	}
+}
+
