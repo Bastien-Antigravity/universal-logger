@@ -73,12 +73,31 @@ class BuildGoLib(setuptoolsCommand):
             raise
 
 
+def _load_version() -> str:
+    from pathlib import Path
+    candidates = [
+        Path(__file__).resolve().parent.parent.parent / "VERSION.txt",
+        Path("VERSION.txt"),
+        Path("../VERSION.txt"),
+        Path("../../VERSION.txt"),
+    ]
+    for p in candidates:
+        if p.is_file():
+            try:
+                v = p.read_text(encoding="utf-8").strip()
+                if v:
+                    return v
+            except Exception:
+                pass
+    return "0.0.1"
+
+
 ##########################################################################
 # Package configuration
 
 setuptoolsSetup(
     name="unilog",
-    version="0.0.1",
+    version=_load_version(),
     packages=["unilog"],
     package_dir={"": "."},
     package_data={"unilog": ["*.so", "*.dylib", "*.dll", "*.h"]},
