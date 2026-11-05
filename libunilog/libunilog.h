@@ -24,6 +24,23 @@ extern const char *_GoStringPtr(_GoString_ s);
 #line 17 "config.go"
 
 #include <stdlib.h>
+#include <string.h>
+
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define THREAD_LOCAL _Thread_local
+#elif defined(_MSC_VER)
+#define THREAD_LOCAL __declspec(thread)
+#elif defined(__GNUC__)
+#define THREAD_LOCAL __thread
+#else
+#define THREAD_LOCAL
+#endif
+
+static THREAD_LOCAL char vba_buffer[4096];
+
+static inline char* get_vba_buffer(void) {
+    return vba_buffer;
+}
 
 // Define the callback type for C
 typedef void (*config_update_cb)(const char* json_data);
@@ -56,8 +73,18 @@ static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, con
 #define DISTCONF_ERR_DECRYPTION_FAILED   6
 #define DISTCONF_ERR_INVALID_INPUT       7
 
-static char* last_error = NULL;
-static int last_error_code = 0;
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define THREAD_LOCAL _Thread_local
+#elif defined(_MSC_VER)
+#define THREAD_LOCAL __declspec(thread)
+#elif defined(__GNUC__)
+#define THREAD_LOCAL __thread
+#else
+#define THREAD_LOCAL
+#endif
+
+static THREAD_LOCAL char* last_error = NULL;
+static THREAD_LOCAL int last_error_code = 0;
 
 static void set_last_error(int code, const char* err) {
     last_error_code = code;

@@ -169,12 +169,14 @@ func (m *MockServer) GetLastMessage(timeout time.Duration) (string, bool) {
 // -----------------------------------------------------------------------------
 
 func TestFullEcosystemResilience(t *testing.T) {
+	t.Log("Step 1: Setup Mock Servers")
 	// 1. Setup Mock Servers using safe-socket
 	// Log server uses "tcp" (Raw Framed TCP), Notif server uses "tcp-hello"
 	logServer, logHost, logPort := NewMockServer(t, "log-server-mock", "tcp-hello")
 	notifServer, notifHost, notifPort := NewMockServer(t, "notif-server-mock", "tcp-hello")
 
-	// 2. Setup Config
+	t.Logf("Mock servers started: log=%s:%s, notif=%s:%s", logHost, logPort, notifHost, notifPort)
+	t.Log("Step 2: Setup Config")
 	baseConfig, _ := Init("resilience-test", "standalone", "devel", "INFO", false, nil)
 	baseConfig.Config.Capabilities["log_server"] = map[string]interface{}{
 		"ip":   logHost,
@@ -194,10 +196,6 @@ func TestFullEcosystemResilience(t *testing.T) {
 	}
 
 	_, uniLog := InitWithOptions(opts)
-
-	// Since Log Server is "tcp", the first message might be the hello message.
-	// We need to consume it if it arrives.
-	// Actually, the standard profile DOES send a hello message.
 
 	// 4. Verify baseline connection
 	uniLog.Info("Baseline Log")
@@ -230,7 +228,7 @@ func TestFullEcosystemResilience(t *testing.T) {
 	}
 
 	// 6. RESTART Servers
-	newLogServer := NewMockServerOnPort(t, "log-server-mock", "tcp", logPort)
+	newLogServer := NewMockServerOnPort(t, "log-server-mock", "tcp-hello", logPort)
 	newNotifServer := NewMockServerOnPort(t, "notif-server-mock", "tcp-hello", notifPort)
 
 	t.Log("Servers restarted, waiting for reconnection...")
