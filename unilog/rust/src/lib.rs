@@ -17,7 +17,7 @@
 use libc::{c_char, c_int, uintptr_t, free};
 use std::ffi::{CStr, CString};
 use once_cell::sync::Lazy;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 // -----------------------------------------------------------------------------
 // RAW FFI DECLARATIONS
@@ -51,25 +51,31 @@ extern "C" {
 // -----------------------------------------------------------------------------
 
 /// Global callback storage for C -> Rust bridge.
-/// Currently supports one global callback due to C function pointer limitations.
-static GLOBAL_CONFIG_CB: Lazy<Mutex<Option<Box<dyn Fn(String) + Send + 'static>>>> = Lazy::new(|| Mutex::new(None));
-static GLOBAL_NOTIF_CB: Lazy<Mutex<Option<Box<dyn Fn(String) + Send + 'static>>>> = Lazy::new(|| Mutex::new(None));
+/// Uses Arc to allow releasing the lock before invoking callbacks, preventing deadlocks.
+static GLOBAL_CONFIG_CB: Lazy<Mutex<Option<Arc<dyn Fn(String) + Send + Sync + 'static>>>> = Lazy::new(|| Mutex::new(None));
+static GLOBAL_NOTIF_CB: Lazy<Mutex<Option<Arc<dyn Fn(String) + Send + Sync + 'static>>>> = Lazy::new(|| Mutex::new(None));
 
 extern "C" fn c_callback_bridge(json_data: *const c_char) {
-    if let Ok(guard) = GLOBAL_CONFIG_CB.lock() {
-        if let Some(ref cb) = *guard {
-            let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
-            cb(s);
-        }
+    let cb_opt = if let Ok(guard) = GLOBAL_CONFIG_CB.lock() {
+        guard.clone()
+    } else {
+        None
+    };
+    if let Some(cb) = cb_opt {
+        let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
+        cb(s);
     }
 }
 
 extern "C" fn c_notif_callback_bridge(json_data: *const c_char) {
-    if let Ok(guard) = GLOBAL_NOTIF_CB.lock() {
-        if let Some(ref cb) = *guard {
-            let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
-            cb(s);
-        }
+    let cb_opt = if let Ok(guard) = GLOBAL_NOTIF_CB.lock() {
+        guard.clone()
+    } else {
+        None
+    };
+    if let Some(cb) = cb_opt {
+        let s = unsafe { CStr::from_ptr(json_data).to_string_lossy().into_owned() };
+        cb(s);
     }
 }
 
@@ -164,10 +170,10 @@ impl UniLog {
     }
 
     pub fn on_config_update<F>(&self, cb: F) 
-    where F: Fn(String) + Send + 'static 
+    where F: Fn(String) + Send + Sync + 'static 
     {
         if let Ok(mut guard) = GLOBAL_CONFIG_CB.lock() {
-            *guard = Some(Box::new(cb));
+            *guard = Some(Arc::new(cb));
         }
         unsafe {
             UniLog_OnConfigUpdate(self.handle, c_callback_bridge);
@@ -176,10 +182,10 @@ impl UniLog {
 
     /// Registers a callback to be executed when a local notification is received.
     pub fn on_notification<F>(&self, cb: F)
-    where F: Fn(String) + Send + 'static
+    where F: Fn(String) + Send + Sync + 'static
     {
         if let Ok(mut guard) = GLOBAL_NOTIF_CB.lock() {
-            *guard = Some(Box::new(cb));
+            *guard = Some(Arc::new(cb));
         }
         unsafe {
             UniLog_RegisterNotifCallback(self.handle, c_notif_callback_bridge);

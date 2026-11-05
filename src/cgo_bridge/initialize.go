@@ -109,9 +109,18 @@ func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, 
 //export UniLog_Close
 func UniLog_Close(handle uintptr) {
 	facadeMu.Lock()
-	defer facadeMu.Unlock()
-	if session, ok := facadeStore[handle]; ok {
-		session.Logger.Close()
+	session, ok := facadeStore[handle]
+	if ok {
 		delete(facadeStore, handle)
+	}
+	facadeMu.Unlock()
+
+	if ok && session != nil {
+		if session.Logger != nil {
+			session.Logger.Close()
+		}
+		if session.Config != nil {
+			_ = session.Config.Close()
+		}
 	}
 }

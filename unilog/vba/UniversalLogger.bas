@@ -23,6 +23,7 @@ Attribute VB_Name = "UniLog"
 
 Option Explicit
 
+#If VBA7 Then
     ' 64-bit Excel
     Private Declare PtrSafe Function UniLog_Init Lib "libunilog.dll" (ByVal appName As String, ByVal configProfile As String, ByVal loggerProfile As String, ByVal logLevel As Long, ByVal useLocalNotifier As Long, ByVal configHandle As LongPtr) As LongPtr
     Private Declare PtrSafe Sub UniLog_Close Lib "libunilog.dll" (ByVal handle As LongPtr)

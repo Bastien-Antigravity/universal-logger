@@ -37,7 +37,6 @@ def _load_lib() -> Any:
     import os
     env_path = os.environ.get("LIBUNILOG_PATH") or os.environ.get("LIBDISTCONF_PATH")
     if env_path and os.path.exists(env_path):
-        print(f"!!! libunilog: Loading from environment variable -> {env_path}", file=sysStderr)
         return ctypeCDLL(env_path)
     
     # 1. Check local package directory (for distributed wheels)
@@ -73,10 +72,8 @@ def _load_lib() -> Any:
     if not found:
         # Fallback to system path lookup using standard OS utilities
         res = ctypeUtilFindLibrary(lib_name)
-        print(f"!!! libunilog: System fallback -> {res}", file=sysStderr)
         return ctypeCDLL(res or lib_name)
     
-    print(f"!!! libunilog: Loading from -> {lib_path}", file=sysStderr)
     return ctypeCDLL(str(lib_path))
 
 

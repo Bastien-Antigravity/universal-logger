@@ -230,12 +230,15 @@ class UniLog:
 
     # Capture caller metadata from the current stack trace
     def _get_caller_info(self, depth: int) -> Tuple[str, str, str, str]:
-        frame = sysGetFrame(depth)
-        filename = osPathBasename(frame.f_code.co_filename)
-        lineno = str(frame.f_lineno)
-        function = frame.f_code.co_name
-        module = frame.f_globals.get('__name__', 'unknown')
-        return filename, lineno, function, module
+        try:
+            frame = sysGetFrame(depth)
+            filename = osPathBasename(frame.f_code.co_filename)
+            lineno = str(frame.f_lineno)
+            function = frame.f_code.co_name
+            module = frame.f_globals.get('__name__', 'unknown')
+            return filename, lineno, function, module
+        except (ValueError, AttributeError):
+            return "unknown", "0", "unknown", "unknown"
 
     # Primary bridge to the Go shared library for all logging events
     def _dispatch_log_to_cgo(self, level: Union[int, LogLevel], msg: str, filename: str, lineno: str, function: str, module: str) -> None:

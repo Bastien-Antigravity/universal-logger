@@ -32,11 +32,12 @@ var _ interfaces.Logger = (*UniLog)(nil)
 
 // UniLog wraps the flexible-logger library.
 type UniLog struct {
-	Logger     flex_interfaces.Logger
-	NotifQueue <-chan *utils.NotifMessage
-	Metadata   map[string]string
-	metaMu     sync.RWMutex
-	closeOnce  sync.Once
+	Logger         flex_interfaces.Logger
+	NotifQueue     <-chan *utils.NotifMessage
+	OwnedNotifChan chan *utils.NotifMessage
+	Metadata       map[string]string
+	metaMu         sync.RWMutex
+	closeOnce      sync.Once
 }
 
 // -----------------------------------------------------------------------------
@@ -258,6 +259,7 @@ func (s *UniLog) SetCallerSkip(skip int) {
 func (s *UniLog) SetLocalNotifQueue(notifChan chan *interfaces.NotifMessage) {
 	if wrapper, ok := s.Logger.(*profiles.NotifLoggerWrapper); ok {
 		wrapper.SetLocalNotifQueue(notifChan)
+		s.NotifQueue = notifChan
 	}
 }
 
@@ -285,6 +287,10 @@ func (s *UniLog) Close() {
 		runtime.SetFinalizer(s, nil)
 		if s.Logger != nil {
 			s.Logger.Close()
+		}
+		if s.OwnedNotifChan != nil {
+			close(s.OwnedNotifChan)
+			s.OwnedNotifChan = nil
 		}
 	})
 }

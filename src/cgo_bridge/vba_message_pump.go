@@ -21,10 +21,11 @@ package main
 typedef void (*config_update_cb)(const char* json_data);
 
 // Helper to call PostMessageA from CGO on Windows
-static void PostVbaMessage(HWND hwnd, UINT msg, const char* json_data) {
+static int PostVbaMessage(HWND hwnd, UINT msg, const char* json_data) {
     if (hwnd) {
-        PostMessageA(hwnd, msg, 0, (LPARAM)json_data);
+        return (int)PostMessageA(hwnd, msg, 0, (LPARAM)json_data);
     }
+    return 0;
 }
 
 // C helper to call the configuration update callback
@@ -48,7 +49,6 @@ func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 	defer facadeMu.Unlock()
 
 	if session, ok := facadeStore[handle]; ok {
-		println("!!! Go: Registering VBA Message Pump for handle:", handle, "HWND:", hwnd)
 		session.VbaHwnd = hwnd
 		session.VbaMsgId = msgId
 	}
@@ -68,12 +68,13 @@ func dispatchConfigurationUpdate(handle uintptr, cb C.config_update_cb, jsonData
 	// 1. Dispatch to VBA (if registered)
 	if session.VbaHwnd != 0 {
 		// Create a C-string for the JSON data.
-		// Note: The VBA side is responsible for consuming this.
+		// Note: The VBA side is responsible for consuming this if posted successfully.
 		cStr := C.CString(jsonData)
 
-		// Since PostMessage is asynchronous, we do NOT free cStr here.
-		// The VBA side receives the pointer in its message loop.
-		C.PostVbaMessage(C.HWND(unsafe.Pointer(session.VbaHwnd)), C.UINT(session.VbaMsgId), cStr)
+		if C.PostVbaMessage(C.HWND(unsafe.Pointer(session.VbaHwnd)), C.UINT(session.VbaMsgId), cStr) == 0 {
+			// If PostMessage failed, free cStr immediately to prevent memory leak
+			C.free(unsafe.Pointer(cStr))
+		}
 	}
 
 	// 2. Dispatch to standard FFI callback (if registered)

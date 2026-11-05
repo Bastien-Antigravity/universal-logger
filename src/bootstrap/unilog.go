@@ -111,9 +111,13 @@ func InitWithOptions(opts BootstrapOptions) (*config.DistConfig, interfaces.Logg
 
 	// 5. Initialize Local Notifier if requested
 	if opts.UseLocalNotifier {
-		// Create a channel with a buffer of 1024
-		notifQueue := make(chan *utils.NotifMessage, 1024)
+		bufferSize := opts.NotifQueueBuffer
+		if bufferSize <= 0 {
+			bufferSize = 1024
+		}
+		notifQueue := make(chan *utils.NotifMessage, bufferSize)
 		unilog.NotifQueue = notifQueue
+		unilog.OwnedNotifChan = notifQueue
 
 		// Bind the channel only if the logger profile supports it
 		if wrapper, ok := flexLogger.(interface {
