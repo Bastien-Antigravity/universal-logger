@@ -49,6 +49,14 @@ static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, con
 static THREAD_LOCAL char* last_error = NULL;
 static THREAD_LOCAL int last_error_code = 0;
 
+static inline char* get_last_error(void) {
+    return last_error;
+}
+
+static inline int get_last_error_code(void) {
+    return last_error_code;
+}
+
 static void set_last_error(int code, const char* err) {
     last_error_code = code;
     if (last_error != NULL) {
@@ -222,12 +230,12 @@ func DistConf_GetFullConfig(handle uintptr) *C.char {
 
 //export DistConf_GetLastError
 func DistConf_GetLastError() *C.char {
-	return C.last_error
+	return C.get_last_error()
 }
 
 //export DistConf_GetLastErrorCode
 func DistConf_GetLastErrorCode() int {
-	return int(C.last_error_code)
+	return int(C.get_last_error_code())
 }
 
 //export DistConf_Decrypt
