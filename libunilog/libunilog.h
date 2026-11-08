@@ -86,6 +86,14 @@ static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, con
 static THREAD_LOCAL char* last_error = NULL;
 static THREAD_LOCAL int last_error_code = 0;
 
+static inline char* get_last_error(void) {
+    return last_error;
+}
+
+static inline int get_last_error_code(void) {
+    return last_error_code;
+}
+
 static void set_last_error(int code, const char* err) {
     last_error_code = code;
     if (last_error != NULL) {
