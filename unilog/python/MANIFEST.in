@@ -1,0 +1,2 @@
+include README.md
+recursive-include unilog *.so *.dylib *.dll *.h

@@ -1,99 +1,103 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding:utf-8
 """
 =============================================================================
 ESSENTIAL PROCESS:
-Package packaging and distribution setup script for the unilog Python client library.
+Package setup and distribution script for the unilog Python client library.
 
 DATA FLOW:
-1. Input: Package metadata, version strings, dependencies, and shared library assets.
-2. Logic: Packages unilog modules and binary libraries into Python wheel/sdist format.
-3. Output: Installable Python distribution package.
+1. Input: Repo VERSION.txt, Python source modules, and native libunilog shared library.
+2. Logic: Validates version fail-fast and bundles unilog modules with CGO binaries/headers.
+3. Output: Self-contained Python distribution wheel/package.
 
 KEY PARAMETERS:
 - name: Package distribution name ("unilog").
 =============================================================================
 """
 
-
-from os import path as osPath, environ as osEnviron
-from subprocess import check_call as subprocessCheckCall, CalledProcessError as subprocessCalledProcessError
+from os import environ as osEnviron
+from os.path import exists as osPathExists, join as osPathJoin
+from pathlib import Path as pathlibPath
 from platform import system as platformSystem
+from setuptools import Command as setuptoolsCommand, setup as setuptoolsSetup
 from shutil import copy2 as shutilCopy2
-from setuptools import setup as setuptoolsSetup, Command as setuptoolsCommand
+from subprocess import CalledProcessError as subprocessCalledProcessError, check_call as subprocessCheckCall
 
 
-##########################################################################
+# -----------------------------------------------------------------------------------------------
 # Custom Build Commands
 
 class BuildGoLib(setuptoolsCommand):
     """
-    Compile the Go shared library for the current platform.
-    Used during installation or source distribution builds.
+    Compile or copy the Go shared library for the current platform into unilog/.
     """
+
+    Name = "BuildGoLib"
     description = "Compile the Go shared library"
     user_options = []
 
-    def initialize_options(self): pass
-    def finalize_options(self): pass
+    # -----------------------------------------------------------------------------------------------
 
-    def run(self):
-        # 1. Determine platform extension
+    def initialize_options(self) -> None:
+        pass
+
+    # -----------------------------------------------------------------------------------------------
+
+    def finalize_options(self) -> None:
+        pass
+
+    # -----------------------------------------------------------------------------------------------
+
+    def run(self) -> None:
         ext = ".so"
         if platformSystem() == "Darwin":
             ext = ".dylib"
         elif platformSystem() == "Windows":
             ext = ".dll"
 
-        target_lib = osPath.join("python", f"libunilog{ext}")
-        source_lib = osPath.join("libunilog", f"libunilog{ext}")
-        
-        # 2. Check if library exists in libunilog/ and copy it to python/ if needed
-        if osPath.exists(source_lib):
+        target_lib = osPathJoin("unilog", f"libunilog{ext}")
+        target_hdr = osPathJoin("unilog", "libunilog.h")
+        source_lib = osPathJoin("..", "..", "libunilog", f"libunilog{ext}")
+        source_hdr = osPathJoin("..", "..", "libunilog", "libunilog.h")
+
+        if osPathExists(source_lib):
             print(f">>> Copying {source_lib} to {target_lib} for packaging...")
             shutilCopy2(source_lib, target_lib)
+            if osPathExists(source_hdr):
+                shutilCopy2(source_hdr, target_hdr)
             return
 
-        # 3. Fallback to local Go build if missing
         print(f">>> Missing {source_lib}. Attempting local Go build...")
         cmd = [
-            "go", "build", 
+            "go",
+            "build",
             "-buildmode=c-shared",
-            "-o", target_lib,
-            "./src/cgo_bridge/initialize.go",
-            "./src/cgo_bridge/config.go",
-            "./src/cgo_bridge/logger.go"
+            "-o",
+            osPathJoin("unilog", "python", "unilog", f"libunilog{ext}"),
+            "./src/cgo_bridge",
         ]
 
         try:
-            # Run from the project root (.. relative to python dir)
-            subprocessCheckCall(cmd, env=osEnviron, cwd="..")
-        except subprocessCalledProcessError as e:
-            print(f"Failed to build Go library: {e}")
+            subprocessCheckCall(cmd, env=osEnviron, cwd=osPathJoin("..", ".."))
+        except subprocessCalledProcessError as err:
+            print(f"Failed to build Go library: {err}")
             raise
 
 
+# -----------------------------------------------------------------------------------------------
+
 def _load_version() -> str:
-    from pathlib import Path
-    candidates = [
-        Path(__file__).resolve().parent.parent.parent / "VERSION.txt",
-        Path("VERSION.txt"),
-        Path("../VERSION.txt"),
-        Path("../../VERSION.txt"),
-    ]
-    for p in candidates:
-        if p.is_file():
-            try:
-                v = p.read_text(encoding="utf-8").strip()
-                if v:
-                    return v
-            except Exception:
-                pass
-    return "0.0.1"
+    version_path = pathlibPath(__file__).resolve().parent.parent.parent / "VERSION.txt"
+    if not version_path.is_file():
+        raise FileNotFoundError(f"Missing VERSION.txt at {version_path}")
+    version = version_path.read_text(encoding="utf-8").strip()
+    if not version:
+        raise ValueError(f"Empty VERSION.txt at {version_path}")
+    return version
 
 
-##########################################################################
-# Package configuration
+# -----------------------------------------------------------------------------------------------
+# Package Configuration
 
 setuptoolsSetup(
     name="unilog",
@@ -101,7 +105,7 @@ setuptoolsSetup(
     packages=["unilog"],
     package_dir={"": "."},
     package_data={"unilog": ["*.so", "*.dylib", "*.dll", "*.h"]},
-    # Custom build commands including the Go bridge compilation
+    include_package_data=True,
     cmdclass={
         "build_go": BuildGoLib,
     },
