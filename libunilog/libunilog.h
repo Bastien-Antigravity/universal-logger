@@ -21,7 +21,7 @@ extern const char *_GoStringPtr(_GoString_ s);
 /* Start of preamble from import "C" comments.  */
 
 
-#line 17 "config.go"
+#line 16 "config.go"
 
 #include <stdlib.h>
 #include <string.h>
@@ -47,7 +47,7 @@ typedef void (*config_update_cb)(const char* json_data);
 
 #line 1 "cgo-generated-wrapper"
 
-#line 14 "distconf_bridge.go"
+#line 13 "distconf_bridge.go"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -108,19 +108,19 @@ static void set_last_error(int code, const char* err) {
 
 #line 1 "cgo-generated-wrapper"
 
-#line 17 "initialize.go"
+#line 16 "initialize.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 16 "logger.go"
+#line 15 "logger.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 15 "notif_callback.go"
+#line 14 "notif_callback.go"
 
 #include <stdlib.h>
 
