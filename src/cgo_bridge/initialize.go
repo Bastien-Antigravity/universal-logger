@@ -13,7 +13,6 @@ package main
 //   - UniLog_Close: Releases session resources and closes loggers.
 // =============================================================================
 
-
 /*
 #include <stdlib.h>
 */

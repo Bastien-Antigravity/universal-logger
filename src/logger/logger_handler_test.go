@@ -46,17 +46,17 @@ type mockFlexLogger struct {
 	callerCalled bool
 }
 
-func (m *mockFlexLogger) Debug(format string, args ...any)  {}
-func (m *mockFlexLogger) Info(format string, args ...any)   {}
-func (m *mockFlexLogger) Warning(format string, args ...any) {}
-func (m *mockFlexLogger) Error(format string, args ...any)   {}
+func (m *mockFlexLogger) Debug(format string, args ...any)    {}
+func (m *mockFlexLogger) Info(format string, args ...any)     {}
+func (m *mockFlexLogger) Warning(format string, args ...any)  {}
+func (m *mockFlexLogger) Error(format string, args ...any)    {}
 func (m *mockFlexLogger) Critical(format string, args ...any) {}
-func (m *mockFlexLogger) Stream(format string, args ...any) {}
-func (m *mockFlexLogger) Logon(format string, args ...any)  {}
-func (m *mockFlexLogger) Logout(format string, args ...any) {}
-func (m *mockFlexLogger) Trade(format string, args ...any)  {}
+func (m *mockFlexLogger) Stream(format string, args ...any)   {}
+func (m *mockFlexLogger) Logon(format string, args ...any)    {}
+func (m *mockFlexLogger) Logout(format string, args ...any)   {}
+func (m *mockFlexLogger) Trade(format string, args ...any)    {}
 func (m *mockFlexLogger) Schedule(format string, args ...any) {}
-func (m *mockFlexLogger) Report(format string, args ...any) {}
+func (m *mockFlexLogger) Report(format string, args ...any)   {}
 
 func (m *mockFlexLogger) Log(level flex_models.Level, format string, args ...any) {
 	m.mu.Lock()
@@ -437,5 +437,3 @@ func TestUniLog_NotificationThresholds_Unit(t *testing.T) {
 		t.Fatal("Timed out waiting for LogWithMetadata notification")
 	}
 }
-
-

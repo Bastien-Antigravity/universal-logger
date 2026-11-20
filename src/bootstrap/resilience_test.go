@@ -12,7 +12,6 @@ package bootstrap
 //   - TestFullEcosystemResilience: Validates SafeSocket reconnection under network failure.
 // =============================================================================
 
-
 import (
 	"net"
 	"sync"

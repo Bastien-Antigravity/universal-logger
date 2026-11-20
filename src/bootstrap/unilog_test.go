@@ -11,7 +11,6 @@ package bootstrap
 //   - TestInitService: Validates zero-config bootstrap entrypoint.
 // =============================================================================
 
-
 import (
 	"testing"
 )

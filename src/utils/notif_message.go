@@ -10,7 +10,6 @@ package utils
 //   - NotifMessage: Alert message type alias.
 // =============================================================================
 
-
 import (
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )

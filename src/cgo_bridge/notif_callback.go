@@ -11,7 +11,6 @@ package main
 //   - UniLog_RegisterNotifCallback: Binds external notification handler across C ABI.
 // =============================================================================
 
-
 /*
 #include <stdlib.h>
 

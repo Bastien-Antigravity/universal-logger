@@ -13,7 +13,6 @@ package main
 //   - UniLog_OnConfigUpdate: Registers update notification callbacks.
 // =============================================================================
 
-
 /*
 #include <stdlib.h>
 #include <string.h>

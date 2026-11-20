@@ -12,7 +12,6 @@ package main
 //   - main: Command-line execution entry point.
 // =============================================================================
 
-
 import (
 	"fmt"
 	"os"

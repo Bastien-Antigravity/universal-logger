@@ -13,7 +13,6 @@ package bootstrap
 //   - Init / InitWithOptions / InitService: Factory entrypoints for ecosystem services.
 // =============================================================================
 
-
 import (
 	"os"
 
@@ -158,4 +157,3 @@ func InitService(serviceName string) (*config.DistConfig, interfaces.Logger) {
 
 	return Init(serviceName, configProfile, loggerProfile, logLevel, true, nil)
 }
-

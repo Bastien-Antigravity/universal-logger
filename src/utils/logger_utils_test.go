@@ -33,27 +33,27 @@ type mockLoggerWithCaller struct {
 
 type Level = interfaces.Level
 
-func (m *mockLoggerWithCaller) Debug(format string, args ...any)  {}
-func (m *mockLoggerWithCaller) Info(format string, args ...any)   {}
-func (m *mockLoggerWithCaller) Warning(format string, args ...any) {}
-func (m *mockLoggerWithCaller) Error(format string, args ...any)   {}
-func (m *mockLoggerWithCaller) Critical(format string, args ...any) {}
-func (m *mockLoggerWithCaller) Stream(format string, args ...any) {}
-func (m *mockLoggerWithCaller) Logon(format string, args ...any)  {}
-func (m *mockLoggerWithCaller) Logout(format string, args ...any) {}
-func (m *mockLoggerWithCaller) Trade(format string, args ...any)  {}
-func (m *mockLoggerWithCaller) Schedule(format string, args ...any) {}
-func (m *mockLoggerWithCaller) Report(format string, args ...any) {}
-func (m *mockLoggerWithCaller) GetNotifQueue() <-chan *interfaces.NotifMessage { return nil }
+func (m *mockLoggerWithCaller) Debug(format string, args ...any)                    {}
+func (m *mockLoggerWithCaller) Info(format string, args ...any)                     {}
+func (m *mockLoggerWithCaller) Warning(format string, args ...any)                  {}
+func (m *mockLoggerWithCaller) Error(format string, args ...any)                    {}
+func (m *mockLoggerWithCaller) Critical(format string, args ...any)                 {}
+func (m *mockLoggerWithCaller) Stream(format string, args ...any)                   {}
+func (m *mockLoggerWithCaller) Logon(format string, args ...any)                    {}
+func (m *mockLoggerWithCaller) Logout(format string, args ...any)                   {}
+func (m *mockLoggerWithCaller) Trade(format string, args ...any)                    {}
+func (m *mockLoggerWithCaller) Schedule(format string, args ...any)                 {}
+func (m *mockLoggerWithCaller) Report(format string, args ...any)                   {}
+func (m *mockLoggerWithCaller) GetNotifQueue() <-chan *interfaces.NotifMessage      { return nil }
 func (m *mockLoggerWithCaller) SetLocalNotifQueue(ch chan *interfaces.NotifMessage) {}
-func (m *mockLoggerWithCaller) Log(level Level, format string, args ...any) {}
-func (m *mockLoggerWithCaller) SetLevel(level Level) {}
-func (m *mockLoggerWithCaller) GetLevel() Level { return interfaces.LevelInfo }
-func (m *mockLoggerWithCaller) SetCallerSkip(skip int) {}
-func (m *mockLoggerWithCaller) SetMetadata(metadata map[string]string) {}
-func (m *mockLoggerWithCaller) AddMetadata(key, value string) {}
-func (m *mockLoggerWithCaller) GetMetadata() map[string]string { return nil }
-func (m *mockLoggerWithCaller) Close() {}
+func (m *mockLoggerWithCaller) Log(level Level, format string, args ...any)         {}
+func (m *mockLoggerWithCaller) SetLevel(level Level)                                {}
+func (m *mockLoggerWithCaller) GetLevel() Level                                     { return interfaces.LevelInfo }
+func (m *mockLoggerWithCaller) SetCallerSkip(skip int)                              {}
+func (m *mockLoggerWithCaller) SetMetadata(metadata map[string]string)              {}
+func (m *mockLoggerWithCaller) AddMetadata(key, value string)                       {}
+func (m *mockLoggerWithCaller) GetMetadata() map[string]string                      { return nil }
+func (m *mockLoggerWithCaller) Close()                                              {}
 
 func (m *mockLoggerWithCaller) LogWithCaller(level Level, msg, file, line, function, module string) {
 	m.lastLevel = level
@@ -147,5 +147,3 @@ func TestLogWithMetadata_NilLogger(t *testing.T) {
 	// Should safely return without panic
 	utils.LogWithMetadata(nil, interfaces.LevelInfo, "nil test", "f.go", "1", "fn", "mod")
 }
-
-

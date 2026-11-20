@@ -15,7 +15,6 @@ package bootstrap
 //   - TestLocalNotification_NonBlockingOnSaturation: Verifies non-blocking buffer overflow behavior.
 // =============================================================================
 
-
 import (
 	"testing"
 	"time"
@@ -311,4 +310,3 @@ DRAINED:
 		t.Fatal("Timed out waiting for notification after queue was drained")
 	}
 }
-

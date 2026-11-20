@@ -10,7 +10,6 @@ package main
 //   - DistConf_New / DistConf_Get / DistConf_Set: CGO exported config bridge.
 // =============================================================================
 
-
 /*
 #include <stdlib.h>
 #include <stdint.h>

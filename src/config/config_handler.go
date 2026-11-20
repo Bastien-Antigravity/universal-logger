@@ -10,7 +10,6 @@ package config
 //   - DistConfig: Configuration engine wrapper struct.
 // =============================================================================
 
-
 import (
 	distributed_config "github.com/Bastien-Antigravity/distributed-config"
 )

@@ -12,7 +12,6 @@ package interfaces
 //   - Logger: Unified logging contract for the Bastien-Antigravity ecosystem.
 // =============================================================================
 
-
 // Logger is the main interface for logging across the Bastien-Antigravity ecosystem.
 // It is a facade that ensures microservices remain decoupled from the underlying logging engine.
 type Logger interface {

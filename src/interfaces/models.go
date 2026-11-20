@@ -12,7 +12,6 @@ package interfaces
 //   - NotifMessage: Structured alert notification payload.
 // =============================================================================
 
-
 import logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 
 // -------------------------------------------------------------------------

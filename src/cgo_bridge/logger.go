@@ -12,7 +12,6 @@ package main
 //   - UniLog_SetLevel / UniLog_GetLevel: Runtime log level controls.
 // =============================================================================
 
-
 /*
 #include <stdlib.h>
 */
@@ -115,4 +114,3 @@ func UniLog_Flush(handle uintptr) {
 		// Flushes active buffer if supported
 	}
 }
-
