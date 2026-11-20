@@ -14,12 +14,17 @@
 VERSION := $(strip $(shell cat VERSION.txt))
 $(if $(VERSION),,$(error VERSION.txt is missing or empty))
 
-.PHONY: all build build-lib shared-lib core test audit version clean
+.PHONY: all build build-lib shared-lib core test verify-standalone audit version clean
 
 all: build
 
 version:
 	@echo $(VERSION)
+
+verify-standalone:
+	@echo "Verifying standalone Go build & tests (GOWORK=off)..."
+	GOWORK=off go build ./...
+	GOWORK=off go test ./...
 
 build-lib shared-lib core:
 	@echo "Building CGO shared library libunilog (version $(VERSION))..."
