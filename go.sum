@@ -1,5 +1,13 @@
 capnproto.org/go/capnp/v3 v3.1.0-alpha.2 h1:93ISpqHf2/3WQlfrBP0tT8Dg/RQc3uq6DV36vN0ePWk=
 capnproto.org/go/capnp/v3 v3.1.0-alpha.2/go.mod h1:2vT5D2dtG8sJGEoEKU17e+j7shdaYp1Myl8X03B3hmc=
+github.com/Bastien-Antigravity/distributed-config v0.0.2-0.20261124065914-695bfba252e6 h1:QhDZr0iJk7oM7B+dnT/Ioc56IMqM0i6Sbxz7dgswQSY=
+github.com/Bastien-Antigravity/distributed-config v0.0.2-0.20261124065914-695bfba252e6/go.mod h1:YmNLBOiS7TPsZzbEz1LdHLoiIGaZHWylZwTumREEjXI=
+github.com/Bastien-Antigravity/flexible-logger v0.0.2-0.20261123182829-960a964bf6aa h1:aPN1qONEWgtjWj4rVi+ODnTrHozlUXCTuNKwp0N3orc=
+github.com/Bastien-Antigravity/flexible-logger v0.0.2-0.20261123182829-960a964bf6aa/go.mod h1:FxSquOTizzygc2OcMN5V5IqgbwmTjjmtxzsbW2Qlwbw=
+github.com/Bastien-Antigravity/microservice-toolbox v0.0.2-0.20261123220125-475cf2f671ef h1:iOxn/jvQ5lAQT85m1eBdfRWV27rBkzgkqbz6BUnzknU=
+github.com/Bastien-Antigravity/microservice-toolbox v0.0.2-0.20261123220125-475cf2f671ef/go.mod h1:9xyshJpRpjfp0wobWV5dy9zHfn/tBH+h2E8LiJf6n9I=
+github.com/Bastien-Antigravity/safe-socket v0.0.2-0.20261123230542-2a4f4de20a0f h1:LpThXcr3Q5MO1e0/Blaem/ZJCcmx9+FGxLnIQNuA3GI=
+github.com/Bastien-Antigravity/safe-socket v0.0.2-0.20261123230542-2a4f4de20a0f/go.mod h1:iPjRZl46Sw1+bXc17BvuDvEn5crmC15rrc4/nqCZq3E=
 github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381 h1:d5EKgQfRQvO97jnISfR89AiCCCJMwMFoSxUiU0OGCRU=
 github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381/go.mod h1:OU76gHeRo8xrzGJU3F3I1CqX1ekM8dfJw0+wPeMwnp0=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

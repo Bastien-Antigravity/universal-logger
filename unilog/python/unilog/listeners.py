@@ -24,8 +24,7 @@ from typing import TYPE_CHECKING, Any, Dict
 if TYPE_CHECKING:
     from unilog.facade import UniLog
 
-
-##########################################################################
+# -----------------------------------------------------------------------------------------------
 # Async config listener
 
 class ConfigUpdateListener:

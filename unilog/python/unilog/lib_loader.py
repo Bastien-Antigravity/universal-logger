@@ -25,8 +25,7 @@ from pathlib import Path as pathlibPath
 from typing import Any
 from sys import stderr as sysStderr
 
-
-##########################################################################
+# -----------------------------------------------------------------------------------------------
 # Loader logic
 
 # Discovery function to find the shared library across development and production environments

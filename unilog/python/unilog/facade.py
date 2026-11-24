@@ -31,6 +31,7 @@ from .models import LogLevel
 from .listeners import ConfigUpdateListener
 from .lib_loader import lib, CALLBACK_TYPE
 
+# -----------------------------------------------------------------------------------------------
 
 class UniLog:
     """
