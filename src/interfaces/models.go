@@ -14,9 +14,9 @@ package interfaces
 
 import logger_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Log Level Definitions
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // Level mirrors the flexible-logger Level using a type alias.
 type Level = logger_models.Level
@@ -37,9 +37,9 @@ const (
 	LevelCritical = logger_models.LevelCritical
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Notification Definitions
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // NotifMessage mirrors the flexible-logger NotifMessage using a type alias.
 type NotifMessage = logger_models.NotifMessage

@@ -31,6 +31,7 @@
 class UniLog {
 public:
     enum Level {
+        NOTSET = 0,
         DEBUG = 1,
         STREAM = 2,
         INFO = 3,
@@ -109,7 +110,13 @@ public:
     }
 
     void debug(const std::string& msg) { log(DEBUG, msg); }
+    void stream(const std::string& msg) { log(STREAM, msg); }
     void info(const std::string& msg) { log(INFO, msg); }
+    void logon(const std::string& msg) { log(LOGON, msg); }
+    void logout(const std::string& msg) { log(LOGOUT, msg); }
+    void trade(const std::string& msg) { log(TRADE, msg); }
+    void schedule(const std::string& msg) { log(SCHEDULE, msg); }
+    void report(const std::string& msg) { log(REPORT, msg); }
     void warning(const std::string& msg) { log(WARNING, msg); }
     void error(const std::string& msg) { log(ERROR, msg); }
     void critical(const std::string& msg) { log(CRITICAL, msg); }
@@ -170,6 +177,13 @@ public:
     }
 
     /**
+     * @brief Set a callback for live config updates.
+     */
+    void on_config_update(void (*cb)(const char*)) {
+        UniLog_OnConfigUpdate(handle_, cb);
+    }
+
+    /**
      * @brief Set a callback for notifications.
      */
     void set_notification_callback(void (*cb)(const char*)) {
@@ -189,6 +203,24 @@ private:
 
 #define UNILOG_DEBUG(logger, msg) \
     (logger).log(UniLog::DEBUG, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_STREAM(logger, msg) \
+    (logger).log(UniLog::STREAM, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_LOGON(logger, msg) \
+    (logger).log(UniLog::LOGON, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_LOGOUT(logger, msg) \
+    (logger).log(UniLog::LOGOUT, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_TRADE(logger, msg) \
+    (logger).log(UniLog::TRADE, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_SCHEDULE(logger, msg) \
+    (logger).log(UniLog::SCHEDULE, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
+
+#define UNILOG_REPORT(logger, msg) \
+    (logger).log(UniLog::REPORT, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")
 
 #define UNILOG_WARNING(logger, msg) \
     (logger).log(UniLog::WARNING, (msg), __FILE__, std::to_string(__LINE__), __FUNCTION__, "cpp-module")

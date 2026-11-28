@@ -17,17 +17,7 @@ package main
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#define THREAD_LOCAL _Thread_local
-#elif defined(_MSC_VER)
-#define THREAD_LOCAL __declspec(thread)
-#elif defined(__GNUC__)
-#define THREAD_LOCAL __thread
-#else
-#define THREAD_LOCAL
-#endif
-
-static THREAD_LOCAL char vba_buffer[4096];
+static char vba_buffer[4096];
 
 static inline char* get_vba_buffer(void) {
     return vba_buffer;
@@ -40,10 +30,13 @@ import "C"
 
 import (
 	"encoding/json"
+	"sync"
 	"unsafe"
 )
 
-// -------------------------------------------------------------------------
+var vbaBufferMu sync.Mutex
+
+// -----------------------------------------------------------------------------
 
 //export UniLog_Config_Get_Safe
 func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
@@ -60,6 +53,9 @@ func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
 		return nil
 	}
 
+	vbaBufferMu.Lock()
+	defer vbaBufferMu.Unlock()
+
 	bufPtr := C.get_vba_buffer()
 	b := []byte(val)
 	if len(b) >= 4096 {
@@ -71,7 +67,7 @@ func UniLog_Config_Get_Safe(handle uintptr, section, key *C.char) *C.char {
 	return bufPtr
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_Config_Get
 func UniLog_Config_Get(handle uintptr, section, key *C.char) *C.char {
@@ -90,7 +86,7 @@ func UniLog_Config_Get(handle uintptr, section, key *C.char) *C.char {
 	return C.CString(val)
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_Config_Set
 func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
@@ -104,7 +100,7 @@ func UniLog_Config_Set(handle uintptr, section, key, value *C.char) {
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_OnConfigUpdate
 func UniLog_OnConfigUpdate(handle uintptr, cb C.config_update_cb) {

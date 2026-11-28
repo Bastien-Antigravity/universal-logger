@@ -21,16 +21,23 @@ extern const char *_GoStringPtr(_GoString_ s);
 /* Start of preamble from import "C" comments.  */
 
 
-#line 17 "config.go"
+#line 16 "config.go"
 
 #include <stdlib.h>
+#include <string.h>
+
+static char vba_buffer[4096];
+
+static inline char* get_vba_buffer(void) {
+    return vba_buffer;
+}
 
 // Define the callback type for C
 typedef void (*config_update_cb)(const char* json_data);
 
 #line 1 "cgo-generated-wrapper"
 
-#line 14 "distconf_bridge.go"
+#line 13 "distconf_bridge.go"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -56,36 +63,42 @@ static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, con
 #define DISTCONF_ERR_DECRYPTION_FAILED   6
 #define DISTCONF_ERR_INVALID_INPUT       7
 
-static char* last_error = NULL;
+static char last_error_buf[1024] = {0};
 static int last_error_code = 0;
+
+static inline char* get_last_error(void) {
+    return last_error_buf;
+}
+
+static inline int get_last_error_code(void) {
+    return last_error_code;
+}
 
 static void set_last_error(int code, const char* err) {
     last_error_code = code;
-    if (last_error != NULL) {
-        free(last_error);
-    }
     if (err == NULL) {
-        last_error = NULL;
+        last_error_buf[0] = '\0';
     } else {
-        last_error = strdup(err);
+        strncpy(last_error_buf, err, sizeof(last_error_buf) - 1);
+        last_error_buf[sizeof(last_error_buf) - 1] = '\0';
     }
 }
 
 #line 1 "cgo-generated-wrapper"
 
-#line 17 "initialize.go"
+#line 16 "initialize.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 16 "logger.go"
+#line 15 "logger.go"
 
 #include <stdlib.h>
 
 #line 1 "cgo-generated-wrapper"
 
-#line 15 "notif_callback.go"
+#line 14 "notif_callback.go"
 
 #include <stdlib.h>
 
@@ -206,6 +219,7 @@ extern void UniLog_SetLevel(GoUintptr handle, GoInt level);
 extern GoInt UniLog_GetLevel(GoUintptr handle);
 extern void UniLog_AddMetadata(GoUintptr handle, char* key, char* value);
 extern void UniLog_SetMetadata(GoUintptr handle, char* jsonMetadata);
+extern void UniLog_Flush(GoUintptr handle);
 extern void UniLog_RegisterNotifCallback(GoUintptr handle, UniLogNotifCallback callback);
 extern void UniLog_RegisterVBAWindow(GoUintptr handle, GoUintptr hwnd, GoUint32 msgId);
 

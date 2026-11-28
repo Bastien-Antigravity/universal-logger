@@ -135,12 +135,62 @@ impl UniLog {
         }
     }
 
-    /// Convenience logging methods
-    pub fn info(&self, msg: &str) { self.log_with_metadata(LogLevel::Info, msg, "lib.rs", "?", "info", "rust-wrapper"); }
-    pub fn debug(&self, msg: &str) { self.log_with_metadata(LogLevel::Debug, msg, "lib.rs", "?", "debug", "rust-wrapper"); }
-    pub fn warning(&self, msg: &str) { self.log_with_metadata(LogLevel::Warning, msg, "lib.rs", "?", "warning", "rust-wrapper"); }
-    pub fn error(&self, msg: &str) { self.log_with_metadata(LogLevel::Error, msg, "lib.rs", "?", "error", "rust-wrapper"); }
-    pub fn critical(&self, msg: &str) { self.log_with_metadata(LogLevel::Critical, msg, "lib.rs", "?", "critical", "rust-wrapper"); }
+    /// Convenience logging methods with accurate caller file/line capture
+    #[track_caller]
+    pub fn info(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Info, msg, loc.file(), &loc.line().to_string(), "info", "rust");
+    }
+    #[track_caller]
+    pub fn debug(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Debug, msg, loc.file(), &loc.line().to_string(), "debug", "rust");
+    }
+    #[track_caller]
+    pub fn warning(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Warning, msg, loc.file(), &loc.line().to_string(), "warning", "rust");
+    }
+    #[track_caller]
+    pub fn error(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Error, msg, loc.file(), &loc.line().to_string(), "error", "rust");
+    }
+    #[track_caller]
+    pub fn critical(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Critical, msg, loc.file(), &loc.line().to_string(), "critical", "rust");
+    }
+    #[track_caller]
+    pub fn stream(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Stream, msg, loc.file(), &loc.line().to_string(), "stream", "rust");
+    }
+    #[track_caller]
+    pub fn logon(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Logon, msg, loc.file(), &loc.line().to_string(), "logon", "rust");
+    }
+    #[track_caller]
+    pub fn logout(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Logout, msg, loc.file(), &loc.line().to_string(), "logout", "rust");
+    }
+    #[track_caller]
+    pub fn trade(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Trade, msg, loc.file(), &loc.line().to_string(), "trade", "rust");
+    }
+    #[track_caller]
+    pub fn schedule(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Schedule, msg, loc.file(), &loc.line().to_string(), "schedule", "rust");
+    }
+    #[track_caller]
+    pub fn report(&self, msg: &str) {
+        let loc = std::panic::Location::caller();
+        self.log_with_metadata(LogLevel::Report, msg, loc.file(), &loc.line().to_string(), "report", "rust");
+    }
 
     /// Retrieves a configuration value.
     pub fn get_config(&self, section: &str, key: &str) -> Option<String> {
@@ -240,6 +290,12 @@ impl UniLog {
 
 impl Drop for UniLog {
     fn drop(&mut self) {
+        if let Ok(mut guard) = GLOBAL_CONFIG_CB.lock() {
+            *guard = None;
+        }
+        if let Ok(mut guard) = GLOBAL_NOTIF_CB.lock() {
+            *guard = None;
+        }
         unsafe {
             UniLog_Close(self.handle);
         }
@@ -285,6 +341,48 @@ macro_rules! unilog_error {
     };
 }
 
+#[macro_export]
+macro_rules! unilog_stream {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Stream, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
+#[macro_export]
+macro_rules! unilog_logon {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Logon, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
+#[macro_export]
+macro_rules! unilog_logout {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Logout, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
+#[macro_export]
+macro_rules! unilog_trade {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Trade, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
+#[macro_export]
+macro_rules! unilog_schedule {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Schedule, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
+#[macro_export]
+macro_rules! unilog_report {
+    ($logger:expr, $msg:expr) => {
+        $logger.log_with_metadata($crate::LogLevel::Report, $msg, file!(), &line!().to_string(), "?", module_path!());
+    };
+}
+
 // -----------------------------------------------------------------------------
 // TESTS
 // -----------------------------------------------------------------------------
@@ -293,6 +391,24 @@ macro_rules! unilog_error {
 mod tests {
     use super::*;
     use std::collections::HashMap;
+    use std::sync::Once;
+
+    static INIT_TEST_ENV: Once = Once::new();
+
+    fn setup_isolated_test_env() {
+        INIT_TEST_ENV.call_once(|| {
+            let tmp_dir = std::env::temp_dir().join("unilog_rust_test");
+            let log_dir = tmp_dir.join("logs");
+            let _ = std::fs::create_dir_all(&log_dir);
+            let cfg_path = tmp_dir.join("standalone.yaml");
+            let _ = std::fs::write(
+                &cfg_path,
+                "common:\n  name: \"unilog-rust-test\"\n  public_ip: \"127.0.0.1\"\n",
+            );
+            std::env::set_var("CONFIG_PATH", &cfg_path);
+            std::env::set_var("LOG_DIR", &log_dir);
+        });
+    }
 
     #[test]
     fn test_log_level_values() {
@@ -306,9 +422,10 @@ mod tests {
 
     #[test]
     fn test_logger_lifecycle() {
+        setup_isolated_test_env();
         let logger = UniLog::new("rust-test-lifecycle", "standalone", "devel", LogLevel::Info, false, 0)
             .expect("failed to initialize UniLog in test_logger_lifecycle");
-        
+
         logger.set_level(LogLevel::Debug);
         assert_eq!(logger.get_level(), LogLevel::Debug);
 
@@ -318,6 +435,7 @@ mod tests {
 
     #[test]
     fn test_metadata_operations() {
+        setup_isolated_test_env();
         let logger = UniLog::new("rust-test-meta", "standalone", "devel", LogLevel::Debug, false, 0)
             .expect("failed to initialize UniLog in test_metadata_operations");
 
@@ -331,7 +449,7 @@ mod tests {
         map.insert("subsystem".to_string(), "rust_wrapper".to_string());
         logger.set_metadata(&map);
 
-        // 3. Direct log with caller metadata
+        // 3. Direct log with caller metadata and #[track_caller] domain helpers
         logger.log_with_metadata(
             LogLevel::Info,
             "Rust message with caller metadata",
@@ -340,10 +458,13 @@ mod tests {
             "test_metadata_operations",
             "unilog::tests",
         );
+        logger.stream("stream method check");
+        logger.trade("trade method check");
     }
 
     #[test]
     fn test_logging_macros() {
+        setup_isolated_test_env();
         let logger = UniLog::new("rust-test-macros", "standalone", "devel", LogLevel::Debug, false, 0)
             .expect("failed to initialize UniLog in test_logging_macros");
 
@@ -352,10 +473,15 @@ mod tests {
         unilog_warning!(logger, "Testing Rust warning macro");
         unilog_error!(logger, "Testing Rust error macro");
         unilog_critical!(logger, "Testing Rust critical macro");
+        unilog_logon!(logger, "Testing Rust logon macro");
+        unilog_logout!(logger, "Testing Rust logout macro");
+        unilog_schedule!(logger, "Testing Rust schedule macro");
+        unilog_report!(logger, "Testing Rust report macro");
     }
 
     #[test]
     fn test_config_operations() {
+        setup_isolated_test_env();
         let logger = UniLog::new("rust-test-config", "standalone", "devel", LogLevel::Info, false, 0)
             .expect("failed to initialize UniLog in test_config_operations");
 

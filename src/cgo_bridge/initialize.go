@@ -21,6 +21,7 @@ import "C"
 import (
 	"strings"
 	"sync"
+	"unsafe"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/bootstrap"
 	"github.com/Bastien-Antigravity/universal-logger/src/config"
@@ -32,10 +33,13 @@ import (
 
 // FacadeSession holds the state for a single library instantiation.
 type FacadeSession struct {
-	Config   *config.DistConfig
-	Logger   interfaces.Logger
-	VbaHwnd  uintptr // Windows HWND for Message Pump (VBA only)
-	VbaMsgId uint32  // Windows Message ID (VBA only)
+	Config           *config.DistConfig
+	Logger           interfaces.Logger
+	OwnsConfig       bool
+	NotifCallback    unsafe.Pointer
+	NotifPumpStarted bool
+	VbaHwnd          uintptr // Windows HWND for Message Pump (VBA only)
+	VbaMsgId         uint32  // Windows Message ID (VBA only)
 }
 
 var (
@@ -47,7 +51,7 @@ var (
 
 func main() {}
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // sanitizeFFIString cleans C strings coming across the frontier
 func sanitizeFFIString(cStr *C.char) string {
@@ -79,11 +83,11 @@ func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, 
 
 		// 2. If not found, check if it's a handle from the distributed-config bridge
 		if existingCfg == nil {
-			distconf_bridge.FacadeMu.Lock()
+			distconf_bridge.FacadeMu.RLock()
 			if session, ok := distconf_bridge.FacadeStore[configHandle]; ok && session.Config != nil {
 				existingCfg = &config.DistConfig{Config: session.Config}
 			}
-			distconf_bridge.FacadeMu.Unlock()
+			distconf_bridge.FacadeMu.RUnlock()
 		}
 
 		// SAFETY: NEVER attempt a raw pointer cast here. Handles are IDs, not memory addresses.
@@ -96,14 +100,15 @@ func UniLog_Init(appName, configProfile, loggerProfile *C.char, logLevel C.int, 
 
 	id := facadeId
 	facadeStore[id] = &FacadeSession{
-		Config: cfg,
-		Logger: log,
+		Config:     cfg,
+		Logger:     log,
+		OwnsConfig: existingCfg == nil,
 	}
 	facadeId++
 	return id
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_Close
 func UniLog_Close(handle uintptr) {
@@ -118,7 +123,7 @@ func UniLog_Close(handle uintptr) {
 		if session.Logger != nil {
 			session.Logger.Close()
 		}
-		if session.Config != nil {
+		if session.OwnsConfig && session.Config != nil {
 			_ = session.Config.Close()
 		}
 	}

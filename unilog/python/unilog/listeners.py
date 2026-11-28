@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding:utf-8
 """
 =============================================================================
 ESSENTIAL PROCESS:
@@ -16,16 +16,14 @@ KEY PARAMETERS:
 =============================================================================
 """
 
+from asyncio import CancelledError as asyncioCancelledError, Queue as asyncioQueue, get_event_loop as asyncioGetEventLoop, get_running_loop as asyncioGetRunningLoop
+from typing import Any as typeAny, Dict as typeDict, TYPE_CHECKING as typeChecking
 
-from asyncio import Queue as asyncioQueue, get_running_loop as asyncioGetRunningLoop, \
-    get_event_loop as asyncioGetEventLoop, CancelledError as asyncioCancelledError
-from typing import TYPE_CHECKING, Any, Dict
-
-if TYPE_CHECKING:
+if typeChecking:
     from unilog.facade import UniLog
 
 # -----------------------------------------------------------------------------------------------
-# Async config listener
+
 
 class ConfigUpdateListener:
     """
@@ -33,33 +31,36 @@ class ConfigUpdateListener:
     Returned by UniLog.on_config_update() when no callback is provided.
     """
 
-    ##########################################################################
-    # Initialization
+    Name = "ConfigUpdateListener"
+
+    # -----------------------------------------------------------------------------------------------
 
     def __init__(self, parent: 'UniLog') -> None:
         self._parent: 'UniLog' = parent
-        self._queue: asyncioQueue[Dict[str, Any]] = asyncioQueue()
-        
+        self._queue: asyncioQueue[typeDict[str, typeAny]] = asyncioQueue()
+
         # Capture the active event loop to ensure thread-safe dispatching
         try:
             self._loop = asyncioGetRunningLoop()
         except RuntimeError:
             self._loop = asyncioGetEventLoop()
-        
+
+    # -----------------------------------------------------------------------------------------------
+
     # Internal thread-safe bridge to push data from Go into the Python event loop
-    def _put(self, data: Dict[str, Any]) -> None:
+    def _put(self, data: typeDict[str, typeAny]) -> None:
         self._loop.call_soon_threadsafe(self._queue.put_nowait, data)
 
-
-    ##########################################################################
-    # Async Iterator protocol
+    # -----------------------------------------------------------------------------------------------
 
     def __aiter__(self) -> 'ConfigUpdateListener':
         # Notify the parent facade that we are now actively listening
         self._parent._async_listeners.add(self)
         return self
 
-    async def __anext__(self) -> Dict[str, Any]:
+    # -----------------------------------------------------------------------------------------------
+
+    async def __anext__(self) -> typeDict[str, typeAny]:
         try:
             # Block until new data arrives via the thread-safe bridge
             return await self._queue.get()
@@ -68,9 +69,7 @@ class ConfigUpdateListener:
             self._parent._async_listeners.discard(self)
             raise
 
-
-    ##########################################################################
-    # Cleanup
+    # -----------------------------------------------------------------------------------------------
 
     # Destruction guard to prevent memory leaks by unhooking from parent
     def __del__(self) -> None:

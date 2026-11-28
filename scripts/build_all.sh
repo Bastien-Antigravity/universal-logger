@@ -25,18 +25,15 @@ echo ">>> Cleaning old binaries in ${LIB_DIR}..."
 mkdir -p "${LIB_DIR}"
 rm -f "${LIB_DIR}"/libunilog.{so,dylib,dll,h}
 
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 1. BUILD FOR macOS (Local)
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 echo ">>> Building for macOS (local)..."
-go build -buildmode=c-shared -o "${LIB_DIR}/libunilog.dylib" \
-    "${BRIDGE_DIR}/initialize.go" \
-    "${BRIDGE_DIR}/config.go" \
-    "${BRIDGE_DIR}/logger.go"
+go build -buildmode=c-shared -o "${LIB_DIR}/libunilog.dylib" "${BRIDGE_DIR}"
 
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 2. CHECK DOCKER DAEMON
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 if ! docker info > /dev/null 2>&1; then
     echo "ERROR: Docker daemon is not running. Cross-compilation for Linux and Windows requires Docker."
     echo "Please start Docker Desktop on your Mac and try again."
@@ -52,27 +49,21 @@ else
 fi
 
 
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 3. BUILD FOR LINUX (x86_64) via Docker
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 echo ">>> Building for Linux x86_64..."
 docker run --rm -v "${PROJECT_ROOT}:/app" ${IMAGE_NAME} \
     "CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC=x86_64-linux-gnu-gcc \
-    go build -buildmode=c-shared -o libunilog/libunilog.so \
-    ${BRIDGE_DIR}/initialize.go ${BRIDGE_DIR}/config.go ${BRIDGE_DIR}/logger.go"
+    go build -buildmode=c-shared -o libunilog/libunilog.so ${BRIDGE_DIR}"
 
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 4. BUILD FOR WINDOWS (x86_64) via Docker
-# -------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 echo ">>> Building for Windows x86_64..."
 docker run --rm -v "${PROJECT_ROOT}:/app" ${IMAGE_NAME} \
     "CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc \
-    go build -buildmode=c-shared -o libunilog/libunilog.dll \
-    ${BRIDGE_DIR}/initialize.go ${BRIDGE_DIR}/config.go ${BRIDGE_DIR}/logger.go"
+    go build -buildmode=c-shared -o libunilog/libunilog.dll ${BRIDGE_DIR}"
 
 echo ">>> All builds complete! Artifacts are in: ${LIB_DIR}"
 ls -lh "${LIB_DIR}"/libunilog.*
-
-
-echo ">>> All builds complete!"
-ls -lh "${PYTHON_DIR}"/libunilog.*

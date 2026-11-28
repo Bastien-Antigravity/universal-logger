@@ -24,6 +24,8 @@ tags:
 - [x] Create cross-language build-pipeline for DLL/SO/dylib generation via consolidated Makefile (FEAT-014).
 
 ## ✅ Completed
+- [x] **Go Core & CGO Bridge Hardening**: Fixed `UniLog` caller stack skip (`SetCallerSkip(2)` + unified `logInternal`), added lock-free `atomic.Pointer` pre-computed metadata snapshots and hot-path level gates (`UniLog`, `UniLog_LogWithMetadata`, Python `_log`/`_async_log`), unbound local notification queues safely in `UniLog.Close()` without GC finalizers, guarded `vba_buffer` and `last_error_buf` with `sync.Mutex`, prevented duplicate `internalNotificationPump` goroutines, and gated `OwnsConfig` on `UniLog_Close`.
+- [x] **Polyglot Parity & Compliance**: Added `#[track_caller]` + all 11 level helpers/macros to Rust `unilog-rs` and C++ `UniversalLogger.hpp`, standardized Python granular camelCase imports and 95-dash dividers, resolved `setup.py` `HARDCODED_VERSION_TRAVERSAL`, fixed `scripts/build_all.sh` and `scripts/parity-audit.py`, removed subpackage `standalone.yaml` symlinks and duplicate stub docs, and isolated Go/Python/Rust/C++ tests via temp `CONFIG_PATH` / `LOG_DIR`.
 - [x] Initial BDD Spec migration.
 - [x] **VBA Buffer (Purger Rule)**: Replace dynamic C.CString with a fixed-length shared buffer in the Go bridge (FEAT-003).
 - [x] **FFI Sanitization**: Add strings.TrimSpace and NULL-byte cleaning to all incoming profile names (FEAT-002).

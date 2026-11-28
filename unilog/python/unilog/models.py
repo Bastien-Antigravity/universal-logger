@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding:utf-8
 """
 =============================================================================
 ESSENTIAL PROCESS:
@@ -16,17 +16,16 @@ KEY PARAMETERS:
 =============================================================================
 """
 
+from enum import IntEnum as enumIntEnum
 
-from enum import IntEnum
+# -----------------------------------------------------------------------------------------------
 
 
-##########################################################################
-# Log Levels
-
-class LogLevel(IntEnum):
+class LogLevel(enumIntEnum):
     """
     LogLevel constants matching the Go logger_models.Level.
     """
+
     DEBUG = 1
     STREAM = 2
     INFO = 3
@@ -39,9 +38,7 @@ class LogLevel(IntEnum):
     ERROR = 10
     CRITICAL = 11
 
-
-    ##########################################################################
-    # Parsers
+    # -----------------------------------------------------------------------------------------------
 
     # Helper to convert string-based levels from config to enum
     @classmethod

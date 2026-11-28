@@ -25,6 +25,7 @@ import (
 // -----------------------------------------------------------------------------
 
 func TestLogLevelSynchronization(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// 1. Initialize with INFO level
 	distConfig, uniLog := Init("sync-test", "standalone", "devel", "INFO", false, nil)
 	defer uniLog.Close()
@@ -49,6 +50,7 @@ func TestLogLevelSynchronization(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestDynamicLogLevelFiltering_ConfigurationSync(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	distConfig, uniLog := Init("dyn-filter-sync", "standalone", "devel", "INFO", false, nil)
 	defer uniLog.Close()
 
@@ -90,6 +92,7 @@ func TestDynamicLogLevelFiltering_ConfigurationSync(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestMetadataInjection(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	meta := map[string]string{
 		"env":     "test",
 		"version": "1.1.7",
@@ -114,6 +117,7 @@ func TestMetadataInjection(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestConfigInjection(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// 1. Create a config instance manually
 	baseConfig, _ := Init("base", "standalone", "devel", "INFO", false, nil)
 
@@ -134,6 +138,7 @@ func TestConfigInjection(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestManualNotifierBinding(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// 1. Initialize with useLocalNotifier = true on DEVEL profile (which supports it safely)
 	_, uniLog := Init("notif-test", "standalone", "devel", "INFO", true, nil)
 	defer uniLog.Close()
@@ -159,6 +164,7 @@ func TestManualNotifierBinding(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestLocalNotification_LevelThresholdAndPayload(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// 1. Initialize with useLocalNotifier = true
 	_, uniLog := Init("thresh-test", "standalone", "devel", "DEBUG", true, nil)
 	defer uniLog.Close()
@@ -255,6 +261,7 @@ func TestLocalNotification_LevelThresholdAndPayload(t *testing.T) {
 // -----------------------------------------------------------------------------
 
 func TestLocalNotification_NonBlockingOnSaturation(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	_, uniLog := Init("saturation-test", "standalone", "devel", "INFO", true, nil)
 	defer uniLog.Close()
 

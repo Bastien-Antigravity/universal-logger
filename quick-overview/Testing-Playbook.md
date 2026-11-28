@@ -31,14 +31,15 @@ Every release is verified against the following cross-platform matrix:
 
 | Subsystem | Target Language | Verification Focus | Test Target / Executable |
 | :--- | :--- | :--- | :--- |
+| **Go Core Unit** | Go | Caller stack attribution (`SetCallerSkip(2)`), safe `Close()` queue unbinding, lock-free metadata snapshots. | `src/logger/logger_handler_test.go` |
 | **Go Core Integration** | Go | Log Level sync, bulk metadata injection, notifier binding. | `src/bootstrap/integration_test.go` |
 | **Go Core Resilience** | Go | MockServer crashes, background reconnect, backoff retries. | `src/bootstrap/resilience_test.go` |
 | **Python Facade** | Python | ctypes bindings, callback lifecycles, `async for` loops. | `unilog/python/test_unilog.py` |
 | **Python Async Telemetry**| Python | Asynchronous queue responsiveness and stack capture depth. | `unilog/python/test_async_logging.py` |
 | **Python Callbacks** | Python | Thread-safe dispatching of config updates across the GIL. | `unilog/python/test_unified_callback.py` |
 | **Python Leak Prevention** | Python | RSS memory profiling (50,000 tight-loop lookups). | `unilog/python/test_leak_comparison.py` |
-| **Rust Facade** | Rust | Safe pointer wrapping, Drop traits, FFI parity callback linking. | `unilog/rust/src/lib.rs` (Cargo tests) |
-| **C++ Facade** | C++ | RAII constructor session cleanups, thread safety. | `unilog/cpp/main.cpp` (make-built binary) |
+| **Rust Facade** | Rust | Safe pointer wrapping, `#[track_caller]` & domain macros, Drop traits, FFI parity callback linking. | `unilog/rust/src/lib.rs` (Cargo tests) |
+| **C++ Facade** | C++ | RAII constructor session cleanups, 11-level macros, config/metadata roundtrips. | `unilog/cpp/test_unilog.cpp` (make test) |
 | **VBA Message Pump** | VBA | Zero-heap static buffer queries, Windows pump. | `unilog/vba/UniversalLogger.bas` |
 | **Polyglot Parity Audit** | Go / Polyglot | Automated Go header signature parity mapping. | `make audit` |
 

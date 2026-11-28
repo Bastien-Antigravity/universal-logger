@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding:utf-8
 """
 =============================================================================
 ESSENTIAL PROCESS:
@@ -19,13 +19,12 @@ KEY PARAMETERS:
 =============================================================================
 """
 
-
-from os.path import basename as osPathBasename
-from ctypes import c_int as ctypeC_int
-from sys import _getframe as sysGetFrame
-from json import loads as jsonLoads
 from asyncio import get_running_loop as asyncioGetRunningLoop
-from typing import Union, Dict, List, Callable, Optional, Set, Any, Tuple
+from ctypes import c_int as ctypeC_int, string_at as ctypeStringAt
+from json import dumps as jsonDumps, loads as jsonLoads
+from os.path import basename as osPathBasename
+from sys import _getframe as sysGetFrame, stderr as sysStderr
+from typing import Any as typeAny, Callable as typeCallable, Dict as typeDict, List as typeList, Optional as typeOptional, Set as typeSet, Tuple as typeTuple, Union as typeUnion
 
 from .models import LogLevel
 from .listeners import ConfigUpdateListener
@@ -33,38 +32,43 @@ from .lib_loader import lib, CALLBACK_TYPE
 
 # -----------------------------------------------------------------------------------------------
 
+
 class UniLog:
     """
     Python Facade for the Universal Logger (Go) shared library.
     Provides integrated configuration management and high-performance logging.
     """
 
-    def __init__(self, app_name: str = "python-app", config_profile: str = "standalone", 
-                 logger_profile: str = "standard", log_level: Union[str, int, LogLevel] = "info", 
+    Name = "UniLog"
+
+    # -----------------------------------------------------------------------------------------------
+
+    def __init__(self, app_name: str = "python-app", config_profile: str = "standalone",
+                 logger_profile: str = "standard", log_level: typeUnion[str, int, LogLevel] = "info",
                  use_local_notifier: bool = False, config_handle: int = 0) -> None:
         if not lib:
             raise RuntimeError("libunilog shared library not found. Please ensure it is built.")
-        
+
         # Convert string log level to int for Go
         level_val = LogLevel.from_str(log_level) if isinstance(log_level, str) else int(log_level)
 
-        self._handle: int = lib.UniLog_Init(
-            app_name.encode('utf-8'), 
-            config_profile.encode('utf-8'), 
-            logger_profile.encode('utf-8'), 
-            ctypeC_int(level_val),
+        self._handle: typeOptional[int] = lib.UniLog_Init(
+            app_name.encode('utf-8'),
+            config_profile.encode('utf-8'),
+            logger_profile.encode('utf-8'),
+            ctypeC_int(int(level_val)),
             ctypeC_int(1 if use_local_notifier else 0),
             config_handle
         )
-        self._callback_ref: Optional[Any] = None # Keep reference to avoid GC
-        self._sync_subscribers: List[Callable[[Dict[str, Any]], None]] = []
-        self._async_listeners: Set[ConfigUpdateListener] = set()
+        self._min_level: int = int(level_val)
+        self._callback_ref: typeOptional[typeAny] = None  # Keep reference to avoid GC
+        self._notif_callback_ref: typeOptional[typeAny] = None
+        self._sync_subscribers: typeList[typeCallable[[typeDict[str, typeAny]], None]] = []
+        self._async_listeners: typeSet[ConfigUpdateListener] = set()
         self._initialized_bridge: bool = False
 
+    # -----------------------------------------------------------------------------------------------
 
-    ##########################################################################
-    # Logging Methods
-    
     def debug(self, msg: str) -> None: self._log(LogLevel.DEBUG, msg)
     def info(self, msg: str) -> None: self._log(LogLevel.INFO, msg)
     def warning(self, msg: str) -> None: self._log(LogLevel.WARNING, msg)
@@ -85,82 +89,89 @@ class UniLog:
     def report(self, msg: str) -> None: self._log(LogLevel.REPORT, msg)
     def stream(self, msg: str) -> None: self._log(LogLevel.STREAM, msg)
 
-    # Log level accessors
-    def set_level(self, level: Union[str, int, LogLevel]) -> None:
+    # -----------------------------------------------------------------------------------------------
+
+    def set_level(self, level: typeUnion[str, int, LogLevel]) -> None:
         """Change the current log level dynamically."""
         if isinstance(level, str):
             level = LogLevel.from_str(level)
-        lib.UniLog_SetLevel(self._handle, int(level))
-        
+        lvl_int = int(level)
+        self._min_level = lvl_int
+        lib.UniLog_SetLevel(self._handle, lvl_int)
+
+    # -----------------------------------------------------------------------------------------------
+
     def get_level(self) -> LogLevel:
         """Retrieve the current log level from the Go core."""
         return LogLevel(lib.UniLog_GetLevel(self._handle))
-        
 
-    ##########################################################################
-    # Metadata Methods ---
+    # -----------------------------------------------------------------------------------------------
 
     def add_metadata(self, key: str, value: str) -> None:
         """Add a single key-value pair to all future logs."""
         lib.UniLog_AddMetadata(self._handle, key.encode('utf-8'), value.encode('utf-8'))
 
-    def set_metadata(self, metadata: Dict[str, Any]) -> None:
+    # -----------------------------------------------------------------------------------------------
+
+    def set_metadata(self, metadata: typeDict[str, typeAny]) -> None:
         """Replace all existing metadata with the provided dictionary."""
-        import json
-        json_data = json.dumps(metadata)
+        json_data = jsonDumps(metadata)
         lib.UniLog_SetMetadata(self._handle, json_data.encode('utf-8'))
 
-    ##########################################################################
-    # Config Methods ---
+    # -----------------------------------------------------------------------------------------------
 
-    def get_config(self, section: str, key: str, default: Optional[str] = None) -> Optional[str]:
+    def get_config(self, section: str, key: str, default: typeOptional[str] = None) -> typeOptional[str]:
         """Retrieve a configuration value from the distributed config service (Zero-Leak FFI)."""
         res_ptr = lib.UniLog_Config_Get(self._handle, section.encode('utf-8'), key.encode('utf-8'))
         if not res_ptr:
             return default
         try:
-            from ctypes import string_at
-            return string_at(res_ptr).decode('utf-8')
+            return ctypeStringAt(res_ptr).decode('utf-8')
         finally:
             if hasattr(lib, "DistConf_FreeString"):
                 lib.DistConf_FreeString(res_ptr)
+
+    # -----------------------------------------------------------------------------------------------
 
     def set_config(self, section: str, key: str, value: str) -> None:
         """Update a configuration value in the memory configuration."""
         lib.UniLog_Config_Set(self._handle, section.encode('utf-8'), key.encode('utf-8'), value.encode('utf-8'))
 
-    # Trigger on_config_update regarding the caller and caller method
+    # -----------------------------------------------------------------------------------------------
+
     def _dispatch_update(self, json_data: bytes) -> None:
         """Internal bridge called from Go shared library background thread."""
         try:
             raw_val = json_data.decode('utf-8')
             data = jsonLoads(raw_val)
-            
+
+            logger_section = data.get("logger") if isinstance(data, dict) else None
+            if isinstance(logger_section, dict) and "level" in logger_section:
+                self._min_level = int(LogLevel.from_str(str(logger_section["level"])))
+
             # 1. Dispatch to synchronous subscribers
             for cb in self._sync_subscribers:
                 try:
                     cb(data)
-                except Exception:
-                    pass
-            
+                except Exception as err:
+                    sysStderr.write(f"UniLog : subscriber callback failed ({err})\n")
+
             # 2. Dispatch to asynchronous listeners (thread-safe)
-            for listener in list(self._async_listeners): # Copy list to avoid concurrent mutation
+            for listener in list(self._async_listeners):  # Copy list to avoid concurrent mutation
                 listener._put(data)
-        except Exception:
-            pass
+        except Exception as err:
+            sysStderr.write(f"UniLog : failed to dispatch config update ({err})\n")
 
+    # -----------------------------------------------------------------------------------------------
 
-    ##########################################################################
-    # Trigger on_config_update
-
-    def on_config_update(self, callback: Optional[Callable[[Dict[str, Any]], None]] = None) -> Optional[ConfigUpdateListener]:
+    def on_config_update(self, callback: typeOptional[typeCallable[[typeDict[str, typeAny]], None]] = None) -> typeOptional[ConfigUpdateListener]:
         """
         Registers a mechanism for configuration updates.
-        
+
         Args:
-            callback: (Optional) A standard Python function. If provided, 
+            callback: (Optional) A standard Python function. If provided,
                       registers a traditional synchronous callback.
-        
+
         Returns:
             None: If a callback was provided.
             ConfigUpdateListener: If NO callback was provided. Use with 'async for'.
@@ -174,14 +185,12 @@ class UniLog:
         if callback is not None:
             self._sync_subscribers.append(callback)
             return None
-        
+
         return ConfigUpdateListener(self)
 
+    # -----------------------------------------------------------------------------------------------
 
-    ##########################################################################
-    # Local Notifier Methods
-
-    def on_notification(self, callback: Callable[[Dict[str, Any]], None]) -> None:
+    def on_notification(self, callback: typeCallable[[typeDict[str, typeAny]], None]) -> None:
         """
         Registers a callback for local notifications.
         The callback will receive a dictionary parsed from the notification JSON.
@@ -190,47 +199,47 @@ class UniLog:
             try:
                 data = jsonLoads(json_data.decode('utf-8'))
                 callback(data)
-            except Exception:
-                pass
+            except Exception as err:
+                sysStderr.write(f"UniLog : notification callback failed ({err})\n")
 
         # Keep a reference to the bridge callback to avoid GC
         self._notif_callback_ref = CALLBACK_TYPE(_bridge_cb)
         lib.UniLog_RegisterNotifCallback(self._handle, self._notif_callback_ref)
 
+    # -----------------------------------------------------------------------------------------------
 
-    ##########################################################################
-    # Internal sync Logging Method
-    
-    def _log(self, level: Union[int, LogLevel], msg: str) -> None:
-        # 1. Capture user caller information 
+    def _log(self, level: typeUnion[int, LogLevel], msg: str) -> None:
+        lvl_int = int(level)
+        if lvl_int < self._min_level:
+            return
+        # 1. Capture user caller information
         caller_info = self._get_caller_info(3)
-        
+
         # 2. Immediate synchronous execution
-        self._dispatch_log_to_cgo(level, msg, *caller_info)
+        self._dispatch_log_to_cgo(lvl_int, msg, *caller_info)
 
+    # -----------------------------------------------------------------------------------------------
 
-    ##########################################################################
-    # Internal async Logging Method
-    
-    async def _async_log(self, level: Union[int, LogLevel], msg: str) -> None:
+    async def _async_log(self, level: typeUnion[int, LogLevel], msg: str) -> None:
+        lvl_int = int(level)
+        if lvl_int < self._min_level:
+            return
         # 1. Capture user caller information BEFORE moving to background thread
         caller_info = self._get_caller_info(3)
-        
+
         # 2. Offload the blocking C-call to the default thread pool executor (non-blocking)
         await asyncioGetRunningLoop().run_in_executor(
-            None, 
-            self._dispatch_log_to_cgo, 
-            int(level), 
-            str(msg), 
+            None,
+            self._dispatch_log_to_cgo,
+            lvl_int,
+            str(msg),
             *caller_info
         )
 
-
-    ##########################################################################
-    # Common Logging Core
+    # -----------------------------------------------------------------------------------------------
 
     # Capture caller metadata from the current stack trace
-    def _get_caller_info(self, depth: int) -> Tuple[str, str, str, str]:
+    def _get_caller_info(self, depth: int) -> typeTuple[str, str, str, str]:
         try:
             frame = sysGetFrame(depth)
             filename = osPathBasename(frame.f_code.co_filename)
@@ -241,20 +250,21 @@ class UniLog:
         except (ValueError, AttributeError):
             return "unknown", "0", "unknown", "unknown"
 
+    # -----------------------------------------------------------------------------------------------
+
     # Primary bridge to the Go shared library for all logging events
-    def _dispatch_log_to_cgo(self, level: Union[int, LogLevel], msg: str, filename: str, lineno: str, function: str, module: str) -> None:
+    def _dispatch_log_to_cgo(self, level: typeUnion[int, LogLevel], msg: str, filename: str, lineno: str, function: str, module: str) -> None:
         lib.UniLog_LogWithMetadata(
-            self._handle, 
-            int(level), 
-            str(msg).encode('utf-8'), 
-            filename.encode('utf-8'), 
-            lineno.encode('utf-8'), 
-            function.encode('utf-8'), 
+            self._handle,
+            int(level),
+            str(msg).encode('utf-8'),
+            filename.encode('utf-8'),
+            lineno.encode('utf-8'),
+            function.encode('utf-8'),
             module.encode('utf-8')
         )
 
-    ##########################################################################
-    # Lifecycle and Context management
+    # -----------------------------------------------------------------------------------------------
 
     # Release the logger session and free shared memory resources
     def close(self) -> None:
@@ -263,29 +273,27 @@ class UniLog:
             lib.UniLog_Close(self._handle)
             self._handle = None
 
+    # -----------------------------------------------------------------------------------------------
 
-    # Ensure resources are released if the object is garbage collected
     def __del__(self) -> None:
         self.close()
-    
-    ##########################################################################
-    # Sync Context Management
-    
-    # Support for standard 'with' context manager
+
+    # -----------------------------------------------------------------------------------------------
+
     def __enter__(self) -> 'UniLog':
         return self
 
-    # Automatic cleanup when exiting 'with' block
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    # -----------------------------------------------------------------------------------------------
+
+    def __exit__(self, exc_type: typeAny, exc_val: typeAny, exc_tb: typeAny) -> None:
         self.close()
 
-    ##########################################################################
-    # Async Context Management
-    
-    # Support for 'async with' context manager
+    # -----------------------------------------------------------------------------------------------
+
     async def __aenter__(self) -> 'UniLog':
         return self.__enter__()
 
-    # Automatic cleanup when exiting 'async with' block
-    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    # -----------------------------------------------------------------------------------------------
+
+    async def __aexit__(self, exc_type: typeAny, exc_val: typeAny, exc_tb: typeAny) -> None:
         return self.__exit__(exc_type, exc_val, exc_tb)

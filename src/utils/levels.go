@@ -16,12 +16,12 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // Level mirrors the universal-logger Level using a type alias.
 type Level = interfaces.Level
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // Log level constants mirrored from universal-logger interfaces for easy access.
 const (
@@ -39,7 +39,7 @@ const (
 	LevelCritical = interfaces.LevelCritical
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // GetLogLevel converts string to Level.
 func GetLogLevel(LogLevel string) Level {

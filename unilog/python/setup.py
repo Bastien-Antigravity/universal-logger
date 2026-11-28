@@ -87,7 +87,8 @@ class BuildGoLib(setuptoolsCommand):
 # -----------------------------------------------------------------------------------------------
 
 def _load_version() -> str:
-    version_path = pathlibPath(__file__).resolve().parent.parent.parent / "VERSION.txt"
+    repo_root = pathlibPath(__file__).resolve().parent.parent.parent
+    version_path = repo_root / "VERSION.txt"
     if not version_path.is_file():
         raise FileNotFoundError(f"Missing VERSION.txt at {version_path}")
     version = version_path.read_text(encoding="utf-8").strip()

@@ -31,12 +31,28 @@ import (
 	"unsafe"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-// internalNotificationPump drains the Go channel and pumps messages to the C callback.
-func internalNotificationPump(notifQueue <-chan *utils.NotifMessage, callback C.UniLogNotifCallback) {
+// internalNotificationPump drains the Go channel and pumps messages to the registered C callback.
+func internalNotificationPump(handle uintptr, notifQueue <-chan *utils.NotifMessage) {
 	for msg := range notifQueue {
 		if msg == nil {
+			continue
+		}
+
+		facadeMu.RLock()
+		session, ok := facadeStore[handle]
+		var cbPtr unsafe.Pointer
+		if ok && session != nil {
+			cbPtr = session.NotifCallback
+		}
+		facadeMu.RUnlock()
+		if !ok {
+			return
+		}
+
+		callback := C.UniLogNotifCallback(cbPtr)
+		if callback == nil {
 			continue
 		}
 
@@ -57,24 +73,31 @@ func internalNotificationPump(notifQueue <-chan *utils.NotifMessage, callback C.
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_RegisterNotifCallback
 func UniLog_RegisterNotifCallback(handle uintptr, callback C.UniLogNotifCallback) {
-	facadeMu.RLock()
+	facadeMu.Lock()
 	session, ok := facadeStore[handle]
-	facadeMu.RUnlock()
-
 	if !ok || session.Logger == nil {
+		facadeMu.Unlock()
 		return
 	}
 
 	queue := session.Logger.GetNotifQueue()
 	if queue == nil {
-		// Notifier was not enabled during Init
+		facadeMu.Unlock()
 		return
 	}
 
-	// Start a background goroutine to pump notifications
-	go internalNotificationPump(queue, callback)
+	session.NotifCallback = unsafe.Pointer(callback)
+	shouldStart := !session.NotifPumpStarted
+	if shouldStart {
+		session.NotifPumpStarted = true
+	}
+	facadeMu.Unlock()
+
+	if shouldStart {
+		go internalNotificationPump(handle, queue)
+	}
 }

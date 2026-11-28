@@ -23,7 +23,7 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_LogWithMetadata
 func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function, module *C.char) {
@@ -31,13 +31,14 @@ func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function
 	session, ok := facadeStore[handle]
 	facadeMu.RUnlock()
 
-	if !ok || session.Logger == nil {
+	lvl := logger_models.Level(level)
+	if !ok || session.Logger == nil || lvl < session.Logger.GetLevel() {
 		return
 	}
 
 	utils.LogWithMetadata(
 		session.Logger,
-		logger_models.Level(level),
+		lvl,
 		C.GoString(msg),
 		C.GoString(file),
 		C.GoString(line),
@@ -46,7 +47,7 @@ func UniLog_LogWithMetadata(handle uintptr, level int, msg, file, line, function
 	)
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_SetLevel
 func UniLog_SetLevel(handle uintptr, level int) {
@@ -59,7 +60,7 @@ func UniLog_SetLevel(handle uintptr, level int) {
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_GetLevel
 func UniLog_GetLevel(handle uintptr) int {
@@ -73,7 +74,7 @@ func UniLog_GetLevel(handle uintptr) int {
 	return 0
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_AddMetadata
 func UniLog_AddMetadata(handle uintptr, key, value *C.char) {
@@ -86,7 +87,7 @@ func UniLog_AddMetadata(handle uintptr, key, value *C.char) {
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_SetMetadata
 func UniLog_SetMetadata(handle uintptr, jsonMetadata *C.char) {
@@ -102,7 +103,7 @@ func UniLog_SetMetadata(handle uintptr, jsonMetadata *C.char) {
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 //export UniLog_Flush
 func UniLog_Flush(handle uintptr) {

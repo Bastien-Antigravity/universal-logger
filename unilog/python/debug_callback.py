@@ -36,6 +36,9 @@ def test_callback():
         print(f"!!! Python: CB RECEIVED: {data}")
         received_updates.append(data)
 
+    root_cfg = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "standalone.yaml"))
+    if os.path.exists(root_cfg) and "CONFIG_PATH" not in os.environ:
+        os.environ["CONFIG_PATH"] = root_cfg
     print("!!! Python: Initializing UniLog...")
     logger = UniLog()
     

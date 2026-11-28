@@ -49,12 +49,13 @@ The project has transitioned to a **Shared Library First** approach:
 
 ## 🚀 Key Features
 
-- **Multi-Language Parity**: Identical behavior and structured log formats for Go, Python, Rust, C++, and VBA.
+- **Multi-Language Parity**: Identical behavior, all 11 canonical log levels, and structured log formats across Go, Python, Rust (`#[track_caller]`), C++, and VBA.
+- **Lock-Free Hot Path**: Fast-path level gating and pre-computed `atomic.Pointer` metadata snapshots avoid allocations and sorting on active logging calls.
 - **DLL-Based Core**: One library to rule them all—fixes applied to the Go core benefit all languages instantly.
 - **Asynchronous Logging**: Non-blocking log dispatching across all supported languages.
-- **Dynamic Configuration**: Real-time configuration updates with language-native callback support.
+- **Dynamic Configuration**: Real-time configuration updates with language-native callback support and mutex-guarded FFI static buffers (`vba_buffer`, `last_error_buf`).
 - **State Inspection**: `GetLevel()` accessor across all facades for real-time verification of active log levels.
-- **Lifecycle Management**: Robust resource handling with context managers and automatic cleanup.
+- **Lifecycle Management**: Explicit `.Close()` / RAII / context-manager teardown that safely unbinds notification queues before closing channels.
 
 ## 📊 Operational Profiles
 

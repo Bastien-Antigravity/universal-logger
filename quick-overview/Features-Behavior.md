@@ -23,7 +23,9 @@ This document tracks the core capabilities, FFI memory ownership policies, and B
 *   **Leak-Free Python ctypes Bindings**: Protects Python applications from dynamic FFI leaks by keeping raw pointers bound to `c_void_p` and executing manual deallocation via `DistConf_FreeString`.
 *   **Defensive FFI Input Cleaning**: Strips trailing/embedded null-bytes (`\x00`) and trims leading/trailing spaces from all incoming string arguments to prevent memory crashes or pointer mismatches.
 *   **Ecosystem Telemetry Parity**: Fully supports standard log levels (DEBUG, STREAM, INFO, LOGON, LOGOUT, TRADE, SCHEDULE, REPORT, WARNING, ERROR, CRITICAL) for seamless cross-tier aggregations.
-*   **Asynchronous Live Config Updates**: Supports asynchronous configuration updates using registered callbacks, enabling real-time telemetry updates.
+*   **Rust Caller Capture**: `unilog-rs` helper methods (`debug`, `info`, `stream`, `logon`, `logout`, `trade`, `schedule`, `report`, `warning`, `error`, `critical`) use `#[track_caller]` to capture exact call-site file and line numbers automatically.
+*   **Thread-Safe Static FFI Buffers**: Both `vba_buffer` (`UniLog_Config_Get_Safe`) and `last_error_buf` (`DistConf_GetLastError`) use static C buffers serialized by Go `sync.Mutex` locks across Go M:N goroutine scheduling.
+*   **Asynchronous Live Config Updates**: Supports asynchronous configuration updates using registered callbacks, enabling real-time telemetry updates and synchronized Python `_min_level` short-circuiting.
 
 ---
 

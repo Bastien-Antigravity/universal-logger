@@ -14,11 +14,22 @@
 
 #include "UniversalLogger.hpp"
 #include <iostream>
+#include <fstream>
 #include <cassert>
+#include <cstdlib>
 #include <string>
+#include <unistd.h>
 
 int main() {
     std::cout << ">>> Running C++ Unit Tests..." << std::endl;
+
+    std::string cfg_path = "/tmp/unilog_cpp_test_standalone_" + std::to_string(getpid()) + ".yaml";
+    {
+        std::ofstream cfg_file(cfg_path);
+        cfg_file << "common:\n  name: \"cpp-test-suite\"\n  public_ip: \"127.0.0.1\"\n";
+    }
+    setenv("CONFIG_PATH", cfg_path.c_str(), 1);
+    setenv("LOG_DIR", "/tmp/unilog_cpp_test_logs", 1);
 
     try {
         // 1. Test Instantiation
@@ -53,6 +64,12 @@ int main() {
         // 6. Test Macros & Logging (should execute without crash)
         UNILOG_INFO(logger, "C++ Info message from automated test");
         UNILOG_DEBUG(logger, "C++ Debug message from automated test");
+        UNILOG_STREAM(logger, "C++ Stream message from automated test");
+        UNILOG_LOGON(logger, "C++ Logon message from automated test");
+        UNILOG_LOGOUT(logger, "C++ Logout message from automated test");
+        UNILOG_TRADE(logger, "C++ Trade message from automated test");
+        UNILOG_SCHEDULE(logger, "C++ Schedule message from automated test");
+        UNILOG_REPORT(logger, "C++ Report message from automated test");
         UNILOG_WARNING(logger, "C++ Warning message from automated test");
         UNILOG_ERROR(logger, "C++ Error message from automated test");
         UNILOG_CRITICAL(logger, "C++ Critical message from automated test");
@@ -60,9 +77,11 @@ int main() {
 
         std::cout << ">>> ✅ ALL C++ UNIT TESTS PASSED SUCCESSFULLY!" << std::endl;
     } catch (const std::exception& e) {
+        std::remove(cfg_path.c_str());
         std::cerr << ">>> ❌ C++ UNIT TEST FAILED: " << e.what() << std::endl;
         return 1;
     }
 
+    std::remove(cfg_path.c_str());
     return 0;
 }

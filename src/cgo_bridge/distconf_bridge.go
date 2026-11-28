@@ -35,21 +35,11 @@ static void call_distconf_update_cb(distconf_update_cb cb, uintptr_t handle, con
 #define DISTCONF_ERR_DECRYPTION_FAILED   6
 #define DISTCONF_ERR_INVALID_INPUT       7
 
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#define THREAD_LOCAL _Thread_local
-#elif defined(_MSC_VER)
-#define THREAD_LOCAL __declspec(thread)
-#elif defined(__GNUC__)
-#define THREAD_LOCAL __thread
-#else
-#define THREAD_LOCAL
-#endif
-
-static THREAD_LOCAL char* last_error = NULL;
-static THREAD_LOCAL int last_error_code = 0;
+static char last_error_buf[1024] = {0};
+static int last_error_code = 0;
 
 static inline char* get_last_error(void) {
-    return last_error;
+    return last_error_buf;
 }
 
 static inline int get_last_error_code(void) {
@@ -58,13 +48,11 @@ static inline int get_last_error_code(void) {
 
 static void set_last_error(int code, const char* err) {
     last_error_code = code;
-    if (last_error != NULL) {
-        free(last_error);
-    }
     if (err == NULL) {
-        last_error = NULL;
+        last_error_buf[0] = '\0';
     } else {
-        last_error = strdup(err);
+        strncpy(last_error_buf, err, sizeof(last_error_buf) - 1);
+        last_error_buf[sizeof(last_error_buf) - 1] = '\0';
     }
 }
 */
@@ -73,14 +61,17 @@ import "C"
 import (
 	"encoding/json"
 	"strings"
+	"sync"
 	"unsafe"
 
 	"github.com/Bastien-Antigravity/distributed-config/src/cgo_bridge"
 )
 
-// -------------------------------------------------------------------------
+var distconfErrMu sync.Mutex
+
+// -----------------------------------------------------------------------------
 // HELPERS
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 func mapErrorCode(err error) C.int {
 	if err == nil {
@@ -104,6 +95,8 @@ func mapErrorCode(err error) C.int {
 }
 
 func setLastError(code C.int, msg string) {
+	distconfErrMu.Lock()
+	defer distconfErrMu.Unlock()
 	if code == C.DISTCONF_SUCCESS {
 		C.set_last_error(code, nil)
 	} else {
@@ -113,7 +106,7 @@ func setLastError(code C.int, msg string) {
 	}
 }
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // DISTRIBUTED CONFIG BRIDGE (Re-exported logic from distributed-config)
 // -------------------------------------------------------------------------
 
@@ -229,11 +222,15 @@ func DistConf_GetFullConfig(handle uintptr) *C.char {
 
 //export DistConf_GetLastError
 func DistConf_GetLastError() *C.char {
+	distconfErrMu.Lock()
+	defer distconfErrMu.Unlock()
 	return C.get_last_error()
 }
 
 //export DistConf_GetLastErrorCode
 func DistConf_GetLastErrorCode() int {
+	distconfErrMu.Lock()
+	defer distconfErrMu.Unlock()
 	return int(C.get_last_error_code())
 }
 
@@ -271,9 +268,9 @@ func DistConf_ShareConfig(handle uintptr, jsonData *C.char) int {
 
 //export DistConf_OnLiveConfUpdate
 func DistConf_OnLiveConfUpdate(handle uintptr, cb C.distconf_update_cb) {
-	cgo_bridge.FacadeMu.Lock()
+	cgo_bridge.FacadeMu.RLock()
 	session, ok := cgo_bridge.FacadeStore[handle]
-	cgo_bridge.FacadeMu.Unlock()
+	cgo_bridge.FacadeMu.RUnlock()
 
 	if !ok || session.Config == nil {
 		setLastError(C.DISTCONF_ERR_INVALID_HANDLE, "invalid handle")
@@ -295,9 +292,9 @@ func DistConf_OnLiveConfUpdate(handle uintptr, cb C.distconf_update_cb) {
 
 //export DistConf_OnRegistryUpdate
 func DistConf_OnRegistryUpdate(handle uintptr, cb C.distconf_update_cb) {
-	cgo_bridge.FacadeMu.Lock()
+	cgo_bridge.FacadeMu.RLock()
 	session, ok := cgo_bridge.FacadeStore[handle]
-	cgo_bridge.FacadeMu.Unlock()
+	cgo_bridge.FacadeMu.RUnlock()
 
 	if !ok || session.Config == nil {
 		setLastError(C.DISTCONF_ERR_INVALID_HANDLE, "invalid handle")

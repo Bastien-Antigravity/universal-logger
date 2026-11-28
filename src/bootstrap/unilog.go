@@ -155,5 +155,6 @@ func InitService(serviceName string) (*config.DistConfig, interfaces.Logger) {
 		logLevel = "INFO"
 	}
 
-	return Init(serviceName, configProfile, loggerProfile, logLevel, true, nil)
+	useLocalNotif := serviceName == "notif-server" || serviceName == "notif_server"
+	return Init(serviceName, configProfile, loggerProfile, logLevel, useLocalNotif, nil)
 }

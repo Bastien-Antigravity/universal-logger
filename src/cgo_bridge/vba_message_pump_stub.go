@@ -39,6 +39,13 @@ func UniLog_RegisterVBAWindow(handle uintptr, hwnd uintptr, msgId uint32) {
 // dispatchConfigurationUpdate handles the logic of routing a configuration
 // update on non-Windows platforms (Standard FFI Callback only).
 func dispatchConfigurationUpdate(handle uintptr, cb C.config_update_cb, jsonData string) {
+	facadeMu.RLock()
+	_, ok := facadeStore[handle]
+	facadeMu.RUnlock()
+	if !ok {
+		return
+	}
+
 	if cb != nil {
 		cStr := C.CString(jsonData)
 		defer C.free(unsafe.Pointer(cStr))

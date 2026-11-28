@@ -27,6 +27,7 @@ import (
 	flex_interfaces "github.com/Bastien-Antigravity/flexible-logger/src/interfaces"
 	flex_models "github.com/Bastien-Antigravity/flexible-logger/src/models"
 	flex_notifier "github.com/Bastien-Antigravity/flexible-logger/src/notifier"
+	flex_profiles "github.com/Bastien-Antigravity/flexible-logger/src/profiles"
 	"github.com/Bastien-Antigravity/universal-logger/src/interfaces"
 	"github.com/Bastien-Antigravity/universal-logger/src/logger"
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
@@ -436,4 +437,43 @@ func TestUniLog_NotificationThresholds_Unit(t *testing.T) {
 	case <-time.After(200 * time.Millisecond):
 		t.Fatal("Timed out waiting for LogWithMetadata notification")
 	}
+}
+
+// -----------------------------------------------------------------------------
+
+func TestUniLog_CallerAttribution_PointsToCallerNotFacade(t *testing.T) {
+	sink := &capturingSink{}
+	flexEngine := flex_factory.CreateLogEngine("caller-attr-test", flex_models.LevelDebug, sink, true, 0).(*flex_engine.LogEngine)
+	ul := logger.NewUniLog(flexEngine)
+	defer ul.Close()
+
+	ul.Error("helper-error")
+	ul.Log(utils.LevelError, "direct-log-error")
+
+	entries := sink.getEntries()
+	if len(entries) != 2 {
+		t.Fatalf("Expected 2 entries, got %d", len(entries))
+	}
+	for i, e := range entries {
+		if e.File != "logger_handler_test.go" {
+			t.Errorf("Entry %d attributed to %q (func=%q) instead of logger_handler_test.go", i, e.File, e.Func)
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+func TestUniLog_Close_UnbindsNotifQueueWithoutPanic(t *testing.T) {
+	t.Setenv("LOG_DIR", t.TempDir())
+	wrapper := flex_profiles.NewDevelLogger("close-safe-test", true)
+
+	ul := logger.NewUniLog(wrapper)
+	owned := make(chan *utils.NotifMessage, 4)
+	ul.SetLocalNotifQueue(owned)
+	ul.OwnedNotifChan = owned
+
+	// Close must unbind the LocalNotifier queue before closing OwnedNotifChan
+	ul.Close()
+	// Calling Warning after Close must not panic on a closed OwnedNotifChan
+	ul.Warning("post-close warning should not panic")
 }

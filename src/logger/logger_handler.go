@@ -15,10 +15,10 @@ package logger
 
 import (
 	"fmt"
-	"runtime"
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 
@@ -30,6 +30,11 @@ import (
 
 var _ interfaces.Logger = (*UniLog)(nil)
 
+type metaSnapshot struct {
+	suffix     string
+	defaultMod string
+}
+
 // UniLog wraps the flexible-logger library.
 type UniLog struct {
 	Logger         flex_interfaces.Logger
@@ -37,38 +42,31 @@ type UniLog struct {
 	OwnedNotifChan chan *utils.NotifMessage
 	Metadata       map[string]string
 	metaMu         sync.RWMutex
+	atomicMeta     atomic.Pointer[metaSnapshot]
 	closeOnce      sync.Once
 }
 
 // -----------------------------------------------------------------------------
 
 // NewUniLog initializes a new logger service from an existing logger instance.
-// Note: This implementation uses a runtime finalizer to automatically call Close()
-// when the logger instance is about to be garbage collected.
 func NewUniLog(logger flex_interfaces.Logger) *UniLog {
 	res := &UniLog{
 		Logger:   logger,
 		Metadata: make(map[string]string),
 	}
 
-	// Initialize with 1 to skip this facade layer by default
-	res.Logger.SetCallerSkip(1)
-
-	// Register finalizer for automatic cleanup
-	runtime.SetFinalizer(res, func(ul *UniLog) {
-		ul.Close()
-	})
+	// Initialize with 2 to skip both UniLog.logInternal and UniLog.<Helper/Log>
+	res.Logger.SetCallerSkip(2)
 
 	return res
 }
 
 // -----------------------------------------------------------------------------
 
-func (s *UniLog) formatMessageWithMetadata(msg string) string {
-	s.metaMu.RLock()
-	defer s.metaMu.RUnlock()
+func (s *UniLog) updateMetaSnapshotLocked() {
 	if len(s.Metadata) == 0 {
-		return msg
+		s.atomicMeta.Store(nil)
+		return
 	}
 	keys := make([]string, 0, len(s.Metadata))
 	for k := range s.Metadata {
@@ -79,7 +77,14 @@ func (s *UniLog) formatMessageWithMetadata(msg string) string {
 	for _, k := range keys {
 		tags = append(tags, fmt.Sprintf("%s=%s", k, s.Metadata[k]))
 	}
-	return fmt.Sprintf("%s [meta: %s]", msg, strings.Join(tags, " "))
+	defaultMod := s.Metadata["mod"]
+	if defaultMod == "" {
+		defaultMod = s.Metadata["module"]
+	}
+	s.atomicMeta.Store(&metaSnapshot{
+		suffix:     fmt.Sprintf(" [meta: %s]", strings.Join(tags, " ")),
+		defaultMod: defaultMod,
+	})
 }
 
 // -----------------------------------------------------------------------------
@@ -92,6 +97,7 @@ func (s *UniLog) SetMetadata(metadata map[string]string) {
 	for k, v := range metadata {
 		s.Metadata[k] = v
 	}
+	s.updateMetaSnapshotLocked()
 }
 
 // -----------------------------------------------------------------------------
@@ -104,6 +110,7 @@ func (s *UniLog) AddMetadata(key, value string) {
 		s.Metadata = make(map[string]string)
 	}
 	s.Metadata[key] = value
+	s.updateMetaSnapshotLocked()
 }
 
 // -----------------------------------------------------------------------------
@@ -124,79 +131,97 @@ func (s *UniLog) GetMetadata() map[string]string {
 
 // -----------------------------------------------------------------------------
 
+func (s *UniLog) logInternal(level utils.Level, format string, args ...any) {
+	if s.Logger == nil || level < s.Logger.GetLevel() {
+		return
+	}
+	var msg string
+	if len(args) > 0 {
+		msg = fmt.Sprintf(format, args...)
+	} else {
+		msg = format
+	}
+	if snap := s.atomicMeta.Load(); snap != nil && snap.suffix != "" {
+		msg += snap.suffix
+	}
+	s.Logger.Log(level, "%s", msg)
+}
+
+// -----------------------------------------------------------------------------
+
 // Debug logs a message at Debug level.
 func (s *UniLog) Debug(format string, args ...any) {
-	s.Log(utils.LevelDebug, format, args...)
+	s.logInternal(utils.LevelDebug, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Info logs a message at Info level.
 func (s *UniLog) Info(format string, args ...any) {
-	s.Log(utils.LevelInfo, format, args...)
+	s.logInternal(utils.LevelInfo, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Warning logs a message at Warning level.
 func (s *UniLog) Warning(format string, args ...any) {
-	s.Log(utils.LevelWarning, format, args...)
+	s.logInternal(utils.LevelWarning, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Error logs a message at Error level.
 func (s *UniLog) Error(format string, args ...any) {
-	s.Log(utils.LevelError, format, args...)
+	s.logInternal(utils.LevelError, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Critical logs a message at Critical level.
 func (s *UniLog) Critical(format string, args ...any) {
-	s.Log(utils.LevelCritical, format, args...)
+	s.logInternal(utils.LevelCritical, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Stream logs a message at Stream level.
 func (s *UniLog) Stream(format string, args ...any) {
-	s.Log(utils.LevelStream, format, args...)
+	s.logInternal(utils.LevelStream, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Logon logs a message at Logon level.
 func (s *UniLog) Logon(format string, args ...any) {
-	s.Log(utils.LevelLogon, format, args...)
+	s.logInternal(utils.LevelLogon, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Logout logs a message at Logout level.
 func (s *UniLog) Logout(format string, args ...any) {
-	s.Log(utils.LevelLogout, format, args...)
+	s.logInternal(utils.LevelLogout, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Trade logs a message at Trade level.
 func (s *UniLog) Trade(format string, args ...any) {
-	s.Log(utils.LevelTrade, format, args...)
+	s.logInternal(utils.LevelTrade, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Schedule logs a message at Schedule level.
 func (s *UniLog) Schedule(format string, args ...any) {
-	s.Log(utils.LevelSchedule, format, args...)
+	s.logInternal(utils.LevelSchedule, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // Report logs a message at Report level.
 func (s *UniLog) Report(format string, args ...any) {
-	s.Log(utils.LevelReport, format, args...)
+	s.logInternal(utils.LevelReport, format, args...)
 }
 
 // -----------------------------------------------------------------------------
@@ -217,29 +242,23 @@ func (s *UniLog) GetLevel() utils.Level {
 
 // Log logs a message at a specific level.
 func (s *UniLog) Log(level utils.Level, format string, args ...any) {
-	var msg string
-	if len(args) > 0 {
-		msg = fmt.Sprintf(format, args...)
-	} else {
-		msg = format
-	}
-	msg = s.formatMessageWithMetadata(msg)
-	s.Logger.Log(level, "%s", msg)
+	s.logInternal(level, format, args...)
 }
 
 // -----------------------------------------------------------------------------
 
 // LogWithCaller logs a message with explicit caller stack metadata.
 func (s *UniLog) LogWithCaller(level utils.Level, msg, file, line, function, module string) {
-	msg = s.formatMessageWithMetadata(msg)
-	if module == "" {
-		s.metaMu.RLock()
-		if m, ok := s.Metadata["mod"]; ok {
-			module = m
-		} else if m, ok := s.Metadata["module"]; ok {
-			module = m
+	if s.Logger == nil || level < s.Logger.GetLevel() {
+		return
+	}
+	if snap := s.atomicMeta.Load(); snap != nil {
+		if snap.suffix != "" {
+			msg += snap.suffix
 		}
-		s.metaMu.RUnlock()
+		if module == "" {
+			module = snap.defaultMod
+		}
 	}
 	s.Logger.LogWithCaller(level, msg, file, line, function, module)
 }
@@ -247,9 +266,9 @@ func (s *UniLog) LogWithCaller(level utils.Level, msg, file, line, function, mod
 // -----------------------------------------------------------------------------
 
 // SetCallerSkip sets the number of stack frames to skip when detecting source info.
-// It automatically adds 1 to the provided skip value to account for this facade layer.
+// It automatically adds 2 to the provided skip value to account for UniLog facade layers.
 func (s *UniLog) SetCallerSkip(skip int) {
-	s.Logger.SetCallerSkip(skip + 1)
+	s.Logger.SetCallerSkip(skip + 2)
 }
 
 // -----------------------------------------------------------------------------
@@ -281,10 +300,12 @@ func (s *UniLog) Unwrap() any {
 
 // -----------------------------------------------------------------------------
 
-// Close closes the underlying logger idempotently and unregisters the GC finalizer.
+// Close closes the underlying logger idempotently and unbinds local notification queues safely.
 func (s *UniLog) Close() {
 	s.closeOnce.Do(func() {
-		runtime.SetFinalizer(s, nil)
+		if wrapper, ok := s.Logger.(*profiles.NotifLoggerWrapper); ok {
+			wrapper.SetLocalNotifQueue(nil)
+		}
 		if s.Logger != nil {
 			s.Logger.Close()
 		}

@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding:utf-8
 """
 =============================================================================
 ESSENTIAL PROCESS:
@@ -16,31 +16,28 @@ KEY PARAMETERS:
 =============================================================================
 """
 
-
-from ctypes import CDLL as ctypeCDLL, CFUNCTYPE as ctypeCFUNCTYPE, c_char_p as ctypeC_char_p, \
-                   c_int as ctypeC_int, c_size_t as ctypeC_size_t, c_longlong as ctypeC_longlong, \
-                   c_void_p as ctypeC_void_p
+from ctypes import CDLL as ctypeCDLL, CFUNCTYPE as ctypeCFUNCTYPE, c_char_p as ctypeC_char_p, c_int as ctypeC_int, c_longlong as ctypeC_longlong, c_size_t as ctypeC_size_t, c_void_p as ctypeC_void_p
 from ctypes.util import find_library as ctypeUtilFindLibrary
+from os import environ as osEnviron
+from os.path import exists as osPathExists
 from pathlib import Path as pathlibPath
-from typing import Any
-from sys import stderr as sysStderr
+from sys import platform as sysPlatform, stderr as sysStderr
+from typing import Any as typeAny
 
 # -----------------------------------------------------------------------------------------------
-# Loader logic
 
-# Discovery function to find the shared library across development and production environments
-def _load_lib() -> Any:
+
+def _load_lib() -> typeAny:
     lib_name = "libunilog"
-    
+
     # Prioritize LIBUNILOG_PATH or LIBDISTCONF_PATH environment variables if defined
-    import os
-    env_path = os.environ.get("LIBUNILOG_PATH") or os.environ.get("LIBDISTCONF_PATH")
-    if env_path and os.path.exists(env_path):
+    env_path = osEnviron.get("LIBUNILOG_PATH") or osEnviron.get("LIBDISTCONF_PATH")
+    if env_path and osPathExists(env_path):
         return ctypeCDLL(env_path)
-    
+
     # 1. Check local package directory (for distributed wheels)
     lib_path = pathlibPath(__file__).parent / f"{lib_name}.so"
-    
+
     # 2. Check root 'libunilog' directory (for development)
     root_lib = pathlibPath(__file__).parent.parent.parent / "libunilog" / f"{lib_name}.so"
 
@@ -50,12 +47,10 @@ def _load_lib() -> Any:
     elif root_lib.exists():
         lib_path = root_lib
         found = True
-        
+
     # Resolve platform-specific extensions if the generic .so is not found
     if not found:
-        # Prioritize extension based on current platform
-        import sys
-        platforms = [".dll", ".dylib"] if sys.platform == "win32" else [".dylib", ".so"]
+        platforms = [".dll", ".dylib"] if sysPlatform == "win32" else [".dylib", ".so"]
         for ext in platforms:
             p = lib_path.with_suffix(ext)
             if p.exists():
@@ -67,27 +62,24 @@ def _load_lib() -> Any:
                 lib_path = p_root
                 found = True
                 break
-    
+
     if not found:
         # Fallback to system path lookup using standard OS utilities
         res = ctypeUtilFindLibrary(lib_name)
         return ctypeCDLL(res or lib_name)
-    
+
     return ctypeCDLL(str(lib_path))
 
 
-##########################################################################
-# Library loading
+# -----------------------------------------------------------------------------------------------
 
 try:
     lib = _load_lib()
-except Exception:
-    # Silent failure during initialization to avoid blocking installation or builds
+except Exception as err:
+    sysStderr.write(f"unilog.lib_loader : failed to load libunilog ({err})\n")
     lib = None
 
-
-##########################################################################
-# FFI Declarations
+# -----------------------------------------------------------------------------------------------
 
 # Shared Bridge Callbacks (defined globally to prevent ImportErrors)
 CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
@@ -95,16 +87,16 @@ CALLBACK_TYPE = ctypeCFUNCTYPE(None, ctypeC_char_p)
 if lib:
     # Initialization & Lifecycle
     lib.UniLog_Init.argtypes = [
-        ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, 
-        ctypeC_int, ctypeC_int, ctypeC_size_t
+        ctypeC_char_p, ctypeC_char_p, ctypeC_char_p,
+        ctypeC_int, ctypeC_int, ctypeC_size_t,
     ]
     lib.UniLog_Init.restype = ctypeC_size_t
     lib.UniLog_Close.argtypes = [ctypeC_size_t]
 
     # Logging Interface
     lib.UniLog_LogWithMetadata.argtypes = [
-        ctypeC_size_t, ctypeC_longlong, ctypeC_char_p, 
-        ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p
+        ctypeC_size_t, ctypeC_longlong, ctypeC_char_p,
+        ctypeC_char_p, ctypeC_char_p, ctypeC_char_p, ctypeC_char_p,
     ]
     lib.UniLog_SetLevel.argtypes = [ctypeC_size_t, ctypeC_longlong]
     lib.UniLog_GetLevel.argtypes = [ctypeC_size_t]
@@ -132,5 +124,5 @@ if lib:
         lib.DistConf_GetFullConfig.argtypes = [ctypeC_size_t]
         lib.DistConf_GetFullConfig.restype = ctypeC_void_p
         lib.DistConf_Close.argtypes = [ctypeC_size_t]
-    except Exception:
-        pass # Compatibility layer might be missing if lib is old
+    except Exception as err:
+        sysStderr.write(f"unilog.lib_loader : optional DistConf symbols unavailable ({err})\n")

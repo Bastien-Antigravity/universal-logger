@@ -37,6 +37,9 @@ func LogWithMetadata(logger Logger, level Level, msg, file, line, function, modu
 
 // Log logs a message at a specific level using the provided logger.
 func Log(logger Logger, level Level, format string, args ...any) {
+	if logger == nil {
+		return
+	}
 	logger.Log(level, format, args...)
 }
 

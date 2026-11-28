@@ -17,6 +17,7 @@ KEY PARAMETERS:
 import sys
 import os
 import subprocess
+import tempfile
 try:
     import psutil
 except ImportError:
@@ -33,33 +34,43 @@ def get_memory_usage() -> int:
         return int(out.strip()) * 1024
 
 def run_leak_test(use_free: bool) -> float:
-    logger = UniLog(app_name="comparison", config_profile="standalone", logger_profile="devel")
-    logger.set_config("test", "key", "value_data_to_be_read_dynamically")
-    
-    orig_free = None
-    if not use_free:
-        # Temporarily mock the free function out to simulate the leak
-        if hasattr(lib, "DistConf_FreeString"):
-            orig_free = lib.DistConf_FreeString
-            lib.DistConf_FreeString = lambda x: None
-            
-    # Warm-up
-    for _ in range(100):
-        logger.get_config("test", "key")
-        
-    start = get_memory_usage()
-    
-    for _ in range(5000):
-        logger.get_config("test", "key")
-        
-    end = get_memory_usage()
-    
-    # Restore original free
-    if not use_free and orig_free is not None:
-        lib.DistConf_FreeString = orig_free
-            
-    logger.close()
-    return (end - start) / 1024 / 1024
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        cfg_path = os.path.join(tmp_dir, "standalone.yaml")
+        with open(cfg_path, "w", encoding="utf-8") as fh:
+            fh.write('common:\n  name: "comparison"\n  public_ip: "127.0.0.1"\n')
+        os.environ["CONFIG_PATH"] = cfg_path
+        os.environ["LOG_DIR"] = os.path.join(tmp_dir, "logs")
+        try:
+            logger = UniLog(app_name="comparison", config_profile="standalone", logger_profile="devel")
+            logger.set_config("test", "key", "value_data_to_be_read_dynamically")
+
+            orig_free = None
+            if not use_free:
+                # Temporarily mock the free function out to simulate the leak
+                if hasattr(lib, "DistConf_FreeString"):
+                    orig_free = lib.DistConf_FreeString
+                    lib.DistConf_FreeString = lambda x: None
+
+            # Warm-up
+            for _ in range(100):
+                logger.get_config("test", "key")
+
+            start = get_memory_usage()
+
+            for _ in range(5000):
+                logger.get_config("test", "key")
+
+            end = get_memory_usage()
+
+            # Restore original free
+            if not use_free and orig_free is not None:
+                lib.DistConf_FreeString = orig_free
+
+            logger.close()
+            return (end - start) / 1024 / 1024
+        finally:
+            os.environ.pop("CONFIG_PATH", None)
+            os.environ.pop("LOG_DIR", None)
 
 def test_leak_comparison():
     # Pytest integration check

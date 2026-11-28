@@ -86,19 +86,21 @@ flowchart TD
 ### 1. Compiled Go Core Engine (`src/`)
 The central engine orchestrates active telemetry and configuration configurations:
 *   **Unified Bootstrap**: Aligns discovery secrets, environment parameters, and profile parsing. It implements standard **Dependency Injection**, allowing a single `distributed-config` instance to be shared across logging contexts.
+*   **Unified Caller Attribution & Lock-Free Metadata**: `UniLog` routes both `Log()` and all severity helpers through `logInternal` (`SetCallerSkip(2)`) so caller frames resolve to application code rather than facade wrappers. `SetMetadata` and `AddMetadata` pre-compute a sorted suffix snapshot stored in `atomic.Pointer`, enabling lock-free hot-path gating and formatting.
 *   **Defensive Marshaling**: Implements strict YAML tags (`yaml:"-"`) on internal telemetry channels to guarantee that file loading does not trigger runtime thread panics.
-*   **Asynchronous Queues**: Decouples active processes from logging I/O. Messages are pushed to lock-free memory rings, serialized into binary payloads, and streamed in the background, keeping the caller thread fully non-blocking.
+*   **Asynchronous Queues & Safe Teardown**: Decouples active processes from logging I/O. Explicit `.Close()` unbinds `LocalNotifier` queues before closing owned channels so concurrent callers cannot panic.
 
 ### 2. FFI Boundary & Input Sanitizer (`sanitizeFFIString`)
 CGO serves as the gatekeeper between native system runtimes and the Go runtime:
 *   **Whitespace Trimming**: Automatically strips leading/trailing spaces, tabs, and carriage returns from incoming FFI string buffers.
 *   **Null-Byte Stripping**: Truncates trailing or embedded null terminators (`\x00`). This ensures that string comparisons in the Go core match configuration profiles perfectly and prevents buffer misalignments or dynamic memory pointer truncations.
+*   **Hot-Path Filtering & Static Error Buffers**: `UniLog_LogWithMetadata` short-circuits suppressed levels before allocating `C.GoString` copies, and `DistConf_*` error state uses a mutex-guarded static `last_error_buf` instead of `strdup`/`free` or thread-local storage.
 
 ### 3. Native Language Facades
 Each wrapper provides client features that align perfectly with runtime expectations:
-*   **Python**: Integrates `ctypes` bindings with native `asyncio` loop callbacks, routing live configuration updates via registered `async for` listener loops.
-*   **Rust**: Bundled in `unilog-rs` which utilizes a custom `build.rs` script to handle library discovery and link C ABI functions at compile time.
-*   **C++**: Implements lightweight RAII wrappers that manage dynamic logger contexts.
+*   **Python**: Integrates `ctypes` bindings with native `asyncio` loop callbacks, cached `_min_level` hot-path short-circuiting, and `async for` listener loops.
+*   **Rust**: Bundled in `unilog-rs` using `#[track_caller]` (`std::panic::Location::caller()`) on all 11 severity helpers plus matching macros and RAII `Drop` cleanup (clearing global callback slots).
+*   **C++**: Implements lightweight RAII wrappers supporting all 11 log levels, caller-capturing macros, and `on_config_update` callbacks.
 *   **VBA / Excel**: Employs a **Windows Message-Based Proxy** via a hidden `HWND_MESSAGE` message window to translate multi-threaded Go callbacks safely into Excel's single-threaded, thread-local memory space.
 
 ---

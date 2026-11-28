@@ -12,10 +12,28 @@ package bootstrap
 // =============================================================================
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 )
 
+func setupIsolatedBootstrapConfig(t *testing.T) {
+	t.Helper()
+	tmpDir := t.TempDir()
+	t.Setenv("LOG_DIR", filepath.Join(tmpDir, "logs"))
+	cfgPath := filepath.Join(tmpDir, "standalone.yaml")
+	yamlContent := `common:
+  name: "unilog-test"
+  public_ip: "127.0.0.1"
+`
+	if err := os.WriteFile(cfgPath, []byte(yamlContent), 0o644); err != nil {
+		t.Fatalf("Failed to write temp standalone config: %v", err)
+	}
+	t.Setenv("CONFIG_PATH", cfgPath)
+}
+
 func TestInitWithLocalNotifier(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// Initialize with useLocalNotifier = true
 	_, uniLog := Init("test-app", "standalone", "devel", "INFO", true, nil)
 	defer uniLog.Close()
@@ -36,6 +54,7 @@ func TestInitWithLocalNotifier(t *testing.T) {
 }
 
 func TestInitWithoutLocalNotifier(t *testing.T) {
+	setupIsolatedBootstrapConfig(t)
 	// Initialize with useLocalNotifier = false
 	_, uniLog := Init("test-app", "standalone", "devel", "INFO", false, nil)
 	defer uniLog.Close()

@@ -21,7 +21,7 @@ import (
 	"github.com/Bastien-Antigravity/universal-logger/src/utils"
 )
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 func main() {
 	if len(os.Args) < 2 {
@@ -99,7 +99,7 @@ func main() {
 		return
 	}
 
-	// -------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
 	// EXECUTION
 
 	distConfig, uniLog := bootstrap.Init(name, configProfile, loggerProfile, logLevel, useLocalNotifier, nil)
@@ -107,7 +107,7 @@ func main() {
 	uniLog.Info("Facade initialized for scenario %s", scenario)
 	uniLog.Warning("This is a warning log from %s", name)
 
-	// -------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
 	// DEMONSTRATION: Dynamic Configuration and Callbacks
 
 	// 1. Register a callback for configuration updates
@@ -147,7 +147,7 @@ func main() {
 		uniLog.Critical("ALERT: High resource usage detected!")
 	}
 
-	// -------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
 
 	fmt.Printf("Config Object initialized: %v\n", distConfig.Common.Name)
 

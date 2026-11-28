@@ -18,6 +18,9 @@ KEY PARAMETERS:
 
 
 from asyncio import run as asyncioRun, create_task as asyncioCreateTask, sleep as asyncioSleep, wait_for as asyncioWaitFor
+from os import environ as osEnviron
+from os.path import join as osPathJoin
+from tempfile import TemporaryDirectory as tempTemporaryDirectory
 from unittest import main as unitMain, TestCase as unitTestCase
 
 from unilog import UniLog
@@ -27,6 +30,21 @@ from unilog import UniLog
 # Unified Callback verification (Sync & Async)
 
 class TestUnifiedCallback(unitTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tmp_dir = tempTemporaryDirectory()
+        cfg_path = osPathJoin(cls._tmp_dir.name, "standalone.yaml")
+        with open(cfg_path, "w", encoding="utf-8") as fh:
+            fh.write('common:\n  name: "unilog-py-cb-test"\n  public_ip: "127.0.0.1"\n')
+        osEnviron["CONFIG_PATH"] = cfg_path
+        osEnviron["LOG_DIR"] = osPathJoin(cls._tmp_dir.name, "logs")
+
+    @classmethod
+    def tearDownClass(cls):
+        osEnviron.pop("CONFIG_PATH", None)
+        osEnviron.pop("LOG_DIR", None)
+        cls._tmp_dir.cleanup()
 
     ##########################################################################
     # Synchronous Callback Tests
